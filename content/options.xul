@@ -46,6 +46,12 @@
 						<checkbox id="redthunderminebird-default_description" label="&options.description-markdown-label;" />
 					</box>
 				</row>
+				<row>
+					<label value="&options.upload-attachments-label;" />
+					<box>
+						<checkbox id="redthunderminebird-default_upload_attachments" label="&options.upload-attachments-checkbox-label;" />
+					</box>
+				</row>
 			</rows>
 		</grid>
 

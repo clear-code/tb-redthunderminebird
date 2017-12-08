@@ -92,6 +92,7 @@ function _build() {
 	document.getElementById('redthunderminebird-default_due').value = preference.getInt('default_due');
 	document.getElementById('redthunderminebird-default_subject').value = preference.getString('default_subject');
 	document.getElementById('redthunderminebird-default_description').checked = preference.getBool('default_description');
+	document.getElementById('redthunderminebird-default_upload_attachments').checked = preference.getBool('default_upload_attachments');
 
 	//設定値読み込み(マッピング系)
 	var directorys = preference.getObject('directories');
@@ -137,6 +138,7 @@ function onCommit() {
 	preference.setInt('default_due', document.getElementById('redthunderminebird-default_due').value);
 	preference.setString('default_subject', document.getElementById('redthunderminebird-default_subject').value);
 	preference.setBool('default_description', document.getElementById('redthunderminebird-default_description').checked);
+	preference.setBool('default_upload_attachments', document.getElementById('redthunderminebird-default_upload_attachments').checked);
 
 	//設定値保存(マッピング系)
 	var directorys = {};

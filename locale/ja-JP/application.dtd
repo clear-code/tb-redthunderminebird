@@ -12,6 +12,8 @@
 <!ENTITY options.subject-label "件名から除外する正規表現">
 <!ENTITY options.description-label "説明">
 <!ENTITY options.description-markdown-label "改行を保つ(改行にスペース2つを付加する)※Markdownプラグイン向け">
+<!ENTITY options.upload-attachments-label "ファイル">
+<!ENTITY options.upload-attachments-checkbox-label "デフォルトで添付ファイルをアップロードする">
 <!ENTITY options.folder-mapping-label "フォルダマッピング">
 
 <!ENTITY options-basic.title "基本設定">
