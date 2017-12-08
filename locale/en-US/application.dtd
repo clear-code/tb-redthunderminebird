@@ -12,7 +12,6 @@
 <!ENTITY options.subject-label "regex to remove from subject">
 <!ENTITY options.description-label "description">
 <!ENTITY options.description-markdown-label "kepp break line">
-<!ENTITY options.description-label "description">
 <!ENTITY options.upload-attachments-label "file">
 <!ENTITY options.upload-attachments-checkbox-label "upload attachments by default">
 <!ENTITY options.folder-mapping-label "folder mapping">
