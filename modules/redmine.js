@@ -338,6 +338,15 @@ var Redmine = function() {
 		return response.trackers;
 	};
 
+	this.issueStatuses = function() {
+		logger.debug('issueStatuses');
+
+		var response = cacher.getorset('redmine:issueStatuses', function() {
+			return self.request('GET', 'issue_statuses.json');
+		});
+		return response.issue_statuses;
+	};
+
 	this.recache = function() {
 		logger.debug('recache');
 
