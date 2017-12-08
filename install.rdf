@@ -7,7 +7,7 @@ xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 	
 		<em:id>redthunderminebird@ryunosuke.arima</em:id>
 		<em:name>Redmine連携+</em:name>
-		<em:version>1.0.8</em:version>
+		<em:version>1.0.8+</em:version>
 		<em:description>コンテキストメニューでRedmineチケットを作成します</em:description>
 		<em:creator>ryunosuke</em:creator>
 		<em:type>2</em:type>
