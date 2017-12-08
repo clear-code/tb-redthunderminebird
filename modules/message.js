@@ -66,8 +66,15 @@ var Message = function(message, selection) {
 		return subject;
 	};
 
+	var MIMEHeaderParam = Components
+		.classes['@mozilla.org/network/mime-hdrparam;1']
+		.getService(Components.interfaces.nsIMIMEHeaderParam);
+
 	this.getHeader = function(name) {
-		return (headers[name.toLowerCase()] || []).join(', ');
+		var value = (headers[name.toLowerCase()] || []).join(', ');
+		return value.replace(/=\?[-_a-z0-9]+\?.\?[^?]+\?=/gi, function(matched) {
+			return MIMEHeaderParam.getParameter(matched, '', '', false, {});
+		});
 	};
 
 	this.getBody = function() {
