@@ -42,9 +42,10 @@
 				</row>
 				<row>
 					<label value="&options.description-label;" />
-					<box>
+					<vbox>
 						<checkbox id="redthunderminebird-default_description" label="&options.description-markdown-label;" />
-					</box>
+						<checkbox id="redthunderminebird-default_description_header" label="&options.description-header-label;" />
+					</vbox>
 				</row>
 				<row>
 					<label value="&options.upload-attachments-label;" />

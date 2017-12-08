@@ -57,6 +57,34 @@ function onLoad() {
 	var elements = document.getElementsByClassName('ticket_data');
 	utility.jsontoform(defdata, elements);
 
+	//転送メールのヘッダ（mail.show_headers=1の場合）と同等の情報の挿入
+	if (preference.getBool('default_description_header')) {
+		var node = document.getElementById('description');
+		// https://dxr.mozilla.org/comm-central/rev/ce8dba0d6a298a23d651a9622db5520b48ba90cf/mailnews/mime/src/mimedrft.cpp#957
+		var headers = [
+			//'Subject',
+			'From',
+			'Resent-From',
+			'Date',
+			'To',
+			'Cc',
+			'Newsgroups'
+		];
+		headers = headers.map(function(name) {
+			var value = message.getHeader(name);
+			if (value)
+				return name + ': ' + value;
+			else
+				return null;
+		});
+		console.log('headers: ', headers);
+		headers = headers.filter(function(header) {
+			return header;
+		});
+		if (headers.length > 0)
+			node.value = headers.join('\n') + '\n\n' + node.value;
+	}
+
 	onProject();
 }
 

@@ -15,11 +15,13 @@ var Message = function(message, selection) {
 
 	//MIMEメッセージ変換(syncにできない？)
 	var subject = null;
+	var headers = {};
 	var body = null;
 	var attachments = null;
 	this.encode = function(callback) {
 		MsgHdrToMimeMessage(this.message, null, function(message, mimemessage) {
 			subject = message.mime2DecodedSubject;
+			headers = mimemessage.headers;
 			body = mimemessage.coerceBodyToPlaintext();
 			attachments = [];
 			for (var i = 0; i < mimemessage.allAttachments.length; i++)
@@ -62,6 +64,10 @@ var Message = function(message, selection) {
 		if (subject === null)
 			subject = this.message.mime2DecodedSubject;
 		return subject;
+	};
+
+	this.getHeader = function(name) {
+		return (headers[name.toLowerCase()] || []).join(', ');
 	};
 
 	this.getBody = function() {
