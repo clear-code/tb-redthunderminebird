@@ -31,6 +31,7 @@
 <!ENTITY dialog-create.tracker-label "tracker">
 <!ENTITY dialog-create.subject-label "subject">
 <!ENTITY dialog-create.description-label "description">
+<!ENTITY dialog-create.status-label "status">
 <!ENTITY dialog-create.assigned-label "assigned to (owner only)">
 <!ENTITY dialog-create.watcher-label "watcher to (owner only)">
 <!ENTITY dialog-create.version-label "fixed version">
@@ -45,6 +46,7 @@
 <!ENTITY dialog-update.issue-label "refered issue">
 <!ENTITY dialog-update.toggle-description-label "edit">
 <!ENTITY dialog-update.notes-label "notes">
+<!ENTITY dialog-update.status-label "status">
 <!ENTITY dialog-update.assigned-label "assigned to (owner only)">
 <!ENTITY dialog-update.version-label "fixed version">
 <!ENTITY dialog-update.period-label "period">

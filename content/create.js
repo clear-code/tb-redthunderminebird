@@ -15,6 +15,14 @@ function onLoad() {
 		utility.appendMenuitem(node, projects[i].id, projects[i].fullname);
 	}
 
+	//選択可能なステータス一覧
+	var issueStatuses = redmine.issueStatuses();
+	var node = document.getElementById('status_id').childNodes[0];
+	for (var i = 0; i < issueStatuses.length; i++)
+	{
+		utility.appendMenuitem(node, issueStatuses[i].id, issueStatuses[i].name);
+	}
+
 	//トラッカー一覧
 	var trackers = redmine.trackers();
 	var node = document.getElementById('tracker_id').childNodes[0];

@@ -7,6 +7,14 @@ load("resource://redthunderminebird/utility.js", this);
 var message = window.arguments[0];
 
 function onLoad() {
+	//選択可能なステータス一覧
+	var issueStatuses = redmine.issueStatuses();
+	var node = document.getElementById('status_id').childNodes[0];
+	for (var i = 0; i < issueStatuses.length; i++)
+	{
+		utility.appendMenuitem(node, issueStatuses[i].id, issueStatuses[i].name);
+	}
+
 	//添付ファイル一覧
 	var files = message.getAttachments();
 	for (var i = 0; i < files.length; i++)
@@ -42,6 +50,7 @@ function onLoad() {
 	defdata.assigned_to_id = ticket.assigned_to ? ticket.assigned_to.id : "";
 	defdata.fixed_version_id = ticket.fixed_version ? ticket.fixed_version.id : "";
 	defdata.description = ticket.description;
+	defdata.status_id = ticket.status ? ticket.status.id : "";
 	defdata.start_date = ticket.start_date;
 	defdata.due_date = ticket.due_date;
 	var elements = document.getElementsByClassName('ticket_data');

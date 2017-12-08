@@ -36,6 +36,13 @@
 				<textbox id="description" multiline="true" rows="10" class="ticket_data" />
 			</row>
 			<row align="center">
+				<label value="&dialog-update.status-label;" />
+				<menulist id="status_id" class="ticket_data">
+					<menupopup>
+					</menupopup>
+				</menulist>
+			</row>
+			<row align="center">
 				<label value="&dialog-create.assigned-label;" />
 				<menulist id="assigned_to_id" class="ticket_data">
 					<menupopup>

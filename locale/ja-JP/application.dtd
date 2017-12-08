@@ -31,6 +31,7 @@
 <!ENTITY dialog-create.tracker-label "トラッカー">
 <!ENTITY dialog-create.subject-label "題名">
 <!ENTITY dialog-create.description-label "説明">
+<!ENTITY dialog-create.status-label "ステータス">
 <!ENTITY dialog-create.assigned-label "担当者(管理者のみ)">
 <!ENTITY dialog-create.watcher-label "ウォッチャー(管理者のみ)">
 <!ENTITY dialog-create.version-label "対象バージョン">
@@ -45,6 +46,7 @@
 <!ENTITY dialog-update.issue-label "対象チケット">
 <!ENTITY dialog-update.toggle-description-label "編集">
 <!ENTITY dialog-update.notes-label "ノート追記">
+<!ENTITY dialog-update.status-label "ステータス">
 <!ENTITY dialog-update.assigned-label "担当者(管理者のみ)">
 <!ENTITY dialog-update.version-label "対象バージョン">
 <!ENTITY dialog-update.period-label "期間">
