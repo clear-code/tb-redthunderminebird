@@ -7,6 +7,7 @@ pref("extensions.redthunderminebird.default_due", 7);
 pref("extensions.redthunderminebird.default_subject", "((fwd:)|(re:))\\s?");
 pref("extensions.redthunderminebird.default_description", true);
 pref("extensions.redthunderminebird.default_description_header", true);
+pref("extensions.redthunderminebird.default_description_header.headers", "Subject,From,Resent-From,Date,To,Cc,Newsgroups");
 pref("extensions.redthunderminebird.default_upload_attachments", true);
 pref("extensions.redthunderminebird.target_project", "");
 pref("extensions.redthunderminebird.filter_project", "");
