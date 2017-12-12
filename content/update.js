@@ -25,6 +25,8 @@ function onLoad() {
 
 		checkbox.setAttribute('label', files[i].name);
 		checkbox.setAttribute('class', 'attachment_data');
+		if (preference.getBool('default_upload_attachments'))
+			checkbox.setAttribute('checked', true);
 
 		label.setAttribute('value', utility.formatSize(files[i].size));
 
