@@ -77,6 +77,23 @@ var Message = function(message, selection) {
 		});
 	};
 
+	//転送メールのヘッダ（mail.show_headers=1の場合）と同等の情報
+	this.getHeadersSummary = function(headers) {
+		headers = headers.map(function(name) {
+			if (!name)
+				return null;
+			var value = this.getHeader(name);
+			if (value)
+				return name + ': ' + value;
+			else
+				return null;
+		}, this);
+		headers = headers.filter(function(header) {
+			return header;
+		});
+		return headers.join('\n');
+	};
+
 	this.getBody = function() {
 		if (this.selection && this.selection.rangeCount && this.selection.getRangeAt(0).toString() !== '')
 		{

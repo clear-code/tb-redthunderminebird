@@ -13,6 +13,8 @@
 <!ENTITY options.description-label "説明">
 <!ENTITY options.description-markdown-label "改行を保つ(改行にスペース2つを付加する)※Markdownプラグイン向け">
 <!ENTITY options.description-header-label "元のメールの情報のヘッダを付ける">
+<!ENTITY options.notes-label "ノート追記">
+<!ENTITY options.notes-header-label "元のメールの情報のヘッダを付ける">
 <!ENTITY options.upload-attachments-label "ファイル">
 <!ENTITY options.upload-attachments-checkbox-label "デフォルトで添付ファイルをアップロードする">
 <!ENTITY options.folder-mapping-label "フォルダマッピング">

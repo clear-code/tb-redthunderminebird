@@ -48,6 +48,12 @@
 					</vbox>
 				</row>
 				<row>
+					<label value="&options.notes-label;" />
+					<vbox>
+						<checkbox id="redthunderminebird-default_notes_header" label="&options.notes-header-label;" />
+					</vbox>
+				</row>
+				<row>
 					<label value="&options.upload-attachments-label;" />
 					<box>
 						<checkbox id="redthunderminebird-default_upload_attachments" label="&options.upload-attachments-checkbox-label;" />
