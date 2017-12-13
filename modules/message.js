@@ -71,6 +71,8 @@ var Message = function(message, selection) {
 		.getService(Components.interfaces.nsIMIMEHeaderParam);
 
 	this.getHeader = function(name) {
+		if (name.toLowerCase() == 'subject')
+			return this.getSubject();
 		var value = (headers[name.toLowerCase()] || []).join(', ');
 		return value.replace(/=\?[-_a-z0-9]+\?.\?[^?]+\?=/gi, function(matched) {
 			return MIMEHeaderParam.getParameter(matched, '', '', false, {});
