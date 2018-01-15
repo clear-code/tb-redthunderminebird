@@ -65,14 +65,14 @@
 		<separator class="groove" />
 
 		<label class="header" value="&options.folder-mapping-label;" />
-		<vbox style="overflow:auto;max-height:460px;">
+		<vbox>
 			<grid>
 				<columns>
 					<column flex="1" />
 					<column flex="8" />
 				</columns>
 
-				<rows id="directory_rows">
+				<rows id="directory_rows" style="overflow:auto;max-height:460px;">
 				</rows>
 			</grid>
 		</vbox>
