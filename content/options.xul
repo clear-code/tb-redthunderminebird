@@ -79,6 +79,7 @@
 	</prefpane>
 
 	<hbox>
+		<button label="&dialog.reset-label;" oncommand="onReset();" />
 		<spacer flex="1" />
 		<button label="&dialog.ok-label;" oncommand="onCommit();" />
 		<button label="&dialog.ng-label;" oncommand="close();" />

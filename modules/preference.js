@@ -49,6 +49,12 @@ var Preference = function() {
 		logger.debug('setObject:', key);
 		return this.setString(key, JSON.stringify(value));
 	};
+
+	this.reset = function(key) {
+		logger.debug('reset:', key);
+		if (branch.prefHasUserValue(key))
+			branch.clearUserPref(key);
+	};
 };
 
 var preference = new Preference();

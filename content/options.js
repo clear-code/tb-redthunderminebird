@@ -158,3 +158,23 @@ function onCommit() {
 	//終了
 	close();
 }
+
+function onReset() {
+	//preference.reset('redmine');
+	//preference.reset('apikey');
+	//preference.reset('account');
+	preference.reset('directories');
+	preference.reset('default_tracker');
+	preference.reset('default_due');
+	preference.reset('default_subject');
+	preference.reset('default_description');
+	preference.reset('default_description_header');
+	preference.reset('default_description_header.headers');
+	preference.reset('default_notes_header');
+	preference.reset('default_notes_header.headers');
+	preference.reset('default_upload_attachments');
+	preference.reset('target_project');
+	preference.reset('filter_project');
+	preference.reset('filter_directory');
+	close();
+}
