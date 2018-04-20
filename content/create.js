@@ -15,8 +15,10 @@ function onLoad() {
 		utility.appendMenuitem(node, projects[i].id, projects[i].fullname);
 	}
 
+	var project_id = document.getElementById('project_id').value;
+
 	//選択可能なステータス一覧
-	var issueStatuses = redmine.issueStatuses();
+	var issueStatuses = redmine.issueStatuses(project_id);
 	var node = document.getElementById('status_id').childNodes[0];
 	for (var i = 0; i < issueStatuses.length; i++)
 	{
@@ -24,7 +26,7 @@ function onLoad() {
 	}
 
 	//トラッカー一覧
-	var trackers = redmine.trackers();
+	var trackers = redmine.trackers(project_id);
 	var node = document.getElementById('tracker_id').childNodes[0];
 	for (var i = 0; i < trackers.length; i++)
 	{
@@ -92,6 +94,19 @@ function onProject() {
 		logger.error(e);
 		close();
 		return window.opener.alert(bundle.getLocalString("message.notfoundproject"));
+	}
+
+	//トラッカー再構築
+	var node = document.getElementById('tracker_id').childNodes[0];
+	utility.removeChildren(node);
+	var trackers = redmine.trackers(project_id);
+	for (var i = 0; i < trackers.length; i++)
+	{
+		utility.appendMenuitem(node, trackers[i].id, trackers[i].name);
+	}
+	if (!node.querySelector('[value="' + node.parentNode.value + '"]'))
+	{
+		node.parentNode.value = trackers[0].id;
 	}
 
 	//担当者再構築
