@@ -17,7 +17,8 @@ var Redmine = function() {
 		//設定値と引数からURL生成
 		var hostname = preference.getString("redmine");
 		var apikey = preference.getString("apikey");
-		var url = hostname + '/' + path + '?key=' + apikey;
+		var delimiter = path.indexOf('?') < 0 ? '?' : '&';
+		var url = hostname + '/' + path + delimiter + 'key=' + apikey;
 
 		//コンテントタイプはデフォルトでjson
 		if (type === undefined)
