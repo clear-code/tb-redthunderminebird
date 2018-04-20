@@ -341,9 +341,9 @@ var Redmine = function() {
 		else
 		{
 			const response = cacher.getorset('redmine:trackers', function() {
-			return self.request('GET', 'trackers.json');
-		});
-		return response.trackers;
+				return self.request('GET', 'trackers.json');
+			});
+			return response.trackers;
 		}
 	};
 
