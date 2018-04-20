@@ -329,13 +329,22 @@ var Redmine = function() {
 		return response;
 	};
 
-	this.trackers = function() {
-		logger.debug('trackers');
-
-		var response = cacher.getorset('redmine:trackers', function() {
+	this.trackers = function(project_id) {
+		logger.debug('trackers (project=' + project_id + ')');
+		if (project_id)
+		{
+			const response = cacher.getorset('redmine:trackers:project-' + project_id, function() {
+				return self.request('GET', 'projects/' + project_id + '.json?include=trackers');
+			});
+			return response.project.trackers;
+		}
+		else
+		{
+			const response = cacher.getorset('redmine:trackers', function() {
 			return self.request('GET', 'trackers.json');
 		});
 		return response.trackers;
+		}
 	};
 
 	this.issueStatuses = function() {
