@@ -6,7 +6,7 @@
 
 	<script type="text/javascript" src="chrome://redthunderminebird/content/input.js" />
 
-	<prefpane style="width:420px">
+	<prefpane style="min-width:420px">
 		<label value="&options-basic.redmine-url-label;" />
 		<textbox id="redthunderminebird-redmine" />
 
