@@ -251,7 +251,9 @@ var Redmine = function() {
 		logger.debug('project:', project_id);
 
 		var response = cacher.getorset('redmine:project:' + project_id, function() {
-			return self.request('GET', 'projects/' + project_id + '.json?include=trackers');
+			return self.request('GET', 'projects/' + project_id + '.json', {
+				include: 'trackers'
+			});
 		});
 		return response.project;
 	};
@@ -264,10 +266,14 @@ var Redmine = function() {
 			var offset = 0;
 			var response;
 			do {
-				response = self.request('GET', 'projects.json?offset=' + offset);
+				var limit = response && response.limit || 25;
+				response = self.request('GET', 'projects.json', {
+					offset: offset,
+					limit:  limit
+				});
 				projects = projects.concat(response.projects);
-				offset += (response.limit || 25);
-			} while (response.offset + response.limit <= response.total_count && response.projects.length > 0);
+				offset += limit;
+			} while (response.offset + response.limit <= response.total_count);
 
 			//識別子でフィルタ
 			var target = utility.explode(preference.getString("target_project"), ',');
