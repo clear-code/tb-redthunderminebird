@@ -27,6 +27,7 @@ function onLoad() {
 	byid('redthunderminebird-account').value = preference.getString('account');
 	byid('redthunderminebird-target_project').value = preference.getString('target_project');
 	byid('redthunderminebird-filter_project').value = preference.getString('filter_project');
+	byid('redthunderminebird-target_status').value = preference.getString('target_status');
 	byid('redthunderminebird-filter_directory').value = preference.getString('filter_directory');
 
 };
@@ -55,6 +56,7 @@ function onCommit() {
 	preference.setString('account', account);
 	preference.setString('target_project', byid('redthunderminebird-target_project').value);
 	preference.setString('filter_project', byid('redthunderminebird-filter_project').value);
+	preference.setString('target_status', byid('redthunderminebird-target_status').value);
 	preference.setString('filter_directory', byid('redthunderminebird-filter_directory').value);
 
 	//コールバックして終了

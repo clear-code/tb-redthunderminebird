@@ -14,4 +14,5 @@ pref("extensions.redthunderminebird.default_notes_header.headers", "Subject,From
 pref("extensions.redthunderminebird.default_upload_attachments", true);
 pref("extensions.redthunderminebird.target_project", "");
 pref("extensions.redthunderminebird.filter_project", "");
+pref("extensions.redthunderminebird.target_status", "");
 pref("extensions.redthunderminebird.filter_directory", "");

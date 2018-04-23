@@ -25,6 +25,7 @@
 <!ENTITY options-basic.account-label "account">
 <!ENTITY options-basic.visible-project-label "visible project (comma separated id value. empty is all)">
 <!ENTITY options-basic.invisible-project-label "invisible project (comma separated id value)">
+<!ENTITY options-basic.visible-status-label "Acceptable statuses (cpmma separated id value or label. empty is all)">
 <!ENTITY options-basic.visible-folder-label "visible folder (regular expression)">
 
 <!ENTITY dialog.ok-label "OK">

@@ -25,6 +25,9 @@
 		<label value="&options-basic.invisible-project-label;" />
 		<textbox id="redthunderminebird-filter_project" />
 
+		<label value="&options-basic.visible-status-label;" />
+		<textbox id="redthunderminebird-target_status" />
+
 		<label value="&options-basic.visible-folder-label;" />
 		<textbox id="redthunderminebird-filter_directory" />
 
