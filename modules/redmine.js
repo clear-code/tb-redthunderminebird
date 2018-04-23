@@ -251,7 +251,7 @@ var Redmine = function() {
 		logger.debug('project:', project_id);
 
 		var response = cacher.getorset('redmine:project:' + project_id, function() {
-			return self.request('GET', 'projects/' + project_id + '.json');
+			return self.request('GET', 'projects/' + project_id + '.json?include=trackers');
 		});
 		return response.project;
 	};
@@ -331,16 +331,14 @@ var Redmine = function() {
 	};
 
 	this.trackers = function(project_id) {
-		logger.debug('trackers (project=' + project_id + ')');
 		if (project_id)
 		{
-			const response = cacher.getorset('redmine:trackers:project-' + project_id, function() {
-				return self.request('GET', 'projects/' + project_id + '.json?include=trackers');
-			});
-			return response.project.trackers;
+			logger.debug('trackers (project=' + project_id + ')');
+			return this.project(project_id).trackers;
 		}
 		else
 		{
+			logger.debug('trackers ');
 			const response = cacher.getorset('redmine:trackers', function() {
 				return self.request('GET', 'trackers.json');
 			});
