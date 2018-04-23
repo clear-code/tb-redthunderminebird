@@ -39,12 +39,10 @@ var bundle = {
 
 //ロガー
 var Logger = function(level) {
-	this.level = level;
-
 	var consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
 
 	this.log = function() {
-		if (!DEBUG)
+		if (!this.logging)
 			return;
 
 		var message = '';
@@ -81,8 +79,25 @@ var Logger = function(level) {
 			return this.log.apply(this, arguments);
 	};
 };
+Logger.prototype = {
+	get logging() {
+		return this._prefs.get('logging') || DEBUG;
+	},
+	get level() {
+		return this._prefs.get('loglevel');
+	},
+	get prefs() {
+		if (this._prefs)
+			return this._prefs;
+		var klass = Cc["@mozilla.org/preferences-service;1"];
+		var service = klass.getService(Ci.nsIPrefService);
+		var suffix = DEBUG ? '_develop' : '';
+		var branch = service.getBranch("extensions.redthunderminebird" + suffix + ".");
+		return this._prefs = branch;
+	}
+};
 
-var logger = new Logger(LOGLEVEL);
+var logger = new Logger();
 var log = logger.log;
 
 //キャッシュ無効モジュール読み込み

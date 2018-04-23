@@ -1,4 +1,6 @@
 pref("extensions.redthunderminebird.redmine", "http://");
+pref("extensions.redthunderminebird.logging", false);
+pref("extensions.redthunderminebird.loglevel", 2); // [1,2,3,4] = [error,warn,info,debug]
 pref("extensions.redthunderminebird.apikey", "");
 pref("extensions.redthunderminebird.account", "");
 pref("extensions.redthunderminebird.directories", "{}");
