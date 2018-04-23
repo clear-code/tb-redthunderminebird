@@ -1,4 +1,5 @@
 Components.utils.import("resource://redthunderminebird/common.js");
+Components.utils.import("resource://redthunderminebird/utility.js");
 
 function onLoad() {
 	var title = document.getElementById('redthunderminebird-title');
