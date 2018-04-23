@@ -352,7 +352,12 @@ var Redmine = function() {
 		var response = cacher.getorset('redmine:issueStatuses', function() {
 			return self.request('GET', 'issue_statuses.json');
 		});
-		return response.issue_statuses;
+		var target = utility.explode(preference.getString("target_status"), ',');
+		var statuses = response.issue_statuses.filter(function(status, i) {
+			var status_id = '' + status.id;
+			return target.length == 0 || target.indexOf(status_id) > -1;
+		});
+		return statuses;
 	};
 
 	this.recache = function() {
