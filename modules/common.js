@@ -81,10 +81,10 @@ var Logger = function(level) {
 };
 Logger.prototype = {
 	get logging() {
-		return this._prefs.getBoolPref('logging') || DEBUG;
+		return this.prefs.getBoolPref('logging') || DEBUG;
 	},
 	get level() {
-		return this._prefs.getIntPref('loglevel');
+		return this.prefs.getIntPref('loglevel');
 	},
 	get prefs() {
 		if (this._prefs)
