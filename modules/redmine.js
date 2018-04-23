@@ -269,9 +269,9 @@ var Redmine = function() {
 			projects = projects.filter(function(project, i) {
 				var project_id = '' + project.id;
 
-				if (target.length > 0 && target.indexOf(project_id) == -1)
+				if (target.length > 0 && target.indexOf(project_id) == -1 && target.indexOf(project.identifier) == -1)
 					return false;
-				return filter.indexOf(project_id) == -1;
+				return filter.indexOf(project_id) == -1 && filter.indexOf(project.identifier) == -1;
 			});
 
 			//fullnameプロパティを定義
