@@ -260,8 +260,14 @@ var Redmine = function() {
 		logger.debug('projects');
 
 		var projects = cacher.getorset('redmine:projects', function() {
-			var response = self.request('GET', 'projects.json');
-			var projects = response.projects;
+			var projects = [];
+			var offset = 0;
+			var response;
+			do {
+				response = self.request('GET', 'projects.json?offset=' + offset);
+				projects = projects.concat(response.projects);
+				offset += (response.limit || 25);
+			} while (response.offset + response.limit <= response.total_count && response.projects.length > 0);
 
 			//識別子でフィルタ
 			var target = utility.explode(preference.getString("target_project"), ',');
