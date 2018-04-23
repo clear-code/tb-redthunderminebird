@@ -355,7 +355,7 @@ var Redmine = function() {
 		var target = utility.explode(preference.getString("target_status"), ',');
 		var statuses = response.issue_statuses.filter(function(status, i) {
 			var status_id = '' + status.id;
-			return target.length == 0 || target.indexOf(status_id) > -1;
+			return target.length == 0 || target.indexOf(status_id) > -1 || target.indexOf(status.name) > -1;
 		});
 		return statuses;
 	};
