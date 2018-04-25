@@ -385,6 +385,8 @@ var Redmine = function() {
 		return fields;
 */
 		var fields = JSON.parse(preference.getString("custom_fields") || '[]');
+		if (!Array.isArray(fields) && fields.custom_fields)
+			fields = fields.custom_fields;
 		return fields;
 	};
 
