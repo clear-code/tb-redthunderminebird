@@ -174,6 +174,7 @@ function onUpdate() {
 
 	var elements = document.getElementsByClassName('ticket_data');
 	var data = utility.formtojson(elements);
+	data.custom_fields = CustomFields.toJSON();
 
 	data.files = [];
 	var attachments = message.getAttachments();

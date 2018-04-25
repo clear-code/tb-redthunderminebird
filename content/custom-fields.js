@@ -62,5 +62,19 @@ var CustomFields = {
 
 		range.insertNode(rows);
 		range.detach();
+	},
+
+	toJSON: function() {
+		var fields = Array.slice(document.querySelectorAll('.custom-field'));
+		return fields.map(field => {
+			let value = field.value;
+			if (field.localName == 'hbox') {
+				value = Array.slice(field.querySelectorAll('checkbox[checked="true"]')).map(item => item.value);
+			}
+			return {
+				id:    parseInt(field.getAttribute('id').replace('custom-field-', '')),
+				value: value
+			};
+		});
 	}
 };
