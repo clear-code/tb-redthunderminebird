@@ -20,11 +20,40 @@ var CustomFields = {
 			label.setAttribute('value', custom_field.name);
 			label.setAttribute('control', 'custom-field-' + custom_field.id);
 
+			let field_definition = all_custom_fields.filter(field => field.id == custom_field.id)[0];
 			let field;
-			//if (custom_field.field_format == 'text') {
-				field = row.appendChild(document.createElement('textbox'));
-				field.setAttribute('value', custom_field.value || '');
-			//}
+			switch (field_definition.field_format) {
+				default:
+				case 'date':
+					field = row.appendChild(document.createElement('textbox'));
+					field.setAttribute('value', custom_field.value || '');
+					if (custom_field.field_format == 'date')
+						field.setAttribute('placeholder', 'YYYY-MM-DD');
+					break;
+				case 'list':
+					let possible_values = field_definition.possible_values;
+					if (field_definition.multiple) {
+						field = row.appendChild(document.createElement('hbox'));
+						for (let possible_value of possible_values) {
+							let item = field.appendChild(document.createElement('checkbox'));
+							item.setAttribute('label', possible_value.value);
+							if (custom_field.value &&
+								custom_field.value.indexOf(possible_value.value) > -1)
+								item.setAttribute('checked', true);
+						}
+					}
+					else {
+						field = row.appendChild(document.createElement('menulist'));
+						field.setAttribute('value', custom_field.value || '');
+						let popup = field.appendChild(document.createElement('menupopup'));
+						for (let possible_value of possible_values) {
+							let item = popup.appendChild(document.createElement('menuitem'));
+							item.setAttribute('label', possible_value.value);
+							item.setAttribute('value', possible_value.value);
+						}
+					}
+					break;
+			}
 			field.setAttribute('id', 'custom-field-' + custom_field.id);
 			field.setAttribute('class', 'custom-field');
 
