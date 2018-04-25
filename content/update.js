@@ -113,9 +113,10 @@ function onProject() {
 	var members = redmine.members(project_id);
 	for (var i = 0; i < members.length; i++)
 	{
-		if (user.id == members[i].user.id)
+		let member_user = members[i].user || {};
+		if (user.id == member_user.id)
 			continue;
-		utility.appendMenuitem(node, members[i].user.id, members[i].user.name);
+		utility.appendMenuitem(node, member_user.id, member_user.name);
 	}
 	document.getElementById('assigned_to_id').value = current;
 
