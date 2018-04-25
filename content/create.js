@@ -54,6 +54,8 @@ function onLoad() {
 		document.getElementById('ticket_files').appendChild(row);
 	}
 
+	CustomFields.buildUI();
+
 	//初期データ
 	var defdata = message.toObject();
 	var elements = document.getElementsByClassName('ticket_data');
@@ -154,6 +156,8 @@ function onProject() {
 
 		row.appendChild(checkbox);
 	}
+
+	CustomFields.buildUI();
 
 	window.sizeToContent();
 }

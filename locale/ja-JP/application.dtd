@@ -27,6 +27,7 @@
 <!ENTITY options-basic.invisible-project-label "非表示プロジェクト(idまたは識別子をカンマ区切り)">
 <!ENTITY options-basic.visible-status-label "使用を許可するステータス(idまたは名前をカンマ区切り。未指定で全て)">
 <!ENTITY options-basic.visible-folder-label "表示フォルダ(正規表現)">
+<!ENTITY options-basic.custom-fields-label "カスタムフィールド(JSON)">
 
 <!ENTITY dialog.ok-label "OK">
 <!ENTITY dialog.ng-label "キャンセル">

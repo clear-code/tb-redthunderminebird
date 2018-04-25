@@ -29,6 +29,7 @@ function onLoad() {
 	byid('redthunderminebird-filter_project').value = preference.getString('filter_project');
 	byid('redthunderminebird-target_status').value = preference.getString('target_status');
 	byid('redthunderminebird-filter_directory').value = preference.getString('filter_directory');
+	byid('redthunderminebird-custom_fields').value = preference.getString('custom_fields');
 
 };
 
@@ -58,6 +59,7 @@ function onCommit() {
 	preference.setString('filter_project', byid('redthunderminebird-filter_project').value);
 	preference.setString('target_status', byid('redthunderminebird-target_status').value);
 	preference.setString('filter_directory', byid('redthunderminebird-filter_directory').value);
+	preference.setString('custom_fields', byid('redthunderminebird-custom_fields').value);
 
 	//コールバックして終了
 	window.arguments[0](hostname, apikey);

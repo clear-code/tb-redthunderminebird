@@ -372,6 +372,22 @@ var Redmine = function() {
 		return statuses;
 	};
 
+	this.customFields = function() {
+		logger.debug('customFields');
+
+/*
+		var response = cacher.getorset('redmine:customFields', function() {
+			return self.request('GET', 'custom_fields.json');
+		});
+		var fields = response.issue_statuses.filter(function(field, i) {
+			return field.customized_type == 'issue' && field.visible;
+		});
+		return fields;
+*/
+		var fields = JSON.parse(preference.getString("custom_fields") || '[]');
+		return fields;
+	};
+
 	this.recache = function() {
 		logger.debug('recache');
 

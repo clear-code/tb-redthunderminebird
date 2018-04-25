@@ -18,3 +18,5 @@ pref("extensions.redthunderminebird.target_project", "");
 pref("extensions.redthunderminebird.filter_project", "");
 pref("extensions.redthunderminebird.target_status", "");
 pref("extensions.redthunderminebird.filter_directory", "");
+pref("extensions.redthunderminebird.custom_fields", "[]");
+

@@ -58,6 +58,8 @@ function onLoad() {
 	var elements = document.getElementsByClassName('ticket_data');
 	utility.jsontoform(defdata, elements);
 
+	CustomFields.buildUI(ticket.custom_fields || []);
+
 	if (preference.getBool('default_notes_header')) {
 		var node = document.getElementById('notes');
 		var headers = message.getHeadersSummary(preference.getString('default_notes_header.headers').split(','));

@@ -27,6 +27,7 @@
 <!ENTITY options-basic.invisible-project-label "invisible project (comma separated id value or identifier)">
 <!ENTITY options-basic.visible-status-label "Acceptable statuses (cpmma separated id value or label. empty is all)">
 <!ENTITY options-basic.visible-folder-label "visible folder (regular expression)">
+<!ENTITY options-basic.custom-fields-label "Custom fields (JSON)">
 
 <!ENTITY dialog.ok-label "OK">
 <!ENTITY dialog.ng-label "cancel">
