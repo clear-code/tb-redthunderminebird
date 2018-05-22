@@ -66,6 +66,8 @@ var CustomFields = {
 
 	toJSON: function() {
 		var fields = Array.slice(document.querySelectorAll('.custom-field'));
+		if (fields.length == 0)
+		  return null;
 		return fields.map(field => {
 			let value = field.value;
 			if (field.localName == 'hbox') {

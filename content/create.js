@@ -166,7 +166,9 @@ function onProject() {
 function onCreate() {
 	var elements = document.getElementsByClassName('ticket_data');
 	var data = utility.formtojson(elements);
-	data.custom_fields = CustomFields.toJSON();
+	var customFields = CustomFields.toJSON();
+	if (customFields)
+		data.custom_fields = customFields;
 
 	//プロジェクト未設定
 	if (data.project_id === '')
