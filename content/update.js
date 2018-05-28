@@ -58,7 +58,10 @@ function onLoad() {
 	var elements = document.getElementsByClassName('ticket_data');
 	utility.jsontoform(defdata, elements);
 
-	CustomFields.buildUI(ticket.custom_fields || []);
+    if (ticket.custom_fields)
+		CustomFields.buildUI(ticket.custom_fields); // build only for associated fields
+	else
+		CustomFields.buildUI(); // build for all custom fields
 
 	if (preference.getBool('default_notes_header')) {
 		var node = document.getElementById('notes');
