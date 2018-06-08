@@ -27,6 +27,7 @@ var CustomFields = {
 				case 'date':
 					field = row.appendChild(document.createElement('textbox'));
 					field.setAttribute('value', custom_field.value || '');
+					field.originalValue = custom_field.value || '';
 					if (custom_field.field_format == 'date')
 						field.setAttribute('placeholder', 'YYYY-MM-DD');
 					break;
@@ -34,17 +35,23 @@ var CustomFields = {
 					let possible_values = field_definition.possible_values;
 					if (field_definition.multiple) {
 						field = row.appendChild(document.createElement('hbox'));
+						field.originalValues = [];
 						for (let possible_value of possible_values) {
 							let item = field.appendChild(document.createElement('checkbox'));
 							item.setAttribute('label', possible_value.value);
 							if (custom_field.value &&
-								custom_field.value.indexOf(possible_value.value) > -1)
+								custom_field.value.indexOf(possible_value.value) > -1) {
 								item.setAttribute('checked', true);
+								field.originalValues.push(possible_value.value);
+							}
 						}
 					}
 					else {
 						field = row.appendChild(document.createElement('menulist'));
 						field.setAttribute('value', custom_field.value || '');
+						field.originalValues = [];
+						if (custom_field.value)
+							field.originalValues.push(custom_field.value);
 						let popup = field.appendChild(document.createElement('menupopup'));
 						for (let possible_value of possible_values) {
 							let item = popup.appendChild(document.createElement('menuitem'));
@@ -68,15 +75,21 @@ var CustomFields = {
 		var fields = Array.slice(document.querySelectorAll('.custom-field'));
 		if (fields.length == 0)
 		  return null;
-		return fields.map(field => {
+		var values = fields.map(field => {
 			let value = field.value;
 			if (field.localName == 'hbox') {
 				value = Array.slice(field.querySelectorAll('checkbox[checked="true"]')).map(item => item.value);
+				if (JSON.stringify(value) == JSON.stringify(field.originalValues))
+					return null;
+			}
+			else if (value == field.originalValue) {
+				return null;
 			}
 			return {
 				id:    parseInt(field.getAttribute('id').replace('custom-field-', '')),
 				value: value
 			};
-		});
+		}).filter(value => !!value);
+		return values.length == 0 ? null : values;
 	}
 };
