@@ -41,6 +41,7 @@ function onLoad() {
 	if (defdata.id == 0)
 		defdata.id = '';
 	var ticket = redmine.tryTicket(defdata.id);
+	console.log('updating UI for ', ticket);
 
 	//タイトル設定
 	if (Object.keys(ticket).length !== 0)
@@ -178,6 +179,7 @@ function onUpdate() {
 	var elements = document.getElementsByClassName('ticket_data');
 	var data = utility.formtojson(elements);
 	var customFields = CustomFields.toJSON();
+	console.log('saving custom fields ', customFields);
 	if (customFields)
 		data.custom_fields = customFields;
 

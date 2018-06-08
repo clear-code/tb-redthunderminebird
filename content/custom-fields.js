@@ -1,5 +1,6 @@
 var CustomFields = {
 	buildUI: function(custom_fields) {
+		console.log('building custom fields UI for ', custom_fields);
 		var fixedRows = Array.slice(document.querySelectorAll('.fixed-row'));
 		var range = document.createRange();
 		range.setStartAfter(fixedRows[fixedRows.length - 1]);
