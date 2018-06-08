@@ -49,9 +49,8 @@ var CustomFields = {
 					else {
 						field = row.appendChild(document.createElement('menulist'));
 						field.setAttribute('value', custom_field.value || '');
-						field.originalValues = [];
 						if (custom_field.value)
-							field.originalValues.push(custom_field.value);
+							field.originalValue = custom_field.value;
 						let popup = field.appendChild(document.createElement('menupopup'));
 						for (let possible_value of possible_values) {
 							let item = popup.appendChild(document.createElement('menuitem'));
@@ -78,7 +77,7 @@ var CustomFields = {
 		var values = fields.map(field => {
 			let value = field.value;
 			if (field.localName == 'hbox') {
-				value = Array.slice(field.querySelectorAll('checkbox[checked="true"]')).map(item => item.value);
+				value = Array.slice(field.querySelectorAll('checkbox[checked="true"]')).map(item => item.getAttribute('label'));
 				if (JSON.stringify(value) == JSON.stringify(field.originalValues))
 					return null;
 			}
