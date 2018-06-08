@@ -147,7 +147,7 @@ function onTicket(ticket) {
 
 	document.getElementById('ticket_title').value = ticket_title;
 	document.getElementById('description').value = ticket.description ? ticket.description : "";
-	document.getElementById('status_id').value = ticket.status_id ? ticket.status_id : "";
+	document.getElementById('status_id').value = ticket.status ? ticket.status.id : "";
 	document.getElementById('assigned_to_id').value = ticket.assigned_to ? ticket.assigned_to.id : "";
 	document.getElementById('fixed_version_id').value = ticket.fixed_version ? ticket.fixed_version.id : "";
 
