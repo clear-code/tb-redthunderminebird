@@ -148,6 +148,11 @@ function onTicket() {
 	document.getElementById('description').value = ticket.description ? ticket.description : "";
 	document.getElementById('assigned_to_id').value = ticket.assigned_to ? ticket.assigned_to.id : "";
 	document.getElementById('fixed_version_id').value = ticket.fixed_version ? ticket.fixed_version.id : "";
+
+    if (ticket.custom_fields)
+		CustomFields.buildUI(ticket.custom_fields); // build only for associated fields
+	else
+		CustomFields.buildUI(); // build for all custom fields
 }
 
 function onRefer() {
