@@ -6,10 +6,24 @@ load("resource://redthunderminebird/preference.js", this);
 load("resource://redthunderminebird/utility.js", this);
 load("resource://redthunderminebird/cacher.js", this);
 
+try {
+	if (Components.utils.importGlobalProperties)
+		Components.utils.importGlobalProperties(["XMLHttpRequest"]);
+}
+catch(e) {
+}
+
 var Redmine = function() {
 	logger.debug('Redmine constractor');
 
 	var self = this;
+
+	this.createNewRequest = function() {
+		if (Cc["@mozilla.org/xmlextras/xmlhttprequest;1"])
+			return Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance();
+		else
+			return new XMLHttpRequest();
+	};
 
 	this.request = function(method, path, data, type) {
 		logger.debug('request:', method, path);
@@ -48,7 +62,7 @@ var Redmine = function() {
 		}
 
 		//リクエストを投げる
-		var request = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance();
+		var request = this.createNewRequest();
 		try
 		{
 			logger.debug('request request:', url);
