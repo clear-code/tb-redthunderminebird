@@ -12,7 +12,7 @@
 
 	<separator class="groove" />
 
-	<prefpane id="advance_option">
+	<prefpane id="advance_option" orient="vertical">
 		<label class="header" value="&options.defaults-label;" />
 		<grid>
 			<columns>
