@@ -79,6 +79,7 @@ var Redmine = function() {
 		}
 		catch (e)
 		{
+			logger.error('Redmine.request: ' + String(e));
 			throw request;
 		}
 
@@ -144,6 +145,7 @@ var Redmine = function() {
 		}
 		catch (e)
 		{
+			logger.error('Redmine.ping: ' + String(e));
 			result = false;
 		}
 
@@ -187,6 +189,7 @@ var Redmine = function() {
 		}
 		catch (e)
 		{
+			logger.error('Redmine.create: ' + String(e));
 			return {};
 		}
 	};
@@ -216,6 +219,7 @@ var Redmine = function() {
 		}
 		catch (e)
 		{
+			logger.error('Redmine.update: ' + String(e));
 			throw e;
 		}
 	};
@@ -227,6 +231,7 @@ var Redmine = function() {
 		}
 		catch (e)
 		{
+			logger.error('Redmine.tryTicket: ' + String(e));
 			return {};
 		}
 	};
@@ -330,6 +335,7 @@ var Redmine = function() {
 		}
 		catch (e)
 		{
+			logger.error('Redmine.members: ' + String(e));
 			//気休めに自分自身を返す
 			var myself = this.myself();
 			myself.name = myself.lastname;
