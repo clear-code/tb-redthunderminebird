@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/bindings.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://redthunderminebird/locale/application.dtd">
 
 <window onload="onLoad();" title="&dialog-refer.title;" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
