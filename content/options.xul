@@ -7,14 +7,17 @@
 
 	<script type="text/javascript" src="chrome://redthunderminebird/content/options.js" />
 
-	<prefpane>
+	<hbox>
 		<button label="&options.basic-label;" oncommand="onRedmine();" style="width:80px;" />
-	</prefpane>
+	</hbox>
 
-	<separator class="groove" />
-
-	<prefpane id="advance_option" orient="vertical">
-		<label class="header" value="&options.defaults-label;" />
+	<tabbox flex="1" id="advance_option">
+	<tabs>
+		<tab label="&options.defaults-label;" />
+		<tab label="&options.folder-mapping-label;" />
+	</tabs>
+	<tabpanels flex="1">
+		<tabpanel orient="vertical">
 		<grid>
 			<columns>
 				<column flex="1" />
@@ -22,11 +25,17 @@
 			</columns>
 
 			<rows>
+
 				<row align="center">
+
 					<label value="&options.tracker-label;" />
+
 					<menulist id="redthunderminebird-default_tracker">
+
 						<menupopup>
+
 						</menupopup>
+
 					</menulist>
 				</row>
 				<row align="center">
@@ -62,11 +71,9 @@
 				</row>
 			</rows>
 		</grid>
+		</tabpanel>
 
-		<separator class="groove" />
-
-		<label class="header" value="&options.folder-mapping-label;" />
-		<vbox>
+		<tabpanel orient="vertical">
 			<grid>
 				<columns>
 					<column flex="1" />
@@ -76,8 +83,9 @@
 				<rows id="directory_rows" style="overflow:auto;max-height:460px;">
 				</rows>
 			</grid>
-		</vbox>
-	</prefpane>
+		</tabpanel>
+	</tabpanels>
+	</tabbox>
 
 	<hbox>
 		<button label="&dialog.reset-label;" oncommand="onReset();" />

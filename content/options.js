@@ -109,7 +109,7 @@ function _build() {
 	}
 
 	//中途半端な状態を出さないためにここまで到達できて初めて表示する
-	document.getElementById('advance_option').style.display = 'block';
+	document.getElementById('advance_option').collapsed = false;
 	sizeToContent();
 }
 
@@ -122,7 +122,7 @@ function onLoad() {
 	//正しくないならフタをする
 	else
 	{
-		document.getElementById('advance_option').style.display = 'none';
+		document.getElementById('advance_option').collapsed = true;
 	}
 };
 
