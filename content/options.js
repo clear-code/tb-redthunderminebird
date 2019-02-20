@@ -108,8 +108,14 @@ function _build() {
 		}
 	}
 
+	preference.getChildList('field_visibility').forEach(function(key) {
+		var field = document.getElementById('field_visibility_' + key.split('.')[1]);
+		if (field)
+			field.checked = preference.getBool(key);
+	});
+
 	//中途半端な状態を出さないためにここまで到達できて初めて表示する
-	document.getElementById('advance_option').collapsed = false;
+	document.getElementById('advance_option').style.visibility = '';
 	sizeToContent();
 }
 
@@ -122,7 +128,7 @@ function onLoad() {
 	//正しくないならフタをする
 	else
 	{
-		document.getElementById('advance_option').collapsed = true;
+		document.getElementById('advance_option').style.visibility = 'collapse';
 	}
 };
 
@@ -154,6 +160,12 @@ function onCommit() {
 		directorys[name] = val;
 	}
 	preference.setObject('directories', directorys);
+
+	preference.getChildList('field_visibility').forEach(function(key) {
+		var field = document.getElementById('field_visibility_' + key.split('.')[1]);
+		if (field)
+			preference.setBool(key, field.checked);
+	});
 
 	//終了
 	close();

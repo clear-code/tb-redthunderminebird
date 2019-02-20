@@ -15,7 +15,7 @@
 		</columns>
 
 		<rows>
-			<row align="center" class="fixed-row">
+			<row align="center" class="fixed-row field_issue">
 				<label value="&dialog-update.issue-label;" />
 				<grid>
 					<columns>
@@ -33,39 +33,39 @@
 					</rows>
 				</grid>
 			</row>
-			<row align="center" class="fixed-row">
+			<row align="center" class="fixed-row field_description">
 				<hbox>
 					<label value="&dialog-create.description-label;" />
 					<label id="toggle-description" class="text-link" value="&dialog-update.toggle-description-label;" onclick="onToggleDescription('description')" />
 				</hbox>
 				<textbox id="description" multiline="true" rows="10" class="ticket_data" style="display:none;" />
 			</row>
-			<row align="center" class="fixed-row">
+			<row align="center" class="fixed-row field_notes">
 				<label value="&dialog-update.notes-label;" />
 				<textbox id="notes" multiline="true" rows="10" class="ticket_data" />
 			</row>
-			<row align="center" class="fixed-row">
+			<row align="center" class="fixed-row field_status">
 				<label value="&dialog-update.status-label;" />
 				<menulist id="status_id" class="ticket_data">
 					<menupopup>
 					</menupopup>
 				</menulist>
 			</row>
-			<row align="center" class="fixed-row">
+			<row align="center" class="fixed-row field_assigned">
 				<label value="&dialog-update.assigned-label;" />
 				<menulist id="assigned_to_id" class="ticket_data">
 					<menupopup>
 					</menupopup>
 				</menulist>
 			</row>
-			<row align="center" class="fixed-row">
+			<row align="center" class="fixed-row field_version">
 				<label value="&dialog-update.version-label;" />
 				<menulist id="fixed_version_id" class="ticket_data">
 					<menupopup>
 					</menupopup>
 				</menulist>
 			</row>
-			<row align="center" class="fixed-row">
+			<row align="center" class="fixed-row field_period">
 				<label value="&dialog-update.period-label;" />
 				<box align="center">
 					<checkbox id="start_date_enable" label="&dialog-update.start-label;" oncommand="onPeriod(this, 'start_date');" />
@@ -74,7 +74,7 @@
 					<datepicker id="due_date" type="popup" class="ticket_data" disabled="true" firstdayofweek="1" />
 				</box>
 			</row>
-			<row align="center" class="fixed-row">
+			<row align="center" class="fixed-row field_file">
 				<label value="&dialog-update.file-label;" />
 				<grid>
 					<columns>

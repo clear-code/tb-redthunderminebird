@@ -15,6 +15,7 @@
 	<tabs>
 		<tab label="&options.defaults-label;" />
 		<tab label="&options.folder-mapping-label;" />
+		<tab label="&options.visible-fields-label;" />
 	</tabs>
 	<tabpanels flex="1">
 		<tabpanel orient="vertical">
@@ -83,6 +84,23 @@
 				<rows id="directory_rows" style="overflow:auto;max-height:460px;">
 				</rows>
 			</grid>
+		</tabpanel>
+
+		<tabpanel orient="vertical">
+			<checkbox id="field_visibility_project" label="&dialog-create.project-label;"/>
+			<checkbox id="field_visibility_tracker" label="&dialog-create.tracker-label;"/>
+			<checkbox id="field_visibility_subject" label="&dialog-create.subject-label;"/>
+			<checkbox id="field_visibility_description" label="&dialog-create.description-label;"/>
+			<checkbox id="field_visibility_status" label="&dialog-create.status-label;"/>
+			<checkbox id="field_visibility_assigned" label="&dialog-create.assigned-label;"/>
+			<checkbox id="field_visibility_watcher" label="&dialog-create.watcher-label;"/>
+			<checkbox id="field_visibility_version" label="&dialog-create.version-label;"/>
+			<checkbox id="field_visibility_period" label="&dialog-create.period-label;"/>
+			<checkbox id="field_visibility_file" label="&dialog-create.file-label;"/>
+			<checkbox id="field_visibility_other" label="&dialog-create.other-label;"/>
+			<separator/>
+			<checkbox id="field_visibility_issue" label="&dialog-update.issue-label;"/>
+			<checkbox id="field_visibility_notes" label="&dialog-update.notes-label;"/>
 		</tabpanel>
 	</tabpanels>
 	</tabbox>

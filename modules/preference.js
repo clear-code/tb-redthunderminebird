@@ -55,6 +55,10 @@ var Preference = function() {
 		if (branch.prefHasUserValue(key))
 			branch.clearUserPref(key);
 	};
+
+	this.getChildList = function(key) {
+		return branch.getChildList(key, {});
+	};
 };
 
 var preference = new Preference();

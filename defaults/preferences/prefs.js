@@ -18,5 +18,18 @@ pref("extensions.redthunderminebird.target_project", "");
 pref("extensions.redthunderminebird.filter_project", "");
 pref("extensions.redthunderminebird.target_status", "");
 pref("extensions.redthunderminebird.filter_directory", "");
+pref("extensions.redthunderminebird.field_visibility.project", true);
+pref("extensions.redthunderminebird.field_visibility.tracker", true);
+pref("extensions.redthunderminebird.field_visibility.subject", true);
+pref("extensions.redthunderminebird.field_visibility.description", true);
+pref("extensions.redthunderminebird.field_visibility.status", true);
+pref("extensions.redthunderminebird.field_visibility.assigned", true);
+pref("extensions.redthunderminebird.field_visibility.watcher", true);
+pref("extensions.redthunderminebird.field_visibility.version", true);
+pref("extensions.redthunderminebird.field_visibility.period", true);
+pref("extensions.redthunderminebird.field_visibility.file", true);
+pref("extensions.redthunderminebird.field_visibility.other", true);
+pref("extensions.redthunderminebird.field_visibility.issue", true);
+pref("extensions.redthunderminebird.field_visibility.notes", true);
 pref("extensions.redthunderminebird.custom_fields", "[]");
 

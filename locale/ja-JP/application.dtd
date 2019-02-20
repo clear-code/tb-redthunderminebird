@@ -19,6 +19,8 @@
 <!ENTITY options.upload-attachments-checkbox-label "デフォルトで添付ファイルをアップロードする">
 <!ENTITY options.folder-mapping-label "フォルダマッピング">
 
+<!ENTITY options.visible-fields-label "表示するフィールド">
+
 <!ENTITY options-basic.title "基本設定">
 <!ENTITY options-basic.redmine-url-label "Redmine URL">
 <!ENTITY options-basic.redmine-key-label "REST API キー">

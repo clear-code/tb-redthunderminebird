@@ -19,6 +19,8 @@
 <!ENTITY options.upload-attachments-checkbox-label "upload attachments by default">
 <!ENTITY options.folder-mapping-label "folder mapping">
 
+<!ENTITY options.visible-fields-label "visibility of fields">
+
 <!ENTITY options-basic.title "basic settions">
 <!ENTITY options-basic.redmine-url-label "Redmine URL">
 <!ENTITY options-basic.redmine-key-label "API KEY">

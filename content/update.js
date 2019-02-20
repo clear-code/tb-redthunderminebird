@@ -7,6 +7,12 @@ load("resource://redthunderminebird/utility.js", this);
 var message = window.arguments[0];
 
 function onLoad() {
+	preference.getChildList('field_visibility').forEach(function(key) {
+		var field = document.querySelector('.field_' + key.split('.')[1]);
+		if (field)
+			field.style.visibility = preference.getBool(key) ? '' : 'collapse';
+	});
+
 	//選択可能なステータス一覧
 	var issueStatuses = redmine.issueStatuses();
 	var node = document.getElementById('status_id').childNodes[0];
