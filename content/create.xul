@@ -6,6 +6,7 @@
 <window onload="onLoad();" title="&dialog-create.title;" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 	<script type="text/javascript" src="chrome://redthunderminebird/content/create.js" />
+	<script type="text/javascript" src="chrome://redthunderminebird/content/template.js" />
 	<script type="text/javascript" src="chrome://redthunderminebird/content/related-issues.js" />
 	<script type="text/javascript" src="chrome://redthunderminebird/content/custom-fields.js" />
 

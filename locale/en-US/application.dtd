@@ -19,6 +19,10 @@
 <!ENTITY options.upload-attachments-checkbox-label "upload attachments by default">
 <!ENTITY options.folder-mapping-label "folder mapping">
 
+<!ENTITY options.templates-label "templates">
+<!ENTITY options.templates-description-label "description">
+<!ENTITY options.templates-notes-label "notes">
+
 <!ENTITY options.visible-fields-label "visibility of fields">
 
 <!ENTITY options-basic.title "basic settions">

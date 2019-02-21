@@ -15,6 +15,7 @@
 	<tabs>
 		<tab label="&options.defaults-label;" />
 		<tab label="&options.folder-mapping-label;" />
+		<tab label="&options.templates-label;" />
 		<tab label="&options.visible-fields-label;" />
 	</tabs>
 	<tabpanels flex="1">
@@ -52,19 +53,6 @@
 					</box>
 				</row>
 				<row>
-					<label value="&options.description-label;" />
-					<vbox>
-						<checkbox id="redthunderminebird-default_description" label="&options.description-markdown-label;" />
-						<checkbox id="redthunderminebird-default_description_header" label="&options.description-header-label;" />
-					</vbox>
-				</row>
-				<row>
-					<label value="&options.notes-label;" />
-					<vbox>
-						<checkbox id="redthunderminebird-default_notes_header" label="&options.notes-header-label;" />
-					</vbox>
-				</row>
-				<row>
 					<label value="&options.upload-attachments-label;" />
 					<box>
 						<checkbox id="redthunderminebird-default_upload_attachments" label="&options.upload-attachments-checkbox-label;" />
@@ -84,6 +72,17 @@
 				<rows id="directory_rows" style="overflow:auto;max-height:460px;">
 				</rows>
 			</grid>
+		</tabpanel>
+
+		<tabpanel orient="vertical">
+			<groupbox flex="1">
+				<caption label="&options.templates-description-label;" />
+				<textbox id="template_description" multiline="true" flex="1"/>
+			</groupbox>
+			<groupbox flex="1">
+				<caption label="&options.templates-notes-label;" />
+				<textbox id="template_notes" multiline="true" flex="1"/>
+			</groupbox>
 		</tabpanel>
 
 		<tabpanel orient="horizontal">

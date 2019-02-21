@@ -67,12 +67,11 @@ function onLoad() {
 	var elements = document.getElementsByClassName('ticket_data');
 	utility.jsontoform(defdata, elements);
 
-	if (preference.getBool('default_notes_header')) {
-		var node = document.getElementById('notes');
-		var headers = message.getHeadersSummary(preference.getString('default_notes_header.headers').split(','));
-		if (headers != '')
-			node.value = headers + '\n\n' + node.value;
-	}
+	var notesField = document.getElementById('notes');
+	notesField.value = fillTemplate(preference.getString('template.notes'), {
+		headers: message.getHeadersSummary(preference.getString('default_notes_header.headers').split(',')),
+		body: notesField.value
+	});
 
 	onProject();
 }

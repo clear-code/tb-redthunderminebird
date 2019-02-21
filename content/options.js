@@ -91,9 +91,6 @@ function _build() {
 	document.getElementById('redthunderminebird-default_tracker').value = preference.getString('default_tracker');
 	document.getElementById('redthunderminebird-default_due').value = preference.getInt('default_due');
 	document.getElementById('redthunderminebird-default_subject').value = preference.getString('default_subject');
-	document.getElementById('redthunderminebird-default_description').checked = preference.getBool('default_description');
-	document.getElementById('redthunderminebird-default_description_header').checked = preference.getBool('default_description_header');
-	document.getElementById('redthunderminebird-default_notes_header').checked = preference.getBool('default_notes_header');
 	document.getElementById('redthunderminebird-default_upload_attachments').checked = preference.getBool('default_upload_attachments');
 
 	//設定値読み込み(マッピング系)
@@ -107,6 +104,9 @@ function _build() {
 			elements[i].value = directorys[name];
 		}
 	}
+
+	document.getElementById('template_description').value = preference.getString('template.description');
+	document.getElementById('template_notes').value = preference.getString('template.notes');
 
 	preference.getChildList('field_visibility').forEach(function(key) {
 		var field = document.getElementById('field_visibility_' + key.split('.')[1]);
@@ -145,9 +145,6 @@ function onCommit() {
 	preference.setString('default_tracker', document.getElementById('redthunderminebird-default_tracker').value);
 	preference.setInt('default_due', document.getElementById('redthunderminebird-default_due').value);
 	preference.setString('default_subject', document.getElementById('redthunderminebird-default_subject').value);
-	preference.setBool('default_description', document.getElementById('redthunderminebird-default_description').checked);
-	preference.setBool('default_description_header', document.getElementById('redthunderminebird-default_description_header').checked);
-	preference.setBool('default_notes_header', document.getElementById('redthunderminebird-default_notes_header').checked);
 	preference.setBool('default_upload_attachments', document.getElementById('redthunderminebird-default_upload_attachments').checked);
 
 	//設定値保存(マッピング系)
@@ -160,6 +157,9 @@ function onCommit() {
 		directorys[name] = val;
 	}
 	preference.setObject('directories', directorys);
+
+	preference.setString('template.description', document.getElementById('template_description').value);
+	preference.setString('template.notes', document.getElementById('template_notes').value);
 
 	preference.getChildList('field_visibility').forEach(function(key) {
 		var field = document.getElementById('field_visibility_' + key.split('.')[1]);
@@ -179,14 +179,13 @@ function onReset() {
 	preference.reset('default_tracker');
 	preference.reset('default_due');
 	preference.reset('default_subject');
-	preference.reset('default_description');
-	preference.reset('default_description_header');
 	preference.reset('default_description_header.headers');
-	preference.reset('default_notes_header');
 	preference.reset('default_notes_header.headers');
 	preference.reset('default_upload_attachments');
 	preference.reset('target_project');
 	preference.reset('filter_project');
 	preference.reset('filter_directory');
+	preference.reset('template.description');
+	preference.reset('template.notes');
 	close();
 }

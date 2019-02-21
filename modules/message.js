@@ -136,15 +136,6 @@ var Message = function(message, selection) {
 		result.tracker_id = preference.getString('default_tracker');
 
 		var body = this.getBody();
-		if (body !== null && preference.getBool('default_description'))
-		{
-			body = body.replace(/^(.*)(\r\n|\r|\n)/mg, function(m, m1, m2) {
-				if (m.charAt(0) == '>')
-					return m;
-				else
-					return m1 + '  ' + m2;
-			});
-		}
 		result.description = body;
 		result.notes = body;
 
