@@ -277,9 +277,10 @@ var Redmine = function() {
 		try
 		{
 			var params = {
-				issue_id      : parseInt(relation.issue_id),
-				issue_to_id   : parseInt(relation.issue_to_id),
-				relation_type : relation.relation_type
+				relation: {
+					issue_to_id   : parseInt(relation.issue_to_id),
+					relation_type : relation.relation_type
+				}
 			};
 			if (relation.delay)
 				params.delay = relation.delay;
