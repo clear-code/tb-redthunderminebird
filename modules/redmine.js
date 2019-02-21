@@ -257,6 +257,18 @@ var Redmine = function() {
 		return response.issues;
 	};
 
+	this.relations = function(issue_id /*, offset, limit */) {
+		logger.debug('relations:', issue_id /*, offset, limit */);
+
+		var response = cacher.getorset('redmine:relations:' + issue_id/* + ':' + (offset + '-' + limit) */, function() {
+			return self.request('GET', 'issues/' + issue_id + '/relations.json' /*, {
+				offset : offset,
+				limit : limit,
+			} */);
+		});
+		return response.relations;
+	};
+
 	this.myself = function() {
 		logger.debug('myself');
 

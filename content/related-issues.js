@@ -18,10 +18,24 @@ function onReferParent() {
 	});
 }
 
-function addRelation() {
-  var rows = document.getElementById('relations');
-  var template = document.getElementById('relation_template').firstChild;
-  rows.appendChild(template.cloneNode(true));
+
+function clearRelations() {
+	var rows = document.getElementById('relations');
+	var range = document.createRange();
+	range.selectNodeContents(rows);
+	range.deleteContents();
+	range.detach();
+}
+
+function addRelation(relation) {
+	var rows = document.getElementById('relations');
+	var template = document.getElementById('relation_template').firstChild;
+	var row = rows.appendChild(template.cloneNode(true));
+	if (relation) {
+		row.querySelector('.relation_type').value = relation.relation_type;
+		row.querySelector('.relation_issue_id').value = relation.issue_to_id;
+		onChangeRelation(row, redmine.tryTicket(relation.issue_to_id));
+	}
 }
 
 function onChangeRelation(row, ticket) {
