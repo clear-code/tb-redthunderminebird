@@ -283,13 +283,10 @@ var Redmine = function() {
 				}
 			};
 			if ('delay' in relation)
-				params.delay = relation.delay;
-			if (relation.id) {
-				return this.deleteRelation(relation.id) && this.request('POST', 'issues/' + relation.issue_id + '/relations.json', params);
-			}
-			else {
-				return this.request('POST', 'issues/' + relation.issue_id + '/relations.json', params);
-			}
+				params.relation.delay = relation.delay;
+			if (relation.id)
+				this.deleteRelation(relation.id);
+			return this.request('POST', 'issues/' + relation.issue_id + '/relations.json', params);
 		}
 		catch (e)
 		{
