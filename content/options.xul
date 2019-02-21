@@ -86,7 +86,8 @@
 			</grid>
 		</tabpanel>
 
-		<tabpanel orient="vertical">
+		<tabpanel orient="horizontal">
+			<vbox>
 			<checkbox id="field_visibility_project" label="&dialog-create.project-label;"/>
 			<checkbox id="field_visibility_tracker" label="&dialog-create.tracker-label;"/>
 			<checkbox id="field_visibility_subject" label="&dialog-create.subject-label;"/>
@@ -100,9 +101,11 @@
 			<checkbox id="field_visibility_file" label="&dialog-create.file-label;"/>
 			<checkbox id="field_visibility_relations" label="&dialog-create.relations-label;"/>
 			<checkbox id="field_visibility_other" label="&dialog-create.other-label;"/>
-			<separator/>
+			</vbox>
+			<vbox>
 			<checkbox id="field_visibility_issue" label="&dialog-update.issue-label;"/>
 			<checkbox id="field_visibility_notes" label="&dialog-update.notes-label;"/>
+			</vbox>
 		</tabpanel>
 	</tabpanels>
 	</tabbox>
