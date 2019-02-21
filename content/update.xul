@@ -6,6 +6,7 @@
 <window onload="onLoad();" title="&dialog-update.title;" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 	<script type="text/javascript" src="chrome://redthunderminebird/content/update.js" />
+	<script type="text/javascript" src="chrome://redthunderminebird/content/parent-issue.js" />
 	<script type="text/javascript" src="chrome://redthunderminebird/content/custom-fields.js" />
 
 	<grid style="width:640px;">

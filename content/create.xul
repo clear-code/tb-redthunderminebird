@@ -6,6 +6,7 @@
 <window onload="onLoad();" title="&dialog-create.title;" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 	<script type="text/javascript" src="chrome://redthunderminebird/content/create.js" />
+	<script type="text/javascript" src="chrome://redthunderminebird/content/parent-issue.js" />
 	<script type="text/javascript" src="chrome://redthunderminebird/content/custom-fields.js" />
 
 	<grid style="width:640px;">
@@ -36,6 +37,23 @@
 			<row align="center" class="fixed-row field_description">
 				<label value="&dialog-create.description-label;" />
 				<textbox id="description" multiline="true" rows="10" class="ticket_data" />
+			</row>
+			<row align="center" class="fixed-row field_parent_issue">
+				<label value="&dialog-update.parent-issue-label;" />
+				<grid>
+					<columns>
+						<column flex="1" />
+						<column flex="16" />
+						<column flex="1" />
+					</columns>
+					<rows>
+						<row>
+							<textbox id="parent_issue_id" class="ticket_data" onchange="onParentTicket();" style="width:3ch;" />
+							<textbox id="parent_ticket_title" value="" disabled="true" />
+							<button label="&dialog.ref-label;" oncommand="onReferParent();" />
+						</row>
+					</rows>
+				</grid>
 			</row>
 			<row align="center" class="fixed-row field_status">
 				<label value="&dialog-update.status-label;" />
