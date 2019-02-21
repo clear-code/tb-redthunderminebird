@@ -6,7 +6,8 @@ function onParentTicket(ticket) {
 	var ticket_title = ticket.id ? utility.formatTicketSubject(ticket) : bundle.getLocalString("message.notfoundissue", id);
 	idField.style.width = (String(id || '000').length + 3) + 'ch';
 
-	document.getElementById('parent_ticket_title').value = ticket_title.replace(/^#[0-9]+:/, '');
+	var titleField = document.getElementById('parent_ticket_title');
+	titleField.setAttribute('tooltiptext', titleField.value = ticket_title.replace(/^#[0-9]+:/, ''));
 }
 
 function onReferParent() {

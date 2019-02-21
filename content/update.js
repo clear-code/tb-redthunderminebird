@@ -150,7 +150,9 @@ function onTicket(ticket) {
 	var ticket_title = ticket.id ? utility.formatTicketSubject(ticket) : bundle.getLocalString("message.notfoundissue", id);
 	idField.style.width = (String(id || '000').length + 3) + 'ch';
 
-	document.getElementById('ticket_title').value = ticket_title.replace(/^#[0-9]+:/, '');
+	var titleField = document.getElementById('ticket_title');
+	titleField.setAttribute('tooltiptext', titleField.value = ticket_title.replace(/^#[0-9]+:/, ''));
+
 	document.getElementById('description').value = ticket.description ? ticket.description : "";
 	document.getElementById('status_id').value = ticket.status ? ticket.status.id : "";
 	document.getElementById('assigned_to_id').value = ticket.assigned_to ? ticket.assigned_to.id : "";
