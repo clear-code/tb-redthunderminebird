@@ -150,6 +150,7 @@ function onTicket(ticket) {
 	if (!ticket)
 		ticket = redmine.tryTicket(id);
 	var ticket_title = ticket.id ? utility.formatTicketSubject(ticket) : bundle.getLocalString("message.notfoundissue", id);
+	id.style.width = String(ticket.id).length + 'ch';
 
 	document.getElementById('ticket_title').value = ticket_title;
 	document.getElementById('description').value = ticket.description ? ticket.description : "";
