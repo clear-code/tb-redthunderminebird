@@ -19,6 +19,38 @@ function onReferParent() {
 }
 
 
+var relationsToBeDeleted = [];
+
+function saveRelations(issueId) {
+	for (var relationId of relationsToBeDeleted) {
+		redmine.deleteRelation(relationId);
+	}
+	relationsToBeDeleted = [];
+
+	var rows = document.getElementById('relations');
+	for (var row of rows.childNodes) {
+		var issueToId = row.querySelector('.relation_issue_id').value;
+		var relation = {
+			id:            row.relationId,
+			relation_type: row.querySelector('.relation_type').value,
+			issue_id:      issueId,
+			issue_to_id:   issueToId
+		};
+		if (row.relationId &&
+			row.originalRelation.relation_type == relation.relation_type &&
+			row.originalRelation.issue_to_id == relation.issue_to_id)
+			continue;
+		if (issueToId) {
+			redmine.saveRelation(relation);
+		}
+		else if (row.relationId) {
+			redmine.deleteRelation(row.relationId);
+			delete row.relationId;
+			delete row.originalRelation;
+		}
+	}
+}
+
 function clearRelations() {
 	var rows = document.getElementById('relations');
 	var range = document.createRange();
@@ -32,6 +64,8 @@ function addRelation(relation) {
 	var template = document.getElementById('relation_template').firstChild;
 	var row = rows.appendChild(template.cloneNode(true));
 	if (relation) {
+		row.relationId = relation.id;
+		row.originalRelation = relation;
 		row.querySelector('.relation_type').value = relation.relation_type;
 		row.querySelector('.relation_issue_id').value = relation.issue_to_id;
 		onChangeRelation(row, redmine.tryTicket(relation.issue_to_id));
@@ -59,6 +93,8 @@ function onReferRelation(row) {
 }
 
 function onRemoveRelation(row) {
+	if (row.relationId)
+		relationsToBeDeleted.push(row.relationId);
 	var rows = row.parentNode;
 	rows.removeChild(row);
 }

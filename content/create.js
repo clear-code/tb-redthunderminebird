@@ -199,9 +199,11 @@ function onCreate() {
 		}
 	}
 
-	//コールバック呼び出し(チケット登録できたらtrue)
-	if (window.arguments[1](data))
+	//コールバック呼び出し(チケット登録できたらissue)
+	var issue = window.arguments[1](data);
+	if (issue)
 	{
+		saveRelations(issue.id);
 		close();
 	}
 }

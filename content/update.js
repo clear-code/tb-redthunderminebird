@@ -46,7 +46,7 @@ function onLoad() {
 	var defdata = message.toObject();
 	if (defdata.id == 0)
 		defdata.id = '';
-	var ticket = redmine.tryTicket(defdata.id);
+	var ticket = redmine.tryTicket(defdata.id, { include: 'relations' });
 	console.log('updating UI for ', ticket);
 
 	onTicket(ticket);
@@ -146,7 +146,7 @@ function onTicket(ticket) {
 	var idField = document.getElementById('id');
 	var id = idField.value;
 	if (!ticket)
-		ticket = redmine.tryTicket(id);
+		ticket = redmine.tryTicket(id, { include: 'relations' });
 	var ticket_title = ticket.id ? utility.formatTicketSubject(ticket) : bundle.getLocalString("message.notfoundissue", id);
 	idField.style.width = (String(id || '000').length + 3) + 'ch';
 
@@ -159,7 +159,7 @@ function onTicket(ticket) {
 	document.getElementById('fixed_version_id').value = ticket.fixed_version ? ticket.fixed_version.id : "";
 
 	clearRelations();
-	var relations = redmine.relations(ticket.id);
+	var relations = ticket.relations || redmine.relations(ticket.id);
 	if (relations)
 		relations.forEach(addRelation);
 
@@ -212,6 +212,7 @@ function onUpdate() {
 	//コールバック呼び出し(チケット更新できたらtrue)
 	if (window.arguments[1](data))
 	{
+		saveRelations(id);
 		close();
 	}
 }

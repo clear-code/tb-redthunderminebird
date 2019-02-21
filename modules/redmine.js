@@ -224,10 +224,10 @@ var Redmine = function() {
 		}
 	};
 
-	this.tryTicket = function(id) {
+	this.tryTicket = function(id, params) {
 		try
 		{
-			return this.ticket(id);
+			return this.ticket(id, params);
 		}
 		catch (e)
 		{
@@ -236,11 +236,13 @@ var Redmine = function() {
 		}
 	};
 
-	this.ticket = function(id) {
-		logger.debug('ticket:', id);
+	this.ticket = function(id, params) {
+		params = params || {};
+		logger.debug('ticket:', id, params);
+		var queryParams = Object.keys(params).map(function(key) { return key + '=' + params[key]; }).join('&');
 
 		var response = cacher.getorset('redmine:ticket:' + id, function() {
-			return self.request('GET', 'issues/' + id + '.json');
+			return self.request('GET', 'issues/' + id + '.json' + (queryParams ? '?' + queryParams : ''));
 		});
 		return response.issue;
 	};
@@ -267,6 +269,46 @@ var Redmine = function() {
 			} */);
 		});
 		return response.relations;
+	};
+
+	this.saveRelation = function(relation) {
+		logger.debug('save relation:', relation);
+
+		try
+		{
+			var params = {
+				issue_id      : parseInt(relation.issue_id),
+				issue_to_id   : parseInt(relation.issue_to_id),
+				relation_type : relation.relation_type
+			};
+			if (relation.delay)
+				params.delay = relation.delay;
+			if (relation.id) {
+				return this.deleteRelation(relation.id) && this.request('POST', 'issues/' + relation.issue_id + '/relations.json', params);
+			}
+			else {
+				return this.request('POST', 'issues/' + relation.issue_id + '/relations.json', params);
+			}
+		}
+		catch (e)
+		{
+			logger.error('Redmine.saveRelation: ' + String(e));
+			return {};
+		}
+	};
+
+	this.deleteRelation = function(relationId) {
+		logger.debug('delete relation:', relationId);
+
+		try
+		{
+			return this.request('DELETE', 'relations/' + relationId + '.json');
+		}
+		catch (e)
+		{
+			logger.error('Redmine.deleteRelation: ' + String(e));
+			return {};
+		}
 	};
 
 	this.myself = function() {

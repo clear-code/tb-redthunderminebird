@@ -35,7 +35,7 @@ function onCreate() {
 					value : redmine.getTicketUrl(result.issue.id, true),
 				});
 
-				return true;
+				return result.issue;
 			}
 			//errorsがある=リクエストは成功したが、バリデーションエラーがある
 			else if (result.errors !== undefined)
