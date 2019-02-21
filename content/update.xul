@@ -20,9 +20,9 @@
 				<label value="&dialog-update.issue-label;" />
 				<grid>
 					<columns>
-						<column flex="1" />
-						<column flex="16" />
-						<column flex="1" />
+						<column/>
+						<column flex="1"/>
+						<column/>
 					</columns>
 					<rows>
 						<row>
@@ -44,9 +44,9 @@
 				<label value="&dialog-update.parent-issue-label;" />
 				<grid>
 					<columns>
-						<column flex="1" />
-						<column flex="16" />
-						<column flex="1" />
+						<column/>
+						<column flex="1"/>
+						<column/>
 					</columns>
 					<rows>
 						<row>
@@ -95,8 +95,8 @@
 				<label value="&dialog-update.file-label;" />
 				<grid>
 					<columns>
-						<column flex="8" />
-						<column flex="4" />
+						<column flex="2"/>
+						<column flex="1"/>
 					</columns>
 
 					<rows id="ticket_files">
