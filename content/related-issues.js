@@ -72,6 +72,8 @@ function addRelation(relation) {
 		row.originalRelation = relation;
 		row.querySelector('.relation_type').value = relation.relation_type;
 		row.querySelector('.relation_issue_id').value = relation.issue_to_id;
+		if (relation.delay)
+			row.querySelector('.relation_delay').value = relation.delay;
 		onChangeRelationType(row);
 		onChangeRelation(row, redmine.tryTicket(relation.issue_to_id));
 	}
