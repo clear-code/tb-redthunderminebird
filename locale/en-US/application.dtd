@@ -35,6 +35,8 @@
 <!ENTITY dialog.ng-label "cancel">
 <!ENTITY dialog.ref-label "reference">
 <!ENTITY dialog.reset-label "reset">
+<!ENTITY dialog.add-label "add">
+<!ENTITY dialog.remove-label "add">
 
 <!ENTITY dialog-create.title "create issue">
 <!ENTITY dialog-create.project-label "project">
@@ -50,6 +52,16 @@
 <!ENTITY dialog-create.start-label "start date">
 <!ENTITY dialog-create.due-label "due date">
 <!ENTITY dialog-create.file-label "file">
+<!ENTITY dialog-create.relations-label "related issues">
+<!ENTITY dialog-create.relations-type-relates "relates">
+<!ENTITY dialog-create.relations-type-duplicates "duplicates">
+<!ENTITY dialog-create.relations-type-duplicated "duplicated">
+<!ENTITY dialog-create.relations-type-blocks "blocks">
+<!ENTITY dialog-create.relations-type-blocked "blocked">
+<!ENTITY dialog-create.relations-type-precedes "precedes">
+<!ENTITY dialog-create.relations-type-follows "follows">
+<!ENTITY dialog-create.relations-type-copied_to "copied to">
+<!ENTITY dialog-create.relations-type-copied_from "copied from">
 <!ENTITY dialog-create.other-label "other">
 <!ENTITY dialog-create.private-label "private">
 

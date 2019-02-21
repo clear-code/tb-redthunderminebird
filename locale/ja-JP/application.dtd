@@ -35,6 +35,8 @@
 <!ENTITY dialog.ng-label "キャンセル">
 <!ENTITY dialog.ref-label "参照">
 <!ENTITY dialog.reset-label "リセット">
+<!ENTITY dialog.add-label "追加">
+<!ENTITY dialog.remove-label "削除">
 
 <!ENTITY dialog-create.title "チケット作成">
 <!ENTITY dialog-create.project-label "プロジェクト">
@@ -50,6 +52,16 @@
 <!ENTITY dialog-create.start-label "開始日">
 <!ENTITY dialog-create.due-label "期日">
 <!ENTITY dialog-create.file-label "ファイル">
+<!ENTITY dialog-create.relations-label "関連チケット">
+<!ENTITY dialog-create.relations-type-relates "関連している">
+<!ENTITY dialog-create.relations-type-duplicates "次のチケットと重複">
+<!ENTITY dialog-create.relations-type-duplicated "次のチケットが重複">
+<!ENTITY dialog-create.relations-type-blocks "ブロック先">
+<!ENTITY dialog-create.relations-type-blocked "ブロック元">
+<!ENTITY dialog-create.relations-type-precedes "次のチケットに先行">
+<!ENTITY dialog-create.relations-type-follows "次のチケットに後続">
+<!ENTITY dialog-create.relations-type-copied_to "コピー先">
+<!ENTITY dialog-create.relations-type-copied_from "コピー元">
 <!ENTITY dialog-create.other-label "その他">
 <!ENTITY dialog-create.private-label "プライベート">
 

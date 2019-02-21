@@ -98,6 +98,7 @@
 			<checkbox id="field_visibility_version" label="&dialog-create.version-label;"/>
 			<checkbox id="field_visibility_period" label="&dialog-create.period-label;"/>
 			<checkbox id="field_visibility_file" label="&dialog-create.file-label;"/>
+			<checkbox id="field_visibility_relations" label="&dialog-create.relations-label;"/>
 			<checkbox id="field_visibility_other" label="&dialog-create.other-label;"/>
 			<separator/>
 			<checkbox id="field_visibility_issue" label="&dialog-update.issue-label;"/>

@@ -110,6 +110,43 @@
 					</rows>
 				</grid>
 			</row>
+			<row align="center" class="fixed-row field_relations">
+				<label value="&dialog-create.relations-label;" />
+				<vbox>
+					<grid flex="1">
+						<columns>
+							<column/>
+							<column/>
+							<column flex="1"/>
+							<column/>
+							<column/>
+						</columns>
+						<rows id="relations"/>
+					</grid>
+					<hbox><button label="&dialog.add-label;" oncommand="addRelation();"/></hbox>
+					<vbox id="relation_template" hidden="true">
+						<row>
+							<menulist class="relation_type" value="relates">
+								<menupopup>
+									<menuitem label="&dialog-create.relations-type-relates;" value="relates"/>
+									<menuitem label="&dialog-create.relations-type-duplicates;" value="duplicates"/>
+									<menuitem label="&dialog-create.relations-type-duplicated;" value="duplicated"/>
+									<menuitem label="&dialog-create.relations-type-blocks;" value="blocks"/>
+									<menuitem label="&dialog-create.relations-type-blocked;" value="blocked"/>
+									<menuitem label="&dialog-create.relations-type-precedes;" value="precedes"/>
+									<menuitem label="&dialog-create.relations-type-follows;" value="follows"/>
+									<menuitem label="&dialog-create.relations-type-copied_to;" value="copied_to"/>
+									<menuitem label="&dialog-create.relations-type-copied_from;" value="copied_from"/>
+								</menupopup>
+							</menulist>
+							<textbox class="relation_issue_id" onchange="onChangeRelation(this.parentNode);" style="width:3ch;" />
+							<textbox class="relation_issue_title" value="" disabled="true" />
+							<button label="&dialog.ref-label;" oncommand="onReferRelation(this.parentNode);" style="min-width:0" />
+							<button label="&dialog.remove-label;" oncommand="onRemoveRelation(this.parentNode);" style="min-width:0" />
+						</row>
+					</vbox>
+				</vbox>
+			</row>
 			<row align="center" class="fixed-row field_other">
 				<label value="&dialog-create.other-label;" />
 				<box>

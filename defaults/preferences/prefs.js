@@ -29,6 +29,7 @@ pref("extensions.redthunderminebird.field_visibility.watcher", true);
 pref("extensions.redthunderminebird.field_visibility.version", true);
 pref("extensions.redthunderminebird.field_visibility.period", true);
 pref("extensions.redthunderminebird.field_visibility.file", true);
+pref("extensions.redthunderminebird.field_visibility.relations", true);
 pref("extensions.redthunderminebird.field_visibility.other", true);
 pref("extensions.redthunderminebird.field_visibility.issue", true);
 pref("extensions.redthunderminebird.field_visibility.notes", true);
