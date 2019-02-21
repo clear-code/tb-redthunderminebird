@@ -10,11 +10,6 @@
 <!ENTITY options.tracker-label "tracker">
 <!ENTITY options.duelength-label "due date (day)">
 <!ENTITY options.subject-label "regex to remove from subject">
-<!ENTITY options.description-label "description">
-<!ENTITY options.description-markdown-label "kepp break line">
-<!ENTITY options.description-header-label "add header for original mail">
-<!ENTITY options.notes-label "notes">
-<!ENTITY options.notes-header-label "add header for original mail">
 <!ENTITY options.upload-attachments-label "file">
 <!ENTITY options.upload-attachments-checkbox-label "upload attachments by default">
 <!ENTITY options.folder-mapping-label "folder mapping">
@@ -22,6 +17,10 @@
 <!ENTITY options.templates-label "templates">
 <!ENTITY options.templates-description-label "description">
 <!ENTITY options.templates-notes-label "notes">
+<!ENTITY options.templates-description "Available placeholders:
+&#x25;headers&#x25; : headers of the original mail
+&#x25;body&#x25; : body of the original mail
+&#x25;body_for_markdown&#x25; : body of the original mail, converted to keep linebreaks in the Markdown format">
 
 <!ENTITY options.visible-fields-label "visibility of fields">
 

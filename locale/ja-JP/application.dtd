@@ -10,11 +10,6 @@
 <!ENTITY options.tracker-label "トラッカー">
 <!ENTITY options.duelength-label "期日(日)">
 <!ENTITY options.subject-label "件名から除外する正規表現">
-<!ENTITY options.description-label "説明">
-<!ENTITY options.description-markdown-label "改行を保つ(改行にスペース2つを付加する)※Markdownプラグイン向け">
-<!ENTITY options.description-header-label "元のメールの情報のヘッダを付ける">
-<!ENTITY options.notes-label "ノート追記">
-<!ENTITY options.notes-header-label "元のメールの情報のヘッダを付ける">
 <!ENTITY options.upload-attachments-label "ファイル">
 <!ENTITY options.upload-attachments-checkbox-label "デフォルトで添付ファイルをアップロードする">
 <!ENTITY options.folder-mapping-label "フォルダマッピング">
@@ -22,6 +17,10 @@
 <!ENTITY options.templates-label "テンプレート">
 <!ENTITY options.templates-description-label "説明">
 <!ENTITY options.templates-notes-label "ノート追記">
+<!ENTITY options.templates-description "以下のプレースホルダを使用できます。
+&#x25;headers&#x25; : メールのヘッダ
+&#x25;body&#x25; : メールの本文
+&#x25;body_for_markdown&#x25; : メールの本文をMarkdown記法で改行を維持するよう変換した内容">
 
 <!ENTITY options.visible-fields-label "表示するフィールド">
 

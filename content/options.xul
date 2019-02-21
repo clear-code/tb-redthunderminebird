@@ -83,6 +83,7 @@
 				<caption label="&options.templates-notes-label;" />
 				<textbox id="template_notes" multiline="true" flex="1"/>
 			</groupbox>
+			<description style="white-space:pre-wrap">&options.templates-description;</description>
 		</tabpanel>
 
 		<tabpanel orient="horizontal">
