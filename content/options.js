@@ -187,5 +187,20 @@ function onReset() {
 	preference.reset('filter_directory');
 	preference.reset('template.description');
 	preference.reset('template.notes');
+	preference.reset("field_visibility.project");
+	preference.reset("field_visibility.tracker");
+	preference.reset("field_visibility.subject");
+	preference.reset("field_visibility.description");
+	preference.reset("field_visibility.parent_issue");
+	preference.reset("field_visibility.status");
+	preference.reset("field_visibility.assigned");
+	preference.reset("field_visibility.watcher");
+	preference.reset("field_visibility.version");
+	preference.reset("field_visibility.period");
+	preference.reset("field_visibility.file");
+	preference.reset("field_visibility.relations");
+	preference.reset("field_visibility.other");
+	preference.reset("field_visibility.issue");
+	preference.reset("field_visibility.notes");
 	close();
 }
