@@ -91,7 +91,7 @@
 			<checkbox id="field_visibility_tracker" label="&dialog-create.tracker-label;"/>
 			<checkbox id="field_visibility_subject" label="&dialog-create.subject-label;"/>
 			<checkbox id="field_visibility_description" label="&dialog-create.description-label;"/>
-			<checkbox id="field_visibility_parent_issue" label="&dialog-update.parent-issue-label;"/>
+			<checkbox id="field_visibility_parent_issue" label="&dialog-create.parent-issue-label;"/>
 			<checkbox id="field_visibility_status" label="&dialog-create.status-label;"/>
 			<checkbox id="field_visibility_assigned" label="&dialog-create.assigned-label;"/>
 			<checkbox id="field_visibility_watcher" label="&dialog-create.watcher-label;"/>
