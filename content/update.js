@@ -49,10 +49,11 @@ function onLoad() {
 	var ticket = redmine.tryTicket(defdata.id);
 	console.log('updating UI for ', ticket);
 
-	//タイトル設定
-	if (Object.keys(ticket).length !== 0)
-	{
-		document.getElementById('ticket_title').value = utility.formatTicketSubject(ticket);
+	onTicket(ticket);
+
+	if (ticket.parent_issue_id) {
+		var parentTicket = redmine.tryTicket(ticket.parent_issue_id);
+		onParentTicket(parentTicket);
 	}
 
 	//フォーム設定
@@ -64,11 +65,6 @@ function onLoad() {
 	defdata.due_date = ticket.due_date;
 	var elements = document.getElementsByClassName('ticket_data');
 	utility.jsontoform(defdata, elements);
-
-    if (ticket.custom_fields)
-		CustomFields.buildUI(ticket.custom_fields); // build only for associated fields
-	else
-		CustomFields.buildUI(); // build for all custom fields
 
 	if (preference.getBool('default_notes_header')) {
 		var node = document.getElementById('notes');
@@ -146,11 +142,12 @@ function onProject() {
 }
 
 function onTicket(ticket) {
-	var id = document.getElementById('id').value;
+	var idField = document.getElementById('id');
+	var id = idField.value;
 	if (!ticket)
 		ticket = redmine.tryTicket(id);
 	var ticket_title = ticket.id ? utility.formatTicketSubject(ticket) : bundle.getLocalString("message.notfoundissue", id);
-	id.style.width = String(ticket.id).length + 'ch';
+	idField.style.width = (String(id || '000').length + 3) + 'ch';
 
 	document.getElementById('ticket_title').value = ticket_title;
 	document.getElementById('description').value = ticket.description ? ticket.description : "";
@@ -166,10 +163,28 @@ function onTicket(ticket) {
 
 function onRefer() {
 	window.openDialog("chrome://redthunderminebird/content/refer.xul", "referDialog", "chrome,centerscreen,modal", message, function(ticket) {
-
 		document.getElementById('id').value = ticket.id;
 		// ↑でonchageは呼ばれない
 		onTicket(ticket);
+		return true;
+	});
+}
+
+function onParentTicket(ticket) {
+	var idField = document.getElementById('parent_issue_id');
+	var id = idField.value;
+	if (!ticket)
+		ticket = redmine.tryTicket(id);
+	var ticket_title = ticket.id ? utility.formatTicketSubject(ticket) : bundle.getLocalString("message.notfoundissue", id);
+	idField.style.width = (String(id || '000').length + 3) + 'ch';
+
+	document.getElementById('parent_ticket_title').value = ticket_title;
+}
+
+function onReferParent() {
+	window.openDialog("chrome://redthunderminebird/content/refer.xul", "referDialog", "chrome,centerscreen,modal", message, function(ticket) {
+		document.getElementById('parent_issue_id').value = ticket.id;
+		onParentTicket(ticket);
 		return true;
 	});
 }

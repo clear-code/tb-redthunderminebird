@@ -23,10 +23,9 @@
 						<column flex="16" />
 						<column flex="1" />
 					</columns>
-
 					<rows>
 						<row>
-							<textbox id="id" class="ticket_data" onchange="onTicket();" style="text-align:right;width:3ch;" />
+							<textbox id="id" class="ticket_data" onchange="onTicket();" style="width:3ch;" />
 							<textbox id="ticket_title" value="" disabled="true" />
 							<button label="&dialog.ref-label;" oncommand="onRefer();" />
 						</row>
@@ -39,6 +38,23 @@
 					<label id="toggle-description" class="text-link" value="&dialog-update.toggle-description-label;" onclick="onToggleDescription('description')" />
 				</hbox>
 				<textbox id="description" multiline="true" rows="10" class="ticket_data" style="display:none;" />
+			</row>
+			<row align="center" class="fixed-row field_parent_issue">
+				<label value="&dialog-update.parent-issue-label;" />
+				<grid>
+					<columns>
+						<column flex="1" />
+						<column flex="16" />
+						<column flex="1" />
+					</columns>
+					<rows>
+						<row>
+							<textbox id="parent_issue_id" class="ticket_data" onchange="onParentTicket();" style="width:3ch;" />
+							<textbox id="parent_ticket_title" value="" disabled="true" />
+							<button label="&dialog.ref-label;" oncommand="onReferParent();" />
+						</row>
+					</rows>
+				</grid>
 			</row>
 			<row align="center" class="fixed-row field_notes">
 				<label value="&dialog-update.notes-label;" />

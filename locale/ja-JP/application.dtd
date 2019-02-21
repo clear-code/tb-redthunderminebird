@@ -54,6 +54,7 @@
 
 <!ENTITY dialog-update.title "チケット更新">
 <!ENTITY dialog-update.issue-label "対象チケット">
+<!ENTITY dialog-update.parent-issue-label "親チケット">
 <!ENTITY dialog-update.toggle-description-label "編集">
 <!ENTITY dialog-update.notes-label "ノート追記">
 <!ENTITY dialog-update.status-label "ステータス">

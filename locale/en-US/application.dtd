@@ -54,6 +54,7 @@
 
 <!ENTITY dialog-update.title "update issue">
 <!ENTITY dialog-update.issue-label "refered issue">
+<!ENTITY dialog-update.parent-issue-label "parent issue">
 <!ENTITY dialog-update.toggle-description-label "edit">
 <!ENTITY dialog-update.notes-label "notes">
 <!ENTITY dialog-update.status-label "status">

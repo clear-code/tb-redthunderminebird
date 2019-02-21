@@ -22,6 +22,7 @@ pref("extensions.redthunderminebird.field_visibility.project", true);
 pref("extensions.redthunderminebird.field_visibility.tracker", true);
 pref("extensions.redthunderminebird.field_visibility.subject", true);
 pref("extensions.redthunderminebird.field_visibility.description", true);
+pref("extensions.redthunderminebird.field_visibility.parent_issue", true);
 pref("extensions.redthunderminebird.field_visibility.status", true);
 pref("extensions.redthunderminebird.field_visibility.assigned", true);
 pref("extensions.redthunderminebird.field_visibility.watcher", true);
