@@ -39,7 +39,7 @@
 				<textbox id="description" multiline="true" rows="10" class="ticket_data" />
 			</row>
 			<row align="center" class="fixed-row field_parent_issue">
-				<label value="&dialog-update.parent-issue-label;" />
+				<label value="&dialog-create.parent-issue-label;" />
 				<grid>
 					<columns>
 						<column/>
