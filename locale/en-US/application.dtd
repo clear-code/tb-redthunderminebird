@@ -62,6 +62,8 @@
 <!ENTITY dialog-create.relations-type-follows "follows">
 <!ENTITY dialog-create.relations-type-copied_to "copied to">
 <!ENTITY dialog-create.relations-type-copied_from "copied from">
+<!ENTITY dialog-create.relations-delay-before "Delay:">
+<!ENTITY dialog-create.relations-delay-after  "day(s)">
 <!ENTITY dialog-create.other-label "other">
 <!ENTITY dialog-create.private-label "private">
 

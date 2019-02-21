@@ -282,7 +282,7 @@ var Redmine = function() {
 					relation_type : relation.relation_type
 				}
 			};
-			if (relation.delay)
+			if ('delay' in relation)
 				params.delay = relation.delay;
 			if (relation.id) {
 				return this.deleteRelation(relation.id) && this.request('POST', 'issues/' + relation.issue_id + '/relations.json', params);

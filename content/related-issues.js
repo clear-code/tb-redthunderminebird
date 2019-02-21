@@ -36,9 +36,13 @@ function saveRelations(issueId) {
 			issue_id:      issueId,
 			issue_to_id:   issueToId
 		};
+		if (relation.relation_type == 'precedes' ||
+			relation.relation_type == 'follows')
+			relation.delay = parseInt(row.querySelector('.relation_delay').value);
 		if (row.relationId &&
 			row.originalRelation.relation_type == relation.relation_type &&
-			row.originalRelation.issue_to_id == relation.issue_to_id)
+			row.originalRelation.issue_to_id == relation.issue_to_id &&
+			row.originalRelation.delay == relation.delay)
 			continue;
 		if (issueToId) {
 			redmine.saveRelation(relation);
@@ -68,8 +72,19 @@ function addRelation(relation) {
 		row.originalRelation = relation;
 		row.querySelector('.relation_type').value = relation.relation_type;
 		row.querySelector('.relation_issue_id').value = relation.issue_to_id;
+		onChangeRelationType(row);
 		onChangeRelation(row, redmine.tryTicket(relation.issue_to_id));
 	}
+}
+
+function onChangeRelationType(row) {
+	var type = row.querySelector('.relation_type').value;
+	var container = row.querySelector('.relation_delay_container');
+	if (type == 'precedes' ||
+		type == 'follows')
+		container.removeAttribute('collapsed');
+	else
+		container.setAttribute('collapsed', true);
 }
 
 function onChangeRelation(row, ticket) {

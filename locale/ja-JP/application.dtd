@@ -62,6 +62,8 @@
 <!ENTITY dialog-create.relations-type-follows "次のチケットに後続">
 <!ENTITY dialog-create.relations-type-copied_to "コピー先">
 <!ENTITY dialog-create.relations-type-copied_from "コピー元">
+<!ENTITY dialog-create.relations-delay-before "遅延:">
+<!ENTITY dialog-create.relations-delay-after  "日">
 <!ENTITY dialog-create.other-label "その他">
 <!ENTITY dialog-create.private-label "プライベート">
 

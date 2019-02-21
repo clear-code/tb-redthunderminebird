@@ -118,8 +118,8 @@
 					</grid>
 					<hbox><button label="&dialog.add-label;" oncommand="addRelation();"/></hbox>
 					<vbox id="relation_template" hidden="true">
-						<row>
-							<menulist class="relation_type" value="relates">
+						<row align="center">
+							<menulist class="relation_type" value="relates" oncommand="onChangeRelationType(this.parentNode);">
 								<menupopup>
 									<menuitem label="&dialog-create.relations-type-relates;" value="relates"/>
 									<menuitem label="&dialog-create.relations-type-duplicates;" value="duplicates"/>
@@ -133,7 +133,14 @@
 								</menupopup>
 							</menulist>
 							<textbox class="relation_issue_id" onchange="onChangeRelation(this.parentNode);" style="width:3ch;" />
-							<textbox class="relation_issue_title" value="" disabled="true" />
+							<hbox align="center">
+								<textbox flex="1" class="relation_issue_title" value="" disabled="true" />
+								<hbox align="center" class="relation_delay_container" collapsed="true">
+									<label value="&dialog-create.relations-delay-before;"/>
+									<textbox class="relation_delay" value="0" type="number" size="3"/>
+									<label value="&dialog-create.relations-delay-after;"/>
+								</hbox>
+							</hbox>
 							<button label="&dialog.ref-label;" oncommand="onReferRelation(this.parentNode);" style="min-width:0" />
 							<button label="&dialog.remove-label;" oncommand="onRemoveRelation(this.parentNode);" style="min-width:0" />
 						</row>
