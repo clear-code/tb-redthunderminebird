@@ -28,7 +28,7 @@
 						<row>
 							<textbox id="id" class="ticket_data" onchange="onTicket();" style="width:3ch;" />
 							<textbox id="ticket_title" value="" disabled="true" />
-							<button label="&dialog.ref-label;" oncommand="onRefer();" />
+							<button label="&dialog.ref-label;" oncommand="onRefer();" style="min-width:0" />
 						</row>
 					</rows>
 				</grid>
@@ -52,7 +52,7 @@
 						<row>
 							<textbox id="parent_issue_id" class="ticket_data" onchange="onParentTicket();" style="width:3ch;" />
 							<textbox id="parent_ticket_title" value="" disabled="true" />
-							<button label="&dialog.ref-label;" oncommand="onReferParent();" />
+							<button label="&dialog.ref-label;" oncommand="onReferParent();" style="min-width:0" />
 						</row>
 					</rows>
 				</grid>
