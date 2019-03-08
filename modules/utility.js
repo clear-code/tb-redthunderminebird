@@ -41,13 +41,18 @@ var Utility = function() {
 	this.jsontoform = function(json, elements) {
 		for (var i = 0; i < elements.length; i++)
 		{
-			var id = elements[i].getAttribute('id');
-			if (json[id] !== undefined)
-			{
-				if (elements[i].tagName == "checkbox")
-					elements[i].checked = json[id];
-				else
-					elements[i].value = json[id];
+			try {
+				var id = elements[i].getAttribute('id');
+				if (json[id] !== undefined)
+				{
+					if (elements[i].tagName == "checkbox")
+						elements[i].checked = json[id];
+					else
+						elements[i].value = json[id];
+				}
+			}
+			catch(error) {
+				Components.utils.reportError(error);
 			}
 		}
 	};
