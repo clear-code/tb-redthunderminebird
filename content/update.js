@@ -62,8 +62,10 @@ function onLoad() {
 	defdata.fixed_version_id = ticket.fixed_version ? ticket.fixed_version.id : "";
 	defdata.description = ticket.description;
 	defdata.status_id = ticket.status ? ticket.status.id : "";
-	defdata.start_date = ticket.start_date;
-	defdata.due_date = ticket.due_date;
+	if (ticket.start_date)
+		defdata.start_date = ticket.start_date;
+	if (ticket.due_date)
+		defdata.due_date = ticket.due_date;
 	var elements = document.getElementsByClassName('ticket_data');
 	utility.jsontoform(defdata, elements);
 
