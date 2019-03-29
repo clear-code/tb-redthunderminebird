@@ -1,9 +1,9 @@
 function onParentTicket(ticket) {
 	var idField = document.getElementById('parent_issue_id');
 	var id = idField.value;
-	if (!ticket)
+	if (!ticket && id)
 		ticket = redmine.tryTicket(id);
-	var ticket_title = ticket.id ? utility.formatTicketSubject(ticket) : bundle.getLocalString("message.notfoundissue", id);
+	var ticket_title = !ticket ? '' : ticket.id ? utility.formatTicketSubject(ticket) : bundle.getLocalString("message.notfoundissue", id);
 	idField.style.width = (String(id || '000').length + 3) + 'ch';
 
 	var titleField = document.getElementById('parent_ticket_title');

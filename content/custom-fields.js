@@ -10,6 +10,7 @@ var CustomFields = {
 		var all_custom_fields = redmine.customFields();
 		custom_fields = custom_fields || all_custom_fields;
 		logger.info('custom_fields', custom_fields);
+		logger.info('all_custom_fields', all_custom_fields);
 
 		var rows = document.createDocumentFragment();
 		for (let custom_field of custom_fields) {

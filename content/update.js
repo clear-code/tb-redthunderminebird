@@ -44,18 +44,14 @@ function onLoad() {
 
 	//初期データ設定
 	var defdata = message.toObject();
+	logger.info('defdata from message: ', defdata);
 	if (defdata.id == 0)
 		defdata.id = '';
 	var ticket = redmine.tryTicket(defdata.id, { include: 'relations' });
 	console.log('updating UI for ', ticket);
+	logger.info('ticket: ', ticket);
 
 	onTicket(ticket);
-
-	if (ticket.parent) {
-		document.getElementById('parent_issue_id').value = ticket.parent.id;
-		var parentTicket = redmine.tryTicket(ticket.parent.id);
-		onParentTicket(parentTicket);
-	}
 
 	//フォーム設定
 	defdata.assigned_to_id = ticket.assigned_to ? ticket.assigned_to.id : "";
@@ -74,8 +70,6 @@ function onLoad() {
 		headers: message.getHeadersSummary(preference.getString('default_notes_header.headers').split(',')),
 		body: notesField.value
 	});
-
-	onProject();
 }
 
 function onPeriod(sender, target) {
@@ -146,8 +140,10 @@ function onProject() {
 function onTicket(ticket) {
 	var idField = document.getElementById('id');
 	var id = idField.value;
+	logger.info('onTicket: id: ', id);
 	if (!ticket)
 		ticket = redmine.tryTicket(id, { include: 'relations' });
+	logger.info('onTicket: ticket: ', ticket);
 	var ticket_title = ticket.id ? utility.formatTicketSubject(ticket) : bundle.getLocalString("message.notfoundissue", id);
 	idField.style.width = (String(id || '000').length + 3) + 'ch';
 
@@ -159,6 +155,16 @@ function onTicket(ticket) {
 	document.getElementById('assigned_to_id').value = ticket.assigned_to ? ticket.assigned_to.id : "";
 	document.getElementById('fixed_version_id').value = ticket.fixed_version ? ticket.fixed_version.id : "";
 
+	if (ticket.parent) {
+		document.getElementById('parent_issue_id').value = ticket.parent.id;
+		var parentTicket = redmine.tryTicket(ticket.parent.id);
+		onParentTicket(parentTicket);
+	}
+	else {
+		document.getElementById('parent_issue_id').value = '';
+		onParentTicket();
+	}
+
 	clearRelations();
 	var relations = ticket.relations || redmine.relations(ticket.id);
 	if (relations)
@@ -168,6 +174,8 @@ function onTicket(ticket) {
 		CustomFields.buildUI(ticket.custom_fields); // build only for associated fields
 	else
 		CustomFields.buildUI(); // build for all custom fields
+
+	onProject();
 }
 
 function onRefer() {
