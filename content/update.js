@@ -146,6 +146,7 @@ function onTicket(ticket) {
 	logger.info('onTicket: ticket: ', ticket);
 	var ticket_title = ticket.id ? utility.formatTicketSubject(ticket) : bundle.getLocalString("message.notfoundissue", id);
 	idField.style.width = (String(id || '000').length + 3) + 'ch';
+	logger.info('onTicket: idField.style.width: ', idField.style.width);
 
 	var titleField = document.getElementById('ticket_title');
 	titleField.setAttribute('tooltiptext', titleField.value = ticket_title.replace(/^#[0-9]+:/, ''));
