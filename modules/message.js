@@ -32,7 +32,7 @@ var Message = function(message, selection) {
 				// declare?
 				// https://developer.mozilla.org/en-US/docs/XPCOM_Interface_Reference/nsIChannel#open()
 				var uri = Services.io.newURI(attachment.url, null, null);
-				var channel = Services.io.newChannelFromURI(uri);
+				var channel = Services.io.newChannelFromURI(uri, null);
 				var istream = channel.open();
 				var bstream = Cc["@mozilla.org/binaryinputstream;1"].createInstance(Ci.nsIBinaryInputStream);
 				bstream.setInputStream(istream);
