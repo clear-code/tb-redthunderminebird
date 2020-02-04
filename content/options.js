@@ -6,7 +6,7 @@ load("resource://redthunderminebird/utility.js", this);
 
 function _build() {
 	//トラッカーselectboxのリフレッシュ
-	var holder = document.getElementById('redthunderminebird-default_tracker').childNodes[0];
+	var holder = document.querySelector('#redthunderminebird-default_tracker menupopup');
 	utility.removeChildren(holder);
 	var trackers = redmine.trackers();
 	for (var i = 0; i < trackers.length; i++)

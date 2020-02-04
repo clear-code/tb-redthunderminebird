@@ -15,7 +15,7 @@ function onLoad() {
 
 	//選択可能なステータス一覧
 	var issueStatuses = redmine.issueStatuses();
-	var node = document.getElementById('status_id').childNodes[0];
+	var node = document.querySelector('#status_id menupopup');
 	for (var i = 0; i < issueStatuses.length; i++)
 	{
 		utility.appendMenuitem(node, issueStatuses[i].id, issueStatuses[i].name);
@@ -107,7 +107,7 @@ function onProject() {
 	}
 
 	//担当者再構築
-	var node = document.getElementById('assigned_to_id').childNodes[0];
+	var node = document.querySelector('#assigned_to_id menupopup');
 	var current = document.getElementById('assigned_to_id').value;
 	utility.removeChildren(node);
 	utility.appendMenuitem(node, "", "");
@@ -123,7 +123,7 @@ function onProject() {
 	document.getElementById('assigned_to_id').value = current;
 
 	//対象バージョン再構築
-	var node = document.getElementById('fixed_version_id').childNodes[0];
+	var node = document.querySelector('#fixed_version_id menupopup');
 	var current = document.getElementById('fixed_version_id').value;
 	utility.removeChildren(node);
 	utility.appendMenuitem(node, "", "");

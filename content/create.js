@@ -15,7 +15,7 @@ function onLoad() {
 
 	//プロジェクト一覧
 	var projects = redmine.projects();
-	var node = document.getElementById('project_id').childNodes[0];
+	var node = document.querySelector('#project_id menupopup');
 	for (var i = 0; i < projects.length; i++)
 	{
 		utility.appendMenuitem(node, projects[i].id, projects[i].fullname);
@@ -25,7 +25,7 @@ function onLoad() {
 
 	//選択可能なステータス一覧
 	var issueStatuses = redmine.issueStatuses(project_id);
-	var node = document.getElementById('status_id').childNodes[0];
+	var node = document.querySelector('#status_id menupopup');
 	for (var i = 0; i < issueStatuses.length; i++)
 	{
 		utility.appendMenuitem(node, issueStatuses[i].id, issueStatuses[i].name);
@@ -33,7 +33,7 @@ function onLoad() {
 
 	//トラッカー一覧
 	var trackers = redmine.trackers(project_id);
-	var node = document.getElementById('tracker_id').childNodes[0];
+	var node = document.querySelector('#tracker_id menupopup');
 	for (var i = 0; i < trackers.length; i++)
 	{
 		utility.appendMenuitem(node, trackers[i].id, trackers[i].name);
@@ -104,7 +104,7 @@ function onProject() {
 	}
 
 	//トラッカー再構築
-	var node = document.getElementById('tracker_id').childNodes[0];
+	var node = document.querySelector('#tracker_id menupopup');
 	utility.removeChildren(node);
 	var trackers = redmine.trackers(project_id);
 	for (var i = 0; i < trackers.length; i++)
@@ -117,7 +117,7 @@ function onProject() {
 	}
 
 	//担当者再構築
-	var node = document.getElementById('assigned_to_id').childNodes[0];
+	var node = document.querySelector('#assigned_to_id menupopup');
 	utility.removeChildren(node);
 	utility.appendMenuitem(node, "", "");
 	utility.appendMenuitem(node, user.id, bundle.getLocalString("value.myselfname"));
@@ -132,7 +132,7 @@ function onProject() {
 	document.getElementById('assigned_to_id').value = '';
 
 	//対象バージョン再構築
-	var node = document.getElementById('fixed_version_id').childNodes[0];
+	var node = document.querySelector('#fixed_version_id menupopup');
 	utility.removeChildren(node);
 	utility.appendMenuitem(node, "", "");
 	var versions = redmine.versions(project_id);

@@ -18,7 +18,7 @@ function onLoad() {
 		var account = accounts.queryElementAt(i, Ci.nsIMsgAccount);
 		var value = account.incomingServer.rootFolder.URI;
 		var name = account.incomingServer.prettyName;
-		utility.appendMenuitem(byid('redthunderminebird-account').childNodes[0], value, name);
+		utility.appendMenuitem(document.querySelector('#redthunderminebird-account menupopup'), value, name);
 	}
 
 	//読み込み
