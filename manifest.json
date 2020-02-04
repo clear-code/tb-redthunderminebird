@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "applications": {
+    "gecko": {
+      "id": "redthunderminebird-plus@ryunosuke.arima",
+      "strict_min_version": "68.0"
+    }
+  },
+  "name": "Redmine連携+",
+  "description": "コンテキストメニューでRedmineチケットを作成します",
+  "version": "1.2.0",
+
+  "legacy": {
+    "type": "xul",
+    "options": {
+      "page": "chrome://redthunderminebird/content/options.xul",
+      "open_in_tab": true
+    }
+  }
+}
