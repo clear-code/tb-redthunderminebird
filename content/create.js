@@ -148,6 +148,9 @@ function onProject() {
 	var row = null;
 	for (var i = 0; i < members.length; i++)
 	{
+		if (!members[i].user)
+			continue;
+
 		if (i % 3 == 0)
 		{
 			row = document.createXULElement('row');
