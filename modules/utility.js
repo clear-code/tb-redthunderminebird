@@ -15,9 +15,11 @@ var Utility = function() {
 
 	this.appendListitem = function(node, value, label) {
 		var document = node.ownerDocument;
-		var listitem = document.createXULElement("listitem");
+		var listitem = document.createXULElement("richlistitem");
 		listitem.setAttribute('value', value);
 		listitem.setAttribute('label', label);
+		var description = listitem.appendChild(document.createXULElement("description"));
+		description.setAttribuve("value", label);
 		node.appendChild(listitem);
 		return listitem;
 	};

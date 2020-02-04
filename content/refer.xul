@@ -24,7 +24,7 @@
 						<textbox id="id" class="ticket_data" style="width:5em;text-align:right;" />
 						<button label="&dialog-refer.more-label;" oncommand="onMore();" />
 					</hbox>
-					<listbox id="ids" onselect="onTicket();" ondblclick="onOpen();" style="min-width:480px;" />
+					<richlistbox id="ids" onselect="onTicket();" ondblclick="onOpen();" style="min-width:480px;" />
 					<html:textarea id="description" rows="10" readonly="true" />
 				</vbox>
 			</row>
