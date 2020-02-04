@@ -169,7 +169,7 @@ function onProject() {
 }
 
 function onCreate() {
-	var elements = document.getElementsByClassName('ticket_data');
+	var elements = document.querySelectorAll('*|*.ticket_data');
 	var data = utility.formtojson(elements);
 	var customFields = CustomFields.toJSON();
 	if (customFields)

@@ -1,0 +1,6 @@
+@namespace html url("http://www.w3.org/1999/xhtml");
+
+html|textarea[flex="1"] {
+  -moz-box-flex: 1;
+  display: -moz-box;
+}

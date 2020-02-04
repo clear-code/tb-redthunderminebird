@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/content/bindings.css" type="text/css"?>
+<?xml-stylesheet href="./textarea.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://redthunderminebird/locale/application.dtd">
 
-<window onload="onLoad();" title="&dialog-update.title;" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<window onload="onLoad();" title="&dialog-update.title;" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml">
 
 	<script type="text/javascript" src="chrome://redthunderminebird/content/update.js" />
 	<script type="text/javascript" src="chrome://redthunderminebird/content/template.js" />
@@ -39,7 +41,7 @@
 					<label value="&dialog-create.description-label;" />
 					<label id="toggle-description" class="text-link" value="&dialog-update.toggle-description-label;" onclick="onToggleDescription('description')" />
 				</hbox>
-				<textbox id="description" multiline="true" rows="10" class="ticket_data" style="display:none;" />
+				<html:textarea id="description" rows="10" class="ticket_data" style="display:none;" />
 			</row>
 			<row align="center" class="fixed-row field_parent_issue">
 				<label value="&dialog-create.parent-issue-label;" />
@@ -60,7 +62,7 @@
 			</row>
 			<row align="center" class="fixed-row field_notes">
 				<label value="&dialog-update.notes-label;" />
-				<textbox id="notes" multiline="true" rows="10" class="ticket_data" />
+				<html:textarea id="notes" rows="10" class="ticket_data" />
 			</row>
 			<row align="center" class="fixed-row field_status">
 				<label value="&dialog-update.status-label;" />

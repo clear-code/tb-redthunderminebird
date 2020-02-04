@@ -16,7 +16,7 @@ function onLoad() {
 	var defdata = onMore();
 
 	//初期データ投入
-	var elements = document.getElementsByClassName('ticket_data');
+	var elements = document.querySelectorAll('*|*.ticket_data');
 	utility.jsontoform(defdata, elements);
 }
 

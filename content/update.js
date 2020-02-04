@@ -62,7 +62,7 @@ function onLoad() {
 		defdata.start_date = ticket.start_date;
 	if (ticket.due_date)
 		defdata.due_date = ticket.due_date;
-	var elements = document.getElementsByClassName('ticket_data');
+	var elements = document.querySelectorAll('*|*.ticket_data');
 	utility.jsontoform(defdata, elements);
 
 	var notesField = document.getElementById('notes');
@@ -201,7 +201,7 @@ function onUpdate() {
 		return;
 	}
 
-	var elements = document.getElementsByClassName('ticket_data');
+	var elements = document.querySelectorAll('*|*.ticket_data');
 	var data = utility.formtojson(elements);
 	var customFields = CustomFields.toJSON();
 	console.log('saving custom fields ', customFields);
