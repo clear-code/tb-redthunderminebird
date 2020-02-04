@@ -15,10 +15,10 @@ var CustomFields = {
 		var rows = document.createDocumentFragment();
 		for (let custom_field of custom_fields) {
 			logger.info('custom_field', custom_field);
-			let row = document.createElement('row');
+			let row = document.createXULElement('row');
 			row.setAttribute('align', 'center');
 
-			let label = row.appendChild(document.createElement('label'));
+			let label = row.appendChild(document.createXULElement('label'));
 			label.setAttribute('value', custom_field.name);
 			label.setAttribute('control', 'custom-field-' + custom_field.id);
 
@@ -27,7 +27,7 @@ var CustomFields = {
 			switch (field_definition.field_format) {
 				default:
 				case 'date':
-					field = row.appendChild(document.createElement('textbox'));
+					field = row.appendChild(document.createXULElement('textbox'));
 					field.setAttribute('value', custom_field.value || '');
 					field.originalValue = custom_field.value || '';
 					if (custom_field.field_format == 'date')
@@ -36,10 +36,10 @@ var CustomFields = {
 				case 'list':
 					let possible_values = field_definition.possible_values;
 					if (field_definition.multiple) {
-						field = row.appendChild(document.createElement('hbox'));
+						field = row.appendChild(document.createXULElement('hbox'));
 						field.originalValues = [];
 						for (let possible_value of possible_values) {
-							let item = field.appendChild(document.createElement('checkbox'));
+							let item = field.appendChild(document.createXULElement('checkbox'));
 							item.setAttribute('label', possible_value.value);
 							if (custom_field.value &&
 								custom_field.value.indexOf(possible_value.value) > -1) {
@@ -49,13 +49,13 @@ var CustomFields = {
 						}
 					}
 					else {
-						field = row.appendChild(document.createElement('menulist'));
+						field = row.appendChild(document.createXULElement('menulist'));
 						field.setAttribute('value', custom_field.value || '');
 						if (custom_field.value)
 							field.originalValue = custom_field.value;
-						let popup = field.appendChild(document.createElement('menupopup'));
+						let popup = field.appendChild(document.createXULElement('menupopup'));
 						for (let possible_value of possible_values) {
-							let item = popup.appendChild(document.createElement('menuitem'));
+							let item = popup.appendChild(document.createXULElement('menuitem'));
 							item.setAttribute('label', possible_value.value);
 							item.setAttribute('value', possible_value.value);
 						}

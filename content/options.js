@@ -52,10 +52,10 @@ function _build() {
 	for ( var k in folders)
 	{
 		//必要ノードをあらかじめ生成
-		var row = document.createElement("row");
-		var label = document.createElement("label");
-		var menulist = document.createElement("menulist");
-		var menupopup = document.createElement("menupopup");
+		var row = document.createXULElement("row");
+		var label = document.createXULElement("label");
+		var menulist = document.createXULElement("menulist");
+		var menupopup = document.createXULElement("menupopup");
 
 		//属性設定
 		label.setAttribute('value', folders[k]);

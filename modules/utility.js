@@ -6,7 +6,7 @@ var Utility = function() {
 
 	this.appendMenuitem = function(node, value, label) {
 		var document = node.ownerDocument;
-		var menuitem = document.createElement("menuitem");
+		var menuitem = document.createXULElement("menuitem");
 		menuitem.setAttribute('value', value);
 		menuitem.setAttribute('label', label);
 		node.appendChild(menuitem);
@@ -15,7 +15,7 @@ var Utility = function() {
 
 	this.appendListitem = function(node, value, label) {
 		var document = node.ownerDocument;
-		var listitem = document.createElement("listitem");
+		var listitem = document.createXULElement("listitem");
 		listitem.setAttribute('value', value);
 		listitem.setAttribute('label', label);
 		node.appendChild(listitem);

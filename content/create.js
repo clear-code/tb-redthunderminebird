@@ -43,9 +43,9 @@ function onLoad() {
 	var files = message.getAttachments();
 	for (var i = 0; i < files.length; i++)
 	{
-		var row = document.createElement('row');
-		var checkbox = document.createElement('checkbox');
-		var label = document.createElement('label');
+		var row = document.createXULElement('row');
+		var checkbox = document.createXULElement('checkbox');
+		var label = document.createXULElement('label');
 
 		checkbox.setAttribute('label', files[i].name);
 		checkbox.setAttribute('class', 'attachment_data');
@@ -150,10 +150,10 @@ function onProject() {
 	{
 		if (i % 3 == 0)
 		{
-			row = document.createElement('row');
+			row = document.createXULElement('row');
 			node.appendChild(row);
 		}
-		var checkbox = document.createElement('checkbox');
+		var checkbox = document.createXULElement('checkbox');
 
 		checkbox.setAttribute('label', members[i].user.name);
 		checkbox.setAttribute('class', 'ticket_data array');

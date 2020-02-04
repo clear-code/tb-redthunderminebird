@@ -25,9 +25,9 @@ function onLoad() {
 	var files = message.getAttachments();
 	for (var i = 0; i < files.length; i++)
 	{
-		var row = document.createElement('row');
-		var checkbox = document.createElement('checkbox');
-		var label = document.createElement('label');
+		var row = document.createXULElement('row');
+		var checkbox = document.createXULElement('checkbox');
+		var label = document.createXULElement('label');
 
 		checkbox.setAttribute('label', files[i].name);
 		checkbox.setAttribute('class', 'attachment_data');
