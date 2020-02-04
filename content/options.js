@@ -116,7 +116,6 @@ function _build() {
 
 	//中途半端な状態を出さないためにここまで到達できて初めて表示する
 	document.getElementById('advance_option').style.visibility = '';
-	sizeToContent();
 }
 
 function onLoad() {
@@ -128,7 +127,7 @@ function onLoad() {
 	//正しくないならフタをする
 	else
 	{
-		document.getElementById('advance_option').style.visibility = 'collapse';
+		document.getElementById('advance_option').style.visibility = 'hidden';
 	}
 };
 

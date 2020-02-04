@@ -11,7 +11,7 @@
 		<button label="&options.basic-label;" oncommand="onRedmine();" style="width:80px;" />
 	</hbox>
 
-	<tabbox flex="1" id="advance_option">
+	<tabbox flex="1" id="advance_option" style="visibility:hidden">
 	<tabs>
 		<tab label="&options.defaults-label;" />
 		<tab label="&options.folder-mapping-label;" />
