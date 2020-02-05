@@ -19,7 +19,7 @@ var Utility = function() {
 		listitem.setAttribute('value', value);
 		listitem.setAttribute('label', label);
 		var description = listitem.appendChild(document.createXULElement("description"));
-		description.setAttribuve("value", label);
+		description.setAttribute("value", label);
 		node.appendChild(listitem);
 		return listitem;
 	};
