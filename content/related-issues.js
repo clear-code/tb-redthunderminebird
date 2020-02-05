@@ -66,7 +66,16 @@ function clearRelations() {
 function addRelation(relation) {
 	var rows = document.getElementById('relations');
 	var template = document.getElementById('relation_template').firstChild;
-	var row = rows.appendChild(template.cloneNode(true));
+
+	var cloned = template.cloneNode(true);
+	// cleanup auto-generated contents
+	var menupopup = cloned.querySelector('.relation_type menupopup');
+	for (const child of menupopup.parentNode.childNodes) {
+		if (child != menupopup)
+			child.parentNode.removeChild(child);
+	}
+
+	var row = rows.appendChild(cloned);
 	if (relation) {
 		row.relationId = relation.id;
 		row.originalRelation = relation;
