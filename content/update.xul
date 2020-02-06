@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/content/bindings.css" type="text/css"?>
+<?xml-stylesheet type="text/css" href="chrome://lightning-common/skin/datetimepickers.css"?>
 <?xml-stylesheet href="./textarea.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://redthunderminebird/locale/application.dtd">
 
 <window onload="onLoad();" title="&dialog-update.title;" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml">
 
-	<script type="text/javascript" src="chrome://redthunderminebird/content/update.js" />
-	<script type="text/javascript" src="chrome://redthunderminebird/content/template.js" />
-	<script type="text/javascript" src="chrome://redthunderminebird/content/related-issues.js" />
-	<script type="text/javascript" src="chrome://redthunderminebird/content/custom-fields.js" />
+	<script type="application/javascript" src="chrome://redthunderminebird/content/update.js" />
+	<script type="application/javascript" src="chrome://redthunderminebird/content/template.js" />
+	<script type="application/javascript" src="chrome://redthunderminebird/content/related-issues.js" />
+	<script type="application/javascript" src="chrome://redthunderminebird/content/custom-fields.js" />
+	<script type="application/javascript" src="chrome://messenger/content/customElements.js"/>
+	<script type="application/javascript" src="chrome://calendar/content/widgets/calendar-minimonth.js"/>
+	<script type="application/javascript" src="chrome://calendar/content/datetimepickers/datetimepickers.js"/>
 
 	<grid style="width:640px;">
 		<columns>
@@ -89,9 +93,9 @@
 				<label value="&dialog-update.period-label;" />
 				<box align="center">
 					<checkbox id="start_date_enable" label="&dialog-update.start-label;" oncommand="onPeriod(this, 'start_date');" />
-					<datepicker id="start_date" type="popup" class="ticket_data" disabled="true" firstdayofweek="1" />
+					<datepicker id="start_date" class="ticket_data" disabled="true" firstdayofweek="1" />
 					<checkbox id="due_date_enable" label="&dialog-update.due-label;" oncommand="onPeriod(this, 'due_date');" />
-					<datepicker id="due_date" type="popup" class="ticket_data" disabled="true" firstdayofweek="1" />
+					<datepicker id="due_date" class="ticket_data" disabled="true" firstdayofweek="1" />
 				</box>
 			</row>
 			<row align="center" class="fixed-row field_file">
