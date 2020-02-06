@@ -14,7 +14,9 @@
 	<script type="application/javascript" src="chrome://redthunderminebird/content/template.js" />
 	<script type="application/javascript" src="chrome://redthunderminebird/content/related-issues.js" />
 	<script type="application/javascript" src="chrome://redthunderminebird/content/custom-fields.js" />
+
 	<script type="application/javascript" src="chrome://messenger/content/customElements.js"/>
+	<script type="application/javascript" src="chrome://calendar/content/calendar-ui-utils.js"/>
 	<script type="application/javascript" src="chrome://calendar/content/widgets/calendar-minimonth.js"/>
 	<script type="application/javascript" src="chrome://calendar/content/datetimepickers/datetimepickers.js"/>
 
