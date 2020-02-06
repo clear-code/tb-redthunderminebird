@@ -77,7 +77,10 @@ function onLoad() {
 }
 
 function onPeriod(sender, target) {
-	document.getElementById(target).disabled = !sender.checked;
+	if (sender.checked)
+		document.getElementById(target).removeAttribute('disabled');
+	else
+		document.getElementById(target).setAttribute('disabled', true);
 };
 
 function onProject() {
