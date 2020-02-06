@@ -86,6 +86,10 @@ var Utility = function() {
 					}
 				}
 			}
+			else if (elm.tagName == "datepicker")
+			{
+				result[key] = this.formatDate(elm.value);
+			}
 			else
 			{
 				result[key] = elm.value;
