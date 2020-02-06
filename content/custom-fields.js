@@ -1,7 +1,7 @@
 var CustomFields = {
 	buildUI: function(custom_fields) {
 		console.log('building custom fields UI for ', custom_fields);
-		var fixedRows = Array.slice(document.querySelectorAll('.fixed-row'));
+		var fixedRows = Array.from(document.querySelectorAll('.fixed-row'));
 		var range = document.createRange();
 		range.setStartAfter(fixedRows[fixedRows.length - 1]);
 		range.setEndAfter(fixedRows[0].parentNode.lastChild);
@@ -73,13 +73,13 @@ var CustomFields = {
 	},
 
 	toJSON: function() {
-		var fields = Array.slice(document.querySelectorAll('.custom-field'));
+		var fields = Array.from(document.querySelectorAll('.custom-field'));
 		if (fields.length == 0)
 		  return null;
 		var values = fields.map(field => {
 			let value = field.value;
 			if (field.localName == 'hbox') {
-				value = Array.slice(field.querySelectorAll('checkbox[checked="true"]')).map(item => item.getAttribute('label'));
+				value = Array.from(field.querySelectorAll('checkbox[checked="true"]')).map(item => item.getAttribute('label'));
 				if (JSON.stringify(value) == JSON.stringify(field.originalValues))
 					return null;
 			}
