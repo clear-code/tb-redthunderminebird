@@ -154,7 +154,7 @@ function onProject() {
 		if (!members[i].user)
 			continue;
 
-		if (i % 3 == 0)
+		if (!row || i % 3 == 0)
 		{
 			row = document.createXULElement('row');
 			node.appendChild(row);
