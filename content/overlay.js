@@ -70,7 +70,11 @@ function onUpdate() {
 
 	//メッセージから得られる初期データ
 	var message = new Message(gFolderDisplay.selectedMessage, document.commandDispatcher.focusedWindow.getSelection());
-	message.encode(function() {
+	message.encode(async function() {
+		if (!message.getId() &&
+			!(await onRefer()))
+			throw new Error('ticket is not assigned');
+
 		//更新ダイアログを表示してチケット更新
 		window.openDialog("chrome://redthunderminebird/content/update.xul", "updateDialog", "chrome,centerscreen,modal,resizable", message, function(ticket) {
 			//チケット更新
@@ -110,14 +114,22 @@ function onOpen() {
 }
 
 function onRefer() {
+	return new Promise(resolve => {
 	//メッセージから得られる初期データ
 	var message = new Message(gFolderDisplay.selectedMessage, document.commandDispatcher.focusedWindow.getSelection());
 
 	//関連付けダイアログを表示してチケット関連付け
 	window.openDialog("chrome://redthunderminebird/content/refer.xul", "referDialog", "chrome,centerscreen,modal,resizable", message, function(ticket) {
-
-		message.setId(parseInt(ticket.id));
-		return true;
+		if (ticket) {
+			message.setId(parseInt(ticket.id));
+			resolve(true);
+			return true;
+		}
+		else {
+			resolve(false);
+			return false;
+		}
+	});
 	});
 }
 

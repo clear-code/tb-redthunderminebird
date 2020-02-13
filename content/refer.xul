@@ -5,7 +5,8 @@
 <!DOCTYPE window SYSTEM "chrome://redthunderminebird/locale/application.dtd">
 
 <window onload="onLoad();" title="&dialog-refer.title;" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml">
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  onunload="onUnload()">
 
 	<script type="text/javascript" src="chrome://global/content/contentAreaUtils.js" />
 	<script type="text/javascript" src="chrome://redthunderminebird/content/refer.js" />

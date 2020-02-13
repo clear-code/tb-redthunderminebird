@@ -8,6 +8,8 @@ var PAGE_UNIT = 10;
 var currentpage = 0;
 var message = window.arguments[0];
 
+var canceled = true;
+
 function onLoad() {
 	//初期設定
 	document.getElementById('ids').setAttribute('rows', PAGE_UNIT - 1);
@@ -18,6 +20,11 @@ function onLoad() {
 	//初期データ投入
 	var elements = document.querySelectorAll('*|*.ticket_data');
 	utility.jsontoform(defdata, elements);
+}
+
+function onUnload() {
+	if (canceled)
+		window.arguments[1](null);
 }
 
 function onMore() {
@@ -94,6 +101,7 @@ function onRefer() {
 
 	if (window.arguments[1](ticket))
 	{
+		canceled = false;
 		close();
 	}
 }
