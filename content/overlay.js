@@ -5,6 +5,8 @@ load("resource://redthunderminebird/redmine.js", this);
 load("resource://redthunderminebird/message.js", this);
 load("resource://redthunderminebird/utility.js", this);
 
+var gRedThunderMineBirdLastSelectionMessage;
+
 function onCreate() {
 	//redmineに接続できないならどうしようもない
 	if (!redmine.ping())
@@ -14,7 +16,7 @@ function onCreate() {
 	}
 
 	//メッセージから得られる初期データ
-	var message = new Message(gFolderDisplay.selectedMessage, document.commandDispatcher.focusedWindow.getSelection());
+	var message = gRedThunderMineBirdLastSelectionMessage;
 	message.encode(function() {
 		//作成ダイアログを表示してチケット作成
 		window.openDialog("chrome://redthunderminebird/content/create.xul", "createDialog", "chrome,centerscreen,modal,resizable", message, function(ticket) {
@@ -69,7 +71,7 @@ function onUpdate() {
 	}
 
 	//メッセージから得られる初期データ
-	var message = new Message(gFolderDisplay.selectedMessage, document.commandDispatcher.focusedWindow.getSelection());
+	var message = gRedThunderMineBirdLastSelectionMessage;
 	message.encode(async function() {
 		if (!message.getId() &&
 			!(await onRefer(message)))
@@ -105,7 +107,7 @@ function onUpdate() {
 
 function onOpen() {
 	//メッセージから得られる初期データ
-	var message = new Message(gFolderDisplay.selectedMessage, document.commandDispatcher.focusedWindow.getSelection());
+	var message = gRedThunderMineBirdLastSelectionMessage;
 
 	if (message.getId() != 0)
 	{
@@ -117,7 +119,7 @@ function onRefer(message) {
 	return new Promise(resolve => {
 	//メッセージから得られる初期データ
 	if (!message)
-		message = new Message(gFolderDisplay.selectedMessage, document.commandDispatcher.focusedWindow.getSelection());
+		message = gRedThunderMineBirdLastSelectionMessage;
 
 	//関連付けダイアログを表示してチケット関連付け
 	window.openDialog("chrome://redthunderminebird/content/refer.xul", "referDialog", "chrome,centerscreen,modal,resizable", message, function(ticket) {
@@ -136,7 +138,7 @@ function onRefer(message) {
 
 function onWebUI() {
 	//メッセージから得られる初期データ
-	var message = new Message(gFolderDisplay.selectedMessage, document.commandDispatcher.focusedWindow.getSelection());
+	var message = gRedThunderMineBirdLastSelectionMessage;
 	message.encode(function() {
 		//ブラウザで開く
 		utility.openBrowser(redmine.getCreationUrl(message));
@@ -144,9 +146,18 @@ function onWebUI() {
 }
 
 window.addEventListener('load', function() {
-	document.getElementById('mailContext').addEventListener('popupshowing', function(e) {
+	const menu = document.getElementById('mailContext');
+	menu.addEventListener('popupshowing', function(e) {
+		if (e.target != menu)
+			return;
 		var message = new Message(gFolderDisplay.selectedMessage, document.commandDispatcher.focusedWindow.getSelection());
 		var id = message.getId();
 		document.getElementById('ticket_open').setAttribute('disabled', id == 0);
+		gRedThunderMineBirdLastSelectionMessage = message;
+	}, false);
+	menu.addEventListener('popuphiding', function(e) {
+		if (e.target != menu)
+			return;
+		gRedThunderMineBirdLastSelectionMessage = null;
 	}, false);
 }, true);
