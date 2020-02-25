@@ -64,6 +64,7 @@ var CustomFields = {
 			}
 			field.setAttribute('id', 'custom-field-' + custom_field.id);
 			field.setAttribute('class', 'custom-field');
+			field.defaultValue = ('default_value' in custom_field) ? custom_field.default_value : undefined;
 
 			rows.appendChild(row);
 		}
