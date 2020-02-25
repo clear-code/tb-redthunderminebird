@@ -188,9 +188,15 @@ function onCreate() {
 	}
 
 	//作成時は明示的に指定しないと現在日時が入ってしまうようだs
-	if (data.start_date === undefined)
+	if (data.start_date === undefined ||
+		!document.getElementById('start_date_enable').checked)
 	{
 		data.start_date = '';
+	}
+	if (data.due_date === undefined ||
+		!document.getElementById('due_date_enable').checked)
+	{
+		data.due_date = '';
 	}
 
 	data.files = [];
