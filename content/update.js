@@ -5,6 +5,7 @@ load("resource://redthunderminebird/redmine.js", this);
 load("resource://redthunderminebird/utility.js", this);
 
 var message = window.arguments[0];
+var gTicket;
 
 function onLoad() {
 	preference.getChildList('field_visibility').forEach(function(key) {
@@ -51,6 +52,7 @@ function onLoad() {
 	console.log('updating UI for ', ticket);
 	logger.info('ticket: ', ticket);
 
+	gTicket = ticket;
 	onTicket(ticket);
 
 	//フォーム設定
@@ -210,6 +212,11 @@ function onUpdate() {
 	console.log('saving custom fields ', customFields);
 	if (customFields)
 		data.custom_fields = customFields;
+
+	if (!document.getElementById('start_date_enable').checked)
+		data.start_date = gTicket.start_date || '';
+	if (!document.getElementById('due_date_enable').checked)
+		data.due_date = gTicket.due_date || '';
 
 	data.files = [];
 	var attachments = message.getAttachments();
