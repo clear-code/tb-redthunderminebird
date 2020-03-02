@@ -28,8 +28,8 @@ var CustomFields = {
 			if (!value &&
 				message &&
 				field_definition.default_value &&
-				/%header:(.+)%/.test(field_definition.default_value)) {
-				value = field_definition.default_value.replace(/%header:(.+)%/g, matched => {
+				/%header:([^%]+)%/.test(field_definition.default_value)) {
+				value = field_definition.default_value.replace(/%header:([^%]+)%/g, matched => {
 					return message.getHeader(RegExp.$1) || '';
 				});
 			}
