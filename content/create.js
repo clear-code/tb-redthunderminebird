@@ -60,7 +60,7 @@ function onLoad() {
 		document.getElementById('ticket_files').appendChild(row);
 	}
 
-	CustomFields.buildUI();
+	CustomFields.buildUI({ message });
 
 	//初期データ
 	var defdata = message.toObject();
@@ -169,7 +169,7 @@ function onProject() {
 		row.appendChild(checkbox);
 	}
 
-	CustomFields.buildUI();
+	CustomFields.buildUI({ message });
 
 	window.sizeToContent();
 }

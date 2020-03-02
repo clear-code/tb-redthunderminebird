@@ -177,9 +177,9 @@ function onTicket(ticket) {
 		relations.forEach(addRelation);
 
     if (ticket.custom_fields)
-		CustomFields.buildUI(ticket.custom_fields); // build only for associated fields
+		CustomFields.buildUI({ custom_fields: ticket.custom_fields, message }); // build only for associated fields
 	else
-		CustomFields.buildUI(); // build for all custom fields
+		CustomFields.buildUI({ message }); // build for all custom fields
 
 	onProject();
 }

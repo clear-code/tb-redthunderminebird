@@ -1,5 +1,5 @@
 var CustomFields = {
-	buildUI: function(custom_fields) {
+	buildUI: function({ custom_fields = null, message = null }) {
 		console.log('building custom fields UI for ', custom_fields);
 		var fixedRows = Array.from(document.querySelectorAll('.fixed-row'));
 		var range = document.createRange();
@@ -24,12 +24,21 @@ var CustomFields = {
 
 			let field_definition = all_custom_fields.filter(field => field.id == custom_field.id)[0];
 			let field;
+			let value = custom_field.value || '';
+			if (!value &&
+				message &&
+				field_definition.default_value &&
+				/%header:(.+)%/.test(field_definition.default_value)) {
+				value = field_definition.default_value.replace(/%header:(.+)%/g, matched => {
+					return message.getHeader(RegExp.$1) || '';
+				});
+			}
 			switch (field_definition.field_format) {
 				default:
 				case 'date':
 					field = row.appendChild(document.createXULElement('textbox'));
-					field.setAttribute('value', custom_field.value || '');
-					field.originalValue = custom_field.value || '';
+					field.setAttribute('value', value);
+					field.originalValue = value;
 					if (custom_field.field_format == 'date')
 						field.setAttribute('placeholder', 'YYYY-MM-DD');
 					break;
@@ -41,8 +50,8 @@ var CustomFields = {
 						for (let possible_value of possible_values) {
 							let item = field.appendChild(document.createXULElement('checkbox'));
 							item.setAttribute('label', possible_value.value);
-							if (custom_field.value &&
-								custom_field.value.indexOf(possible_value.value) > -1) {
+							if (value &&
+								value.indexOf(possible_value.value) > -1) {
 								item.setAttribute('checked', true);
 								field.originalValues.push(possible_value.value);
 							}
@@ -50,9 +59,9 @@ var CustomFields = {
 					}
 					else {
 						field = row.appendChild(document.createXULElement('menulist'));
-						field.setAttribute('value', custom_field.value || '');
-						if (custom_field.value)
-							field.originalValue = custom_field.value;
+						field.setAttribute('value', value);
+						if (value)
+							field.originalValue = value;
 						let popup = field.appendChild(document.createXULElement('menupopup'));
 						for (let possible_value of possible_values) {
 							let item = popup.appendChild(document.createXULElement('menuitem'));
@@ -64,7 +73,6 @@ var CustomFields = {
 			}
 			field.setAttribute('id', 'custom-field-' + custom_field.id);
 			field.setAttribute('class', 'custom-field');
-			field.defaultValue = ('default_value' in custom_field) ? custom_field.default_value : undefined;
 
 			rows.appendChild(row);
 		}

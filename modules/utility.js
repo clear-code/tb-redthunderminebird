@@ -47,10 +47,15 @@ var Utility = function() {
 				var id = elements[i].getAttribute('id');
 				if (json[id] !== undefined)
 				{
-					if (elements[i].tagName == "checkbox")
+					if (elements[i].tagName == "checkbox") {
 						elements[i].checked = json[id];
-					else
+					}
+					else {
 						elements[i].value = json[id];
+						if (!json[id] &&
+							elements[i].defaultValue)
+							elements[i].value = elements[i].defaultValue;
+					}
 				}
 			}
 			catch(error) {
