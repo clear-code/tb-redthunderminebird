@@ -39,14 +39,14 @@ window.addEventListener('DOMContentLoaded', async () => {
   accountsSelect.value = configs.account || (accounts.length > 0 ? accounts[0].id : '');
 
 
+  options.buildUIForAllConfigs(document.querySelector('#debug-configs'));
+  onConfigChanged('debug');
+
   for (const container of document.querySelectorAll('section, fieldset, p, div')) {
     const allFields = container.querySelectorAll('input, textarea, select');
     const lockedFields = container.querySelectorAll('.locked input, .locked textarea, .locked select, input.locked, textarea.locked, select.locked');
     container.classList.toggle('locked', allFields.length == lockedFields.length);
   }
-
-  options.buildUIForAllConfigs(document.querySelector('#debug-configs'));
-  onConfigChanged('debug');
 
   document.documentElement.classList.add('initialized');
 }, { once: true });
