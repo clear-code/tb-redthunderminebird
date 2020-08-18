@@ -1,6 +1,6 @@
 {
   "extensionName": { "message": "RedThunderMineBird Plus - Redmine連携+" },
-  "extensionDescription": { "message": "コンテキストメニューでRedmineチケットを作成します。" },
+  "extensionDescription": { "message": "メッセージのコンテキストメニューからRedmineチケットを作成します。" },
 
 
   "config_base_caption": { "message": "基本設定" },
@@ -27,7 +27,7 @@
   "config_template_caption": { "message": "テンプレート" },
   "config_descriptionTemplate_label": { "message": "説明" },
   "config_notesTemplate_label": { "message": "ノート追記" },
-  "config_placeholders_description": { "message": "以下のプレースホルダを使用できます。\n%headers% : メールのヘッダ\n%body% : メールの本文\n%body_for_markdown% : メールの本文をMarkdown記法で改行を維持するよう変換した内容" },
+  "config_placeholders_description": { "message": "以下のプレースホルダを使用できます。\n%headers% : メッセージのヘッダ\n%body% : メッセージの本文\n%body_for_markdown% : メッセージの本文をMarkdown記法で改行を維持するよう変換した内容" },
 
   "config_debug_caption": { "message": "開発者向け" },
 
