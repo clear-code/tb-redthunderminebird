@@ -1,0 +1,10 @@
+{
+  "extensionName": { "message": "RedThunderMineBird Plus - Redmine連携+" },
+  "extensionDescription": { "message": "コンテキストメニューでRedmineチケットを作成します。" },
+
+
+  "config_debug_caption": { "message": "開発者向け" },
+
+  "config_debug_label": { "message": "デバッグモード" },
+  "config_all_caption": { "message": "すべての設定" }
+}

@@ -1,0 +1,10 @@
+{
+  "extensionName": { "message": "RedThunderMineBird Plus" },
+  "extensionDescription": { "message": "Provides ability to create issues on Redmine from the context menu." },
+
+
+  "config_debug_caption": { "message": "Development" },
+
+  "config_debug_label": { "message": "Debug mode" },
+  "config_all_caption": { "message": "All Configs" }
+}
