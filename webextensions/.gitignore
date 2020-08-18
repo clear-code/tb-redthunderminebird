@@ -1,0 +1,7 @@
+*.xpi
+*.zip
+extlib/*.js
+extlib/*.css
+
+# node.js dependency
+node_modules/
