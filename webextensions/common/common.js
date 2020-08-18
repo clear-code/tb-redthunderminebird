@@ -11,6 +11,27 @@ import * as Constants from './constants.js';
 const OVERRIDE_DEFAULT_CONFIGS = {}; /* Replace this for more customization on an enterprise use. */
 
 export const configs = new Configs({
+  redmineURL: '',
+  redmineAPIKey: '',
+  account: '',
+
+  visibleProjects: [],
+  hiddenProjects: [],
+  visibleStatuses: [],
+  visibleFolderPattern: '',
+  visibleFields: [],
+  customFields: '',
+
+  defaultTracker: null,
+  defaultDueDate: 7,
+  defaultTitleCleanupPattern: '((fwd:)|(re:))\s?',
+  defaultUploadAttachments: true,
+
+  mappedFolders: null,
+
+  descriptionTemplate: '```\n%headers%\n\n%body%\n```',
+  notesTemplate: '```\n%headers%\n\n%body%\n```',
+
   configsVersion: 0,
   debug: false,
 

@@ -3,6 +3,32 @@
   "extensionDescription": { "message": "Provides ability to create issues on Redmine from the context menu." },
 
 
+  "config_base_caption": { "message": "Basic Settings" },
+  "config_redmineURL_label": { "message": "Redmine URL" },
+  "config_redmineAPIKey_label": { "message": "API KEY" },
+  "config_account_label": { "message": "Account" },
+
+  "config_visibility_caption": { "message": "Visibility" },
+  "config_visibleProjects_label": { "message": "Visible Projects (id or identifier, empty means \"show all\")" },
+  "config_hiddenProjects_label": { "message": "Hidden Projects (id or identifier)" },
+  "config_visibleStatuses_label": { "message": "Available Statuses (id value or label, empty means \"allow all\")" },
+  "config_visibleFolderPattern_label": { "message": "Visible Folder (regular expression)" },
+  "config_visibleFields_label": { "message": "visibility of fields" },
+  "config_customFields_label": { "message": "Custom fields (JSON)" },
+
+  "config_defaultValue_caption": { "message": "Default Values" },
+  "config_defaultTracker_label": { "message": "Tracker" },
+  "config_defaultDueDate_label": { "message": "Due Date (days)" },
+  "config_defaultTitleCleanupPattern_label": { "message": "Parts to be Removed from Subject (regular expression)" },
+  "config_defaultUploadAttachments_label": { "message": "Upload Attachments by Default" },
+
+  "config_mappedFolders_caption": { "message": "Folder Mapping" },
+
+  "config_template_caption": { "message": "Templates" },
+  "config_descriptionTemplate_label": { "message": "Description" },
+  "config_notesTemplate_label": { "message": "Notes" },
+  "config_placeholders_description": { "message": "Available placeholders:\n%headers% : headers of the original message\n%body% : body of the original message\n%body_for_markdown% : body of the original message, converted to keep linebreaks in the Markdown format" },
+
   "config_debug_caption": { "message": "Development" },
 
   "config_debug_label": { "message": "Debug mode" },
