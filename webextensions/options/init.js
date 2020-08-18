@@ -27,6 +27,18 @@ configs.$addObserver(onConfigChanged);
 window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
 
+
+  const accounts = configs.accounts;
+  const accountsSelect = document.querySelector('#account');
+  for (const account of accounts) {
+    const option = document.createElement('option');
+    option.textContent = account.name;
+    option.setAttribute('value', account.id);
+    accountsSelect.appendChild(option);
+  }
+  accountsSelect.value = configs.account || (accounts.length > 0 ? accounts[0].id : '');
+
+
   for (const container of document.querySelectorAll('section, fieldset, p, div')) {
     const allFields = container.querySelectorAll('input, textarea, select');
     const lockedFields = container.querySelectorAll('.locked input, .locked textarea, .locked select, input.locked, textarea.locked, select.locked');

@@ -6,7 +6,6 @@
 'use strict';
 
 import Configs from '/extlib/Configs.js';
-import * as Constants from './constants.js';
 
 const OVERRIDE_DEFAULT_CONFIGS = {}; /* Replace this for more customization on an enterprise use. */
 
@@ -32,12 +31,19 @@ export const configs = new Configs({
   descriptionTemplate: '```\n%headers%\n\n%body%\n```',
   notesTemplate: '```\n%headers%\n\n%body%\n```',
 
+
+  // Slots to transfer data from the background page to the options page.
+  // The options page cannot get results of browser.accounts.list() and browser.runtime.sendMessage(),
+  // so as a workaround we need to get the data and transfer them to the options page via the local storage.
+  accounts: [],
+
   configsVersion: 0,
   debug: false,
 
   ...OVERRIDE_DEFAULT_CONFIGS
 }, {
   localKeys: [
+    'accounts',
     'configsVersion',
     'debug'
   ]
