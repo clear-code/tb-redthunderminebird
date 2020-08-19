@@ -54,7 +54,7 @@ async function request({ method, path, params, data, type } = {}) {
       log('request url:', url);
       request.open(method, url, true);
       request.setRequestHeader('Content-Type', type);
-      request.addEventListener('statechange', _event => {
+      request.addEventListener('readystatechange', _event => {
         if (request.readyState != XMLHttpRequest.DONE)
           return;
 
