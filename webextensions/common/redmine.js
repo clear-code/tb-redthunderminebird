@@ -16,7 +16,7 @@ function getURL(path = '', params = {}) {
   for (const name in params) {
     queryParams.set(name, params[name]);
   }
-  return `${configs.redmineURL}/${path.replace(/^\//, '')}${Object.keys(params).length > 0 ? '?' : ''}${queryParams.toString()}`;
+  return `${configs.redmineURL.replace(/\/$/, '')}/${path.replace(/^\//, '')}${Object.keys(params).length > 0 ? '?' : ''}${queryParams.toString()}`;
 }
 
 async function request({ method, path, params, data, type } = {}) {
