@@ -8,7 +8,8 @@
     "accountsRead",
     "messagesRead",
     "storage",
-    "tabs"
+    "tabs",
+    "<all_urls>"
   ],
   "background": {
     "page": "/background/background.html"
