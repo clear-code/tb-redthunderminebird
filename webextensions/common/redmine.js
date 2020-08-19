@@ -51,7 +51,7 @@ async function request({ method, path, params, data, type } = {}) {
   const request = new XMLHttpRequest();
   return new Promise((resolve, reject) => {
     try {
-      log('request request:', url);
+      log('request url:', url);
       request.open(method, url, true);
       request.setRequestHeader('Content-Type', type);
       request.addEventListener('statechange', _event => {
@@ -71,6 +71,7 @@ async function request({ method, path, params, data, type } = {}) {
 
         resolve(result);
       });
+      log('request send:', body);
       request.send(body);
     }
     catch(error) {
