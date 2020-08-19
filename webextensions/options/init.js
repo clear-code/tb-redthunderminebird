@@ -25,10 +25,11 @@ function onConfigChanged(key) {
 configs.$addObserver(onConfigChanged);
 
 window.addEventListener('DOMContentLoaded', async () => {
-  await configs.$loaded;
+  const [accounts, ] = await Promise.all([
+    browser.accounts.list(),
+    configs.$loaded
+  ]);
 
-
-  const accounts = configs.accounts;
   const accountsSelect = document.querySelector('#account');
   for (const account of accounts) {
     const option = document.createElement('option');
