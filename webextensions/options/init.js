@@ -32,6 +32,7 @@ async function initFolderMappings(givenAccounts) {
   const accounts = givenAccounts || await browser.accounts.list();
   if (accounts.length > 0) {
     const projects = await Redmine.getProjects();
+    const allProjects = new Set(projects.map(project => String(project.id)));
     const projectsChooser = document.createElement('select');
     const defaultOption = projectsChooser.appendChild(document.createElement('option'));
     defaultOption.textContent = browser.i18n.getMessage('config_mappedFolders_fallbackToDefault_label');
@@ -47,13 +48,29 @@ async function initFolderMappings(givenAccounts) {
     const rows = document.createDocumentFragment();
     const addRow = (folder, parent) => {
       const row = document.createElement('tr');
+
+      const fullPath = parent ? `${parent}/${folder.name}` : folder.name;
+      const chooserId = `folder-mapping-${encodeURIComponent(fullPath)}`;
+
       const folderCell = row.appendChild(document.createElement('td'));
-      folderCell.textContent = parent ? `${parent}/${folder.name}` : folder.name;
+      const label = folderCell.appendChild(document.createElement('label'));
+      label.setAttribute('for', chooserId);
+      label.textContent = fullPath;
+
       const projectsCell = row.appendChild(document.createElement('td'));
-      projectsCell.appendChild(projectsChooser.cloneNode(true));
+      const clonedProjectChooser = projectsCell.appendChild(projectsChooser.cloneNode(true));
+      clonedProjectChooser.setAttribute('id', chooserId);
+      if (configs.mappedFolders &&
+          fullPath in configs.mappedFolders &&
+          allProjects.has(configs.mappedFolders[fullPath]))
+        clonedProjectChooser.value = configs.mappedFolders[fullPath];
+      else
+        clonedProjectChooser.value = '';
+
       rows.appendChild(row);
+
       for (const subFolder of folder.subFolders) {
-        addRow(subFolder, folderCell.textContent);
+        addRow(subFolder, fullPath);
       }
     };
     const account = accounts.find(account => account.id == configs.account) || accounts[0];
@@ -90,6 +107,14 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 
   initFolderMappings(accounts);
+  const mappingRows = document.querySelector('#mappedFoldersRows');
+  mappingRows.addEventListener('change', _event => {
+    const mapping = {};
+    for (const row of mappingRows.querySelectorAll('tr')) {
+      mapping[row.querySelector('label').textContent] = row.querySelector('select').value;
+    }
+    configs.mappedFolders = mapping;
+  });
 
 
   options.buildUIForAllConfigs(document.querySelector('#debug-configs'));
