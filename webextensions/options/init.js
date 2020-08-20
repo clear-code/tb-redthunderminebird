@@ -49,13 +49,13 @@ async function initFolderMappings(givenAccounts) {
     const addRow = (folder, parent) => {
       const row = document.createElement('tr');
 
-      const fullPath = parent ? `${parent}/${folder.name}` : folder.name;
+      const fullPath = parent ? `${parent}\n${folder.name}` : folder.name;
       const chooserId = `folder-mapping-${encodeURIComponent(fullPath)}`;
 
       const folderCell = row.appendChild(document.createElement('td'));
       const label = folderCell.appendChild(document.createElement('label'));
       label.setAttribute('for', chooserId);
-      label.textContent = fullPath;
+      label.textContent = fullPath.replace(/\n/g, '/');
 
       const projectsCell = row.appendChild(document.createElement('td'));
       const clonedProjectChooser = projectsCell.appendChild(projectsChooser.cloneNode(true));
