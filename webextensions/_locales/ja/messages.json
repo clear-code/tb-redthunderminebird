@@ -25,6 +25,11 @@
   "config_defaultUploadAttachments_label": { "message": "初期状態で添付ファイルをアップロードする" },
 
   "config_mappedFolders_caption": { "message": "フォルダマッピング" },
+  "config_mappedFolders_folders_column": { "message": "Thunderbird上のフォルダー" },
+  "config_mappedFolders_projects_column": { "message": "Redmine上のプロジェクト" },
+  "config_mappedFolders_default_label": { "message": "初期状態で割り当てるプロジェクト" },
+  "config_mappedFolders_unmapped_label": { "message": "(割り当てなし)" },
+  "config_mappedFolders_fallbackToDefault_label": { "message": "(初期値に従う)" },
 
   "config_template_caption": { "message": "テンプレート" },
   "config_descriptionTemplate_label": { "message": "説明" },

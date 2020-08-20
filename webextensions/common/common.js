@@ -26,6 +26,7 @@ export const configs = new Configs({
   defaultTitleCleanupPattern: '((fwd:)|(re:))\s?',
   defaultUploadAttachments: true,
 
+  defaultProject: '',
   mappedFolders: null,
 
   descriptionTemplate: '```\n%headers%\n\n%body%\n```',

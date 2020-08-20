@@ -18,8 +18,14 @@ import * as Redmine from '/common/redmine.js';
 const options = new Options(configs);
 
 async function initFolderMappings(givenAccounts) {
-  const rowsContainer = document.getElementById('mappedFoldersRows');
+  const defaultChooser = document.querySelector('#defaultProject');
+  const rowsContainer = document.querySelector('#mappedFoldersRows');
   const range = document.createRange();
+
+  range.selectNodeContents(defaultChooser);
+  range.setStartAfter(defaultChooser.firstChild);
+  range.deleteContents();
+
   range.selectNodeContents(rowsContainer);
   range.deleteContents();
 
@@ -27,11 +33,16 @@ async function initFolderMappings(givenAccounts) {
   if (accounts.length > 0) {
     const projects = await Redmine.getProjects();
     const projectsChooser = document.createElement('select');
+    const defaultOption = projectsChooser.appendChild(document.createElement('option'));
+    defaultOption.textContent = browser.i18n.getMessage('config_mappedFolders_fallbackToDefault_label');
+    defaultOption.setAttribute('value', '');
     for (const project of projects) {
-      const option = projectsChooser.appendChild(document.createElement('option'));
+      const option = defaultChooser.appendChild(document.createElement('option'));
       option.textContent = project.fullname;
       option.setAttribute('value', project.id);
+      projectsChooser.appendChild(option.cloneNode(true));
     }
+    defaultChooser.value = configs.defaultProject;
 
     const rows = document.createDocumentFragment();
     const addRow = (folder, parent) => {

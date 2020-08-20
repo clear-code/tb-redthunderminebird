@@ -25,6 +25,11 @@
   "config_defaultUploadAttachments_label": { "message": "Upload Attachments by Default" },
 
   "config_mappedFolders_caption": { "message": "Folder Mapping" },
+  "config_mappedFolders_folders_column": { "message": "Thunderbird Folder" },
+  "config_mappedFolders_projects_column": { "message": "Redmine Project" },
+  "config_mappedFolders_default_label": { "message": "Default Project" },
+  "config_mappedFolders_unmapped_label": { "message": "(Unmapped)" },
+  "config_mappedFolders_fallbackToDefault_label": { "message": "(Use the Default Project)" },
 
   "config_template_caption": { "message": "Templates" },
   "config_descriptionTemplate_label": { "message": "Description" },
