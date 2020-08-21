@@ -8,22 +8,22 @@
 import * as Constants from './constants.js';
 
 const mPromisedDB = new Promise((resolve, reject) => {
-    const request = window.indexedDB.open(Constants.DB_NAME, Constants.DB_VERSION);
-    request.onupgradeneeded = event => {
-      const db = event.target.result;
-      const objectStore = db.createObjectStore(Constants.STORE_MESSAGE_TO_TICKET, {
-        keyPath: 'messageId'
-      });
-      objectStore.createIndex('messageToTicket', 'messageId', { unique: true });
-    };
-    request.onsuccess = event => {
-      resolve(event.target.result);
-    };
-    request.onerror = event => {
-      const error = new Error(`Cannot access to the DB: ${event.target.errorCode}`);
-      console.error(error);
-      reject(error);
-    };
+  const request = window.indexedDB.open(Constants.DB_NAME, Constants.DB_VERSION);
+  request.onupgradeneeded = event => {
+    const db = event.target.result;
+    const objectStore = db.createObjectStore(Constants.STORE_MESSAGE_TO_TICKET, {
+      keyPath: 'messageId'
+    });
+    objectStore.createIndex('messageToTicket', 'messageId', { unique: true });
+  };
+  request.onsuccess = event => {
+    resolve(event.target.result);
+  };
+  request.onerror = event => {
+    const error = new Error(`Cannot access to the DB: ${event.target.errorCode}`);
+    console.error(error);
+    reject(error);
+  };
 });
 
 export async function setMessageToTicketRelation(messageId, ticketId) {
