@@ -5,3 +5,8 @@
 */
 'use strict';
 
+export const DB_NAME = 'RedThunderMineBirdPlus';
+export const DB_VERSION = 1;
+
+export const STORE_MESSAGE_TO_TICKET = 'message-to-tickets';
+
