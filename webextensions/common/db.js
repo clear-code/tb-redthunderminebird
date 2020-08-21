@@ -44,7 +44,7 @@ export async function setMessageToTicketRelation(messageId, ticketId) {
 
 export async function getRelatedTicketIdFromMessageId(messageId) {
   const db = await mPromisedDB;
-  const transaction = db.transaction([Constants.STORE_MESSAGE_TO_TICKET], 'read');
+  const transaction = db.transaction([Constants.STORE_MESSAGE_TO_TICKET]);
   return new Promise((resolve, _reject) => {
     const store = transaction.objectStore(Constants.STORE_MESSAGE_TO_TICKET);
     const request = store.get(messageId);
