@@ -49,7 +49,8 @@ export async function getRelatedTicketIdFromMessageId(messageId) {
     const store = transaction.objectStore(Constants.STORE_MESSAGE_TO_TICKET);
     const request = store.get(messageId);
     request.onsuccess = event => {
-      resolve(event.target.result.ticketId);
+      const record = event.target.result;
+      resolve(record && record.ticketId);
     };
     request.onerror = _event => {
       resolve(null);
