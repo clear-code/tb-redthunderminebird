@@ -7,8 +7,7 @@
 
 import * as Constants from './constants.js';
 
-async function openDB() {
-  return new Promise((resolve, reject) => {
+const mPromisedDB = new Promise((resolve, reject) => {
     const request = window.indexedDB.open(Constants.DB_NAME, Constants.DB_VERSION);
     request.onupgradeneeded = event => {
       const db = event.target.result;
@@ -18,16 +17,13 @@ async function openDB() {
       objectStore.createIndex('messageToTicket', 'messageId', { unique: true });
     };
     request.onsuccess = event => {
-      resolve(event.target.reuslt);
+      resolve(event.target.result);
     };
     request.onerror = event => {
-      reject(new Error(`Cannot access to the DB: ${event.target.errorCode}`));
+      const error = new Error(`Cannot access to the DB: ${event.target.errorCode}`);
+      console.error(error);
+      reject(error);
     };
-  });
-}
-
-const mPromisedDB = new Promise((resolve, reject) => {
-  openDB().then(resolve).catch(reject);
 });
 
 export async function setMessageToTicketRelation(messageId, ticketId) {
