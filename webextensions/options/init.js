@@ -49,28 +49,28 @@ async function initFolderMappings(givenAccounts) {
     const addRow = (folder, parent) => {
       const row = document.createElement('tr');
 
-      const fullPath = parent ? `${parent}\n${folder.name}` : folder.name;
-      const chooserId = `folder-mapping-${encodeURIComponent(fullPath)}`;
+      const readablePath = parent ? `${parent}/${folder.name}` : folder.name;
+      const chooserId = `folder-mapping-${encodeURIComponent(folder.path)}`;
 
       const folderCell = row.appendChild(document.createElement('td'));
       const label = folderCell.appendChild(document.createElement('label'));
       label.setAttribute('for', chooserId);
-      label.textContent = fullPath.replace(/\n/g, '/');
+      label.textContent = readablePath;
 
       const projectsCell = row.appendChild(document.createElement('td'));
       const clonedProjectChooser = projectsCell.appendChild(projectsChooser.cloneNode(true));
       clonedProjectChooser.setAttribute('id', chooserId);
       if (configs.mappedFolders &&
-          fullPath in configs.mappedFolders &&
-          allProjects.has(configs.mappedFolders[fullPath]))
-        clonedProjectChooser.value = configs.mappedFolders[fullPath];
+          folder.path in configs.mappedFolders &&
+          allProjects.has(configs.mappedFolders[folder.path]))
+        clonedProjectChooser.value = configs.mappedFolders[folder.path];
       else
         clonedProjectChooser.value = '';
 
       rows.appendChild(row);
 
       for (const subFolder of folder.subFolders) {
-        addRow(subFolder, fullPath);
+        addRow(subFolder, readablePath);
       }
     };
     const account = accounts.find(account => account.id == configs.account) || accounts[0];
