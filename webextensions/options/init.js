@@ -48,6 +48,7 @@ async function initFolderMappings(givenAccounts) {
     const rows = document.createDocumentFragment();
     const addRow = (folder, parent) => {
       const row = document.createElement('tr');
+      row.dataset.folderPath = folder.path;
 
       const readablePath = parent ? `${parent}/${folder.name}` : folder.name;
       const chooserId = `folder-mapping-${encodeURIComponent(folder.path)}`;
@@ -111,7 +112,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   mappingRows.addEventListener('change', _event => {
     const mapping = {};
     for (const row of mappingRows.querySelectorAll('tr')) {
-      mapping[row.querySelector('label').textContent] = row.querySelector('select').value;
+      mapping[row.dataset.folderPath] = row.querySelector('select').value;
     }
     configs.mappedFolders = mapping;
   });
