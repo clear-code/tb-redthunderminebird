@@ -99,8 +99,7 @@ export async function getCreationURL(message) {
   const allParams = await message.toRedmineParams();
   const params = {
     'issue[subject]':     allParams.subject,
-    'issue[description]': allParams.description,
-    key:                  configs.redmineAPIKey
+    'issue[description]': allParams.description
   };
   if (allParams.project_id)
     return getURL(`/projects/${allParams.project_id}/issues/new`, params);
