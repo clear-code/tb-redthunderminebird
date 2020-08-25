@@ -95,15 +95,15 @@ export function getProjectURL(id, withAPIKey) {
   );
 }
 
-export function getCreationURL(message) {
-  const objectified = message.toObject();
+export async function getCreationURL(message) {
+  const allParams = await message.toRedmineParams();
   const params = {
-    'issue[subject]':     objectified.subject,
-    'issue[description]': objectified.description
+    'issue[subject]':     allParams.subject,
+    'issue[description]': allParams.description,
+    key:                  configs.redmineAPIKey
   };
-  const projectId = message.getProjectId();
-  if (projectId !== '')
-    return getURL(`/projects/${projectId}/issues/new`, params);
+  if (allParams.project_id)
+    return getURL(`/projects/${allParams.project_id}/issues/new`, params);
   else
     return getURL(`/issues/new`, params);
 }

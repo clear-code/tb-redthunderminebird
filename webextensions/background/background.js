@@ -8,6 +8,8 @@
 import {
   configs
 } from '/common/common.js';
+import { Message } from '/common/Message.js';
+import * as Redmine from '/common/redmine.js';
 
 const MENU_COMMON_PARAMS = {
   contexts: ['message_list']
@@ -84,4 +86,22 @@ browser.menus.onShown.addListener(async (info, tab) => {
   await Promise.all(tasks);
   if (modificationCount > 0)
     browser.menus.refresh();
+});
+
+browser.menus.onClicked.addListener(async (info, tab) => {
+  const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
+  if (!messages ||
+      messages.length == 0)
+    return;
+
+  switch (info.menuItemId) {
+    case 'openWebUI': {
+      const url = await Redmine.getCreationURL(messages[0]);
+      browser.tabs.create({
+        windowId: tab.windowId,
+        active:   true,
+        url
+      });
+    }; break;
+  }
 });
