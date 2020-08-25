@@ -103,5 +103,17 @@ browser.menus.onClicked.addListener(async (info, tab) => {
         url
       });
     }; break;
+
+    case 'openIssue': {
+      const issueId = await messages[0].getIssueId();
+      if (!issueId)
+        return;
+      const url = await Redmine.getIssueURL(issueId, true);
+      browser.tabs.create({
+        windowId: tab.windowId,
+        active:   true,
+        url
+      });
+    }; break;
   }
 });
