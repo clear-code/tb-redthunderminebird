@@ -11,10 +11,10 @@ const mPromisedDB = new Promise((resolve, reject) => {
   const request = window.indexedDB.open(Constants.DB_NAME, Constants.DB_VERSION);
   request.onupgradeneeded = event => {
     const db = event.target.result;
-    const objectStore = db.createObjectStore(Constants.STORE_MESSAGE_TO_TICKET, {
+    const objectStore = db.createObjectStore(Constants.STORE_MESSAGE_TO_ISSUE, {
       keyPath: 'messageId'
     });
-    objectStore.createIndex('messageToTicket', 'messageId', { unique: true });
+    objectStore.createIndex('messageToIssue', 'messageId', { unique: true });
   };
   request.onsuccess = event => {
     resolve(event.target.result);
@@ -26,12 +26,12 @@ const mPromisedDB = new Promise((resolve, reject) => {
   };
 });
 
-export async function setMessageToTicketRelation(messageId, ticketId) {
-  const record = { messageId, ticketId };
+export async function setMessageToIssueRelation(messageId, issueId) {
+  const record = { messageId, issueId };
   const db = await mPromisedDB;
-  const transaction = db.transaction([Constants.STORE_MESSAGE_TO_TICKET], 'readwrite');
+  const transaction = db.transaction([Constants.STORE_MESSAGE_TO_ISSUE], 'readwrite');
   return new Promise((resolve, _reject) => {
-    const store = transaction.objectStore(Constants.STORE_MESSAGE_TO_TICKET);
+    const store = transaction.objectStore(Constants.STORE_MESSAGE_TO_ISSUE);
     const request = store.put(record);
     request.onsuccess = _event => {
       resolve(true);
@@ -42,15 +42,15 @@ export async function setMessageToTicketRelation(messageId, ticketId) {
   });
 }
 
-export async function getRelatedTicketIdFromMessageId(messageId) {
+export async function getRelatedIssueIdFromMessageId(messageId) {
   const db = await mPromisedDB;
-  const transaction = db.transaction([Constants.STORE_MESSAGE_TO_TICKET]);
+  const transaction = db.transaction([Constants.STORE_MESSAGE_TO_ISSUE]);
   return new Promise((resolve, _reject) => {
-    const store = transaction.objectStore(Constants.STORE_MESSAGE_TO_TICKET);
+    const store = transaction.objectStore(Constants.STORE_MESSAGE_TO_ISSUE);
     const request = store.get(messageId);
     request.onsuccess = event => {
       const record = event.target.result;
-      resolve(record && record.ticketId);
+      resolve(record && record.issueId);
     };
     request.onerror = _event => {
       resolve(null);

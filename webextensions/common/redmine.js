@@ -81,7 +81,7 @@ async function request({ method, path, params, data, type } = {}) {
   });
 }
 
-export function getTicketURL(id, withAPIKey) {
+export function getIssueURL(id, withAPIKey) {
   return getURL(
     `/issues/${id}`,
     withAPIKey ? { key: configs.redmineAPIKey } : {}
@@ -136,19 +136,19 @@ async function upload(file) {
   };
 }
 
-export async function createTicket(ticket) {
-  log('create:', ticket);
+export async function createIssue(issue) {
+  log('create:', issue);
   try {
-    const files = ticket.files;
-    delete ticket.files;
-    ticket.uploads = [];
+    const files = issue.files;
+    delete issue.files;
+    issue.uploads = [];
     for (const file of files) {
-      ticket.uploads.push(await upload(file));
+      issue.uploads.push(await upload(file));
     }
     return request({
       method: 'POST',
       path:   'issues.json',
-      data:   { issue: ticket }
+      data:   { issue: issue }
     });
   }
   catch(error) {
@@ -157,21 +157,21 @@ export async function createTicket(ticket) {
   }
 }
 
-export async function updateTicket(ticket) {
-  log('update:', ticket);
+export async function updateIssue(issue) {
+  log('update:', issue);
   try {
-    const files = ticket.files;
-    delete ticket.files;
-    ticket.uploads = [];
+    const files = issue.files;
+    delete issue.files;
+    issue.uploads = [];
     for (const file of files) {
-      ticket.uploads.push(await upload(file));
+      issue.uploads.push(await upload(file));
     }
     const result = await request({
       method: 'PUT',
-      path:   `issues/${ticket.id}.json`,
-      data:   { issue: ticket }
+      path:   `issues/${issue.id}.json`,
+      data:   { issue: issue }
     });
-    //Cache.remove(`redmine:ticket:${ticket.id}`);
+    //Cache.remove(`redmine:issue:${issue.id}`);
     return result;
   }
   catch(error) {
@@ -180,11 +180,11 @@ export async function updateTicket(ticket) {
   }
 }
 
-export async function getTicket(id, params = {}) {
-  log('ticket:', id, params);
+export async function getIssue(id, params = {}) {
+  log('issue:', id, params);
   try {
     const response = await Cache.getAndFallback(
-      `redmine:ticket:${id}`,
+      `redmine:issue:${id}`,
       () => {
         return request({
           path: `issues/${id}.json`,
@@ -195,16 +195,16 @@ export async function getTicket(id, params = {}) {
     return response && response.issue || {};
   }
   catch(error) {
-    log('Redmine.ticket: ' + String(error));
+    log('Redmine.issue: ' + String(error));
     return {};
   }
 }
 
-export async function getTickets(projectId, { offset, limit } = {}) {
-  log('tickets:', projectId, offset, limit);
+export async function getIssues(projectId, { offset, limit } = {}) {
+  log('issues:', projectId, offset, limit);
   try {
     const response = await Cache.getAndFallback(
-      `redmine:tickets:${projectId}:${offset}-${limit}`,
+      `redmine:issues:${projectId}:${offset}-${limit}`,
       () => {
         return request({
           path: `projects/${projectId}/issues.json`,
@@ -215,7 +215,7 @@ export async function getTickets(projectId, { offset, limit } = {}) {
     return response.issues;
   }
   catch(error) {
-    log('Redmine.tickets: ' + String(error));
+    log('Redmine.issues: ' + String(error));
     return [];
   }
 }

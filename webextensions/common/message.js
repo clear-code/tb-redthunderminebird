@@ -30,16 +30,16 @@ export class Message {
     return this.$messageIds = headers.references ? headers.references[0].trim().split(/\s+/) : headers['message-id'];
   }
 
-  // Treat the most major ticket id in all thread messages is the ticket id of the thread itself.
-  async getTicketId() {
+  // Treat the most major issue id in all thread messages is the issue id of the thread itself.
+  async getIssueId() {
     const messageIds = await this.getThreadMessageIds();
-    const ticketIds = (await Promise.all(messageIds.map(DB.getRelatedTicketIdFromMessageId))).filter(id => !!id);
-    if (ticketIds.length == 0)
+    const issueIds = (await Promise.all(messageIds.map(DB.getRelatedIssueIdFromMessageId))).filter(id => !!id);
+    if (issueIds.length == 0)
       return null;
 
     const counts    = [];
     const countById = {};
-    for (const id of ticketIds) {
+    for (const id of issueIds) {
       if (!(id in countById))
         counts.push(countById[id] = { id, count: 0 });
       countById[id].count++;
@@ -48,9 +48,9 @@ export class Message {
     return greatestCount.id;
   }
 
-  async setTicketId(ticketId) {
+  async setIssueId(issueId) {
     const messageIds = await this.getThreadMessageIds();
-    return Promise.all(messageIds.map(messageId => DB.setMessageToTicketRelation(messageId, ticketId)));
+    return Promise.all(messageIds.map(messageId => DB.setMessageToIssueRelation(messageId, issueId)));
   }
 
   getProjectId() {
@@ -87,12 +87,12 @@ export class Message {
   }
 
   async toRedmineParams() {
-    const [ticketId, body] = await Promise.all([
-      this.getTicketId(),
+    const [issueId, body] = await Promise.all([
+      this.getIssueId(),
       this.getBody()
     ]);
     const params = {
-      id:          ticketId,
+      id:          issueId,
       subject:     this.getSanitizedSubject(),
       project_id:  this.getProjectId(),
       tracker_id:  configs.defaultTracker,
