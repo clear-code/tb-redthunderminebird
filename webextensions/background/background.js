@@ -17,16 +17,16 @@ const MENU_COMMON_PARAMS = {
 const SUBMENU_COMMON_PARAMS = {
   ...MENU_COMMON_PARAMS,
   parentId: 'redmine',
-  shouldVisible(_info, _tab) {
-    return MENU_ITEMS.redmine.shouldEnable(); // eslint-disable-line no-use-before-define
+  async shouldVisible(info, tab) {
+    return MENU_ITEMS.redmine.shouldEnable(info, tab); // eslint-disable-line no-use-before-define
   }
 };
 const MENU_ITEMS = {
   redmine: {
     ...MENU_COMMON_PARAMS,
     title: browser.i18n.getMessage('menu_redmine_label'),
-    shouldEnable(_info, _tab) {
-      return configs.redmineURL && configs.redmineAPIKey;
+    async shouldEnable(_info, _tab) {
+      return !!(configs.redmineURL && configs.redmineAPIKey);
     }
   },
   openWebUI: {
@@ -47,13 +47,25 @@ const MENU_ITEMS = {
   },
   openIssue: {
     ...SUBMENU_COMMON_PARAMS,
-    title: browser.i18n.getMessage('menu_openIssue_label')
+    title: browser.i18n.getMessage('menu_openIssue_label'),
+    async shouldEnable(info, tab) {
+      return !!(await getContextIssueId(info));
+    }
   }
 };
 
+async function getContextIssueId(info) {
+  const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
+  return (
+    messages &&
+    messages.length > 0 &&
+    messages[0].getIssueId()
+  ) || null;
+}
+
 for (const [id, item] of Object.entries(MENU_ITEMS)) {
   item.id = id;
-  item.lastEnabled = false;
+  item.lastEnabled = true;
   item.lastVisible = true;
   item.params = {
     id,
@@ -73,7 +85,7 @@ browser.menus.onShown.addListener(async (info, tab) => {
         typeof item.shouldEnable == 'function' ? item.shouldEnable(info, tab) : true,
         typeof item.shouldVisible == 'function' ? item.shouldVisible(info, tab) : true
       ]);
-      browser.menus.create(id, {
+      browser.menus.update(id, {
         enabled,
         visible
       });
@@ -105,7 +117,7 @@ browser.menus.onClicked.addListener(async (info, tab) => {
     }; break;
 
     case 'openIssue': {
-      const issueId = await messages[0].getIssueId();
+      const issueId = await getContextIssueId(info);
       if (!issueId)
         return;
       const url = await Redmine.getIssueURL(issueId, true);
