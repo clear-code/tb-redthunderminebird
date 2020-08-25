@@ -3,6 +3,15 @@
   "extensionDescription": { "message": "Provides ability to create issues on Redmine from the context menu." },
 
 
+  "menu_redmine_label": { "message": "Redmine" },
+
+  "menu_openWebUI_label": { "message": "Open Web UI with subject and body" },
+  "menu_linkToIssue_label": { "message": "Link to existing issue" },
+  "menu_createIssue_label": { "message": "Create new issue" },
+  "menu_updateIssue_label": { "message": "Update linked issue" },
+  "menu_openIssue_label": { "message": "Open linked issue" },
+
+
   "config_title": { "message": "RedThunderMineBird Plus Configuration" },
 
   "config_base_caption": { "message": "Basic Settings" },

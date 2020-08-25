@@ -3,6 +3,15 @@
   "extensionDescription": { "message": "メッセージのコンテキストメニューからRedmineチケットを作成します。" },
 
 
+  "menu_redmine_label": { "message": "Redmine" },
+
+  "menu_openWebUI_label": { "message": "件名と本文でWeb画面を開く" },
+  "menu_linkToIssue_label": { "message": "チケットを関連付け" },
+  "menu_createIssue_label": { "message": "チケットを作成" },
+  "menu_updateIssue_label": { "message": "チケットを更新" },
+  "menu_openIssue_label": { "message": "チケットを開く" },
+
+
   "config_title": { "message": "RedThunderMineBird Plusの設定" },
 
   "config_base_caption": { "message": "基本設定" },
