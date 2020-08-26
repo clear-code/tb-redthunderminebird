@@ -37,15 +37,9 @@ export class Message {
     if (issueIds.length == 0)
       return null;
 
-    const counts    = [];
-    const countById = {};
-    for (const id of issueIds) {
-      if (!(id in countById))
-        counts.push(countById[id] = { id, count: 0 });
-      countById[id].count++;
-    }
-    const greatestCount = counts.sort((a, b) => b.count - a.count)[0];
-    return greatestCount.id;
+    // We should return the ID of the most root level message in the thread,
+    // because issue information can be modified with a message middle of the thread.
+    return issueIds[0];
   }
 
   async setIssueId(issueId) {
