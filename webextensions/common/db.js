@@ -5,6 +5,9 @@
 */
 'use strict';
 
+import {
+  log
+} from './common.js';
 import * as Constants from './constants.js';
 
 const mPromisedDB = new Promise((resolve, reject) => {
@@ -27,6 +30,7 @@ const mPromisedDB = new Promise((resolve, reject) => {
 });
 
 export async function setMessageToIssueRelation(messageId, issueId) {
+  log('setMessageToIssueRelation ', { messageId, issueId });
   const record = { messageId, issueId };
   const db = await mPromisedDB;
   const transaction = db.transaction([Constants.STORE_MESSAGE_TO_ISSUE], 'readwrite');
@@ -34,15 +38,18 @@ export async function setMessageToIssueRelation(messageId, issueId) {
     const store = transaction.objectStore(Constants.STORE_MESSAGE_TO_ISSUE);
     const request = store.put(record);
     request.onsuccess = _event => {
+      log(' => success');
       resolve(true);
     };
-    request.onerror = _event => {
+    request.onerror = event => {
+      log(' => fail ', event);
       resolve(false);
     };
   });
 }
 
 export async function getRelatedIssueIdFromMessageId(messageId) {
+  log('getRelatedIssueIdFromMessageId ', messageId);
   const db = await mPromisedDB;
   const transaction = db.transaction([Constants.STORE_MESSAGE_TO_ISSUE]);
   return new Promise((resolve, _reject) => {
@@ -50,9 +57,11 @@ export async function getRelatedIssueIdFromMessageId(messageId) {
     const request = store.get(messageId);
     request.onsuccess = event => {
       const record = event.target.result;
+      log(' => success ', record);
       resolve(record && record.issueId);
     };
-    request.onerror = _event => {
+    request.onerror = event => {
+      log(' => fail ', event);
       resolve(null);
     };
   });
