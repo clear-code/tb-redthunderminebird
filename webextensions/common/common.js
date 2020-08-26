@@ -33,6 +33,12 @@ export const configs = new Configs({
   notesTemplate: '```\n%headers%\n\n%body%\n```',
 
 
+  linkToIssueDialogWidth: 500,
+  linkToIssueDialogHeight: 440,
+  linkToIssueDialogLeft: null,
+  linkToIssueDialogTop: null,
+
+
   configsVersion: 0,
   debug: false,
 

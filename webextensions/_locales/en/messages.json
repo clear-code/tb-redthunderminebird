@@ -12,6 +12,13 @@
   "menu_openIssue_label": { "message": "Open linked issue" },
 
 
+  "dialog_linkToIssue_title": { "message": "Choose an issue to link this thread to" },
+  "dialog_linkToIssue_issueId_label": { "message": "Link to #" },
+  "dialog_linkToIssue_more_label": { "message": "Fetch next 10 issues" },
+  "dialog_linkToIssue_accept_label": { "message": "OK" },
+  "dialog_linkToIssue_cancel_label": { "message": "Cancel" },
+
+
   "config_title": { "message": "RedThunderMineBird Plus Configuration" },
 
   "config_base_caption": { "message": "Basic Settings" },

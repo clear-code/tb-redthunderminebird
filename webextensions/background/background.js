@@ -5,11 +5,16 @@
 */
 'use strict';
 
+import * as Dialog from '/extlib/dialog.js';
+
 import {
-  configs
+  configs,
+  log
 } from '/common/common.js';
 import { Message } from '/common/Message.js';
 import * as Redmine from '/common/redmine.js';
+
+Dialog.setLogger(log);
 
 const MENU_COMMON_PARAMS = {
   contexts: ['message_list']
@@ -114,6 +119,28 @@ browser.menus.onClicked.addListener(async (info, tab) => {
         active:   true,
         url
       });
+    }; break;
+
+    case 'linkToIssue': {
+      const dialogParams = {
+        url:    '/dialog/link-to-issue/link-to-issue.html',
+        modal:  !configs.debug,
+        opener: await browser.windows.get(tab.windowId),
+        width:  configs.linkToIssueDialogWidth,
+        height: configs.linkToIssueDialogHeight
+      };
+      if (typeof configs.linkToIssueDialogLeft == 'number')
+        dialogParams.left = configs.linkToIssueDialogLeft;
+      if (typeof configs.linkToIssueDialogTop == 'number')
+        dialogParams.top = configs.linkToIssueDialogTop;
+      try {
+        await Dialog.open(
+          dialogParams,
+          { message: messages[0].raw }
+        );
+      }
+      catch(_error) {
+      }
     }; break;
 
     case 'openIssue': {
