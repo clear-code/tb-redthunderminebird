@@ -83,7 +83,7 @@ export class Message {
           break;
       }
     }
-    return (lastHTML ? Format.htmlToPlaintext(lastHTML) : lastPlaintext).replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    return (lastHTML ? Format.htmlToPlaintext(lastHTML) : lastPlaintext).replace(/\r\n?/g, '\n');
   }
 
   async toRedmineParams() {
