@@ -60,7 +60,10 @@ configs.$loaded.then(async () => {
     try {
     await mMessage.setIssueId(mIssueIdField.value);
     Dialog.accept();
-    }catch(error){console.log(error);}
+    }
+    catch(error) {
+      console.error(error);
+    }
   });
   Dialog.initCancelButton(mCancelButton);
 
