@@ -53,7 +53,7 @@ const MENU_ITEMS = {
   openIssue: {
     ...SUBMENU_COMMON_PARAMS,
     title: browser.i18n.getMessage('menu_openIssue_label'),
-    async shouldEnable(info, tab) {
+    async shouldEnable(info, _tab) {
       return !!(await getContextIssueId(info));
     }
   }
