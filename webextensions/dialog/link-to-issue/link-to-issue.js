@@ -58,8 +58,8 @@ configs.$loaded.then(async () => {
     if (!mIssueIdField.value)
       return;
     try {
-    await mMessage.setIssueId(mIssueIdField.value);
-    Dialog.accept();
+      await mMessage.setIssueId(mIssueIdField.value);
+      Dialog.accept();
     }
     catch(error) {
       console.error(error);
