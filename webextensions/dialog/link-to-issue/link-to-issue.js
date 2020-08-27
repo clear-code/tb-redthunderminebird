@@ -29,8 +29,20 @@ const mDescriptionField  = document.querySelector('#description');
 const mAcceptButton      = document.querySelector('#accept');
 const mCancelButton      = document.querySelector('#cancel');
 
+function onConfigChange(key) {
+  const value = configs[key];
+  switch (key) {
+    case 'debug':
+      document.documentElement.classList.toggle('debug', value);
+      break;
+  }
+}
+configs.$addObserver(onConfigChange);
+
 configs.$loaded.then(async () => {
   mParams = await Dialog.getParams();
+
+  onConfigChange('debug');
 
   mMessage = new Message(mParams.message);
   mRedmineParams = await mMessage.toRedmineParams();
@@ -105,8 +117,12 @@ async function fetchMore() {
 
 function createItem(issue) {
   const row = document.createElement('li');
+  row.classList.add('flex-box');
+  row.classList.add('column');
   row.dataset.description = issue.description.replace(/\r\n?/g, '\n');
   const label = row.appendChild(document.createElement('label'));
+  label.classList.add('flex-box');
+  label.classList.add('row');
   const radio = label.appendChild(document.createElement('input'));
   radio.type = 'radio';
   radio.name = 'issueIds';
