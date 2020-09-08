@@ -126,17 +126,18 @@ browser.menus.onClicked.addListener(async (info, tab) => {
         url:    '/dialog/link-to-issue/link-to-issue.html',
         modal:  !configs.debug,
         opener: await browser.windows.get(tab.windowId),
-        width:  configs.linkToIssueDialogWidth,
-        height: configs.linkToIssueDialogHeight
+        width:  configs.chooseIssueDialogWidth,
+        height: configs.chooseIssueDialogHeight
       };
-      if (typeof configs.linkToIssueDialogLeft == 'number')
-        dialogParams.left = configs.linkToIssueDialogLeft;
-      if (typeof configs.linkToIssueDialogTop == 'number')
-        dialogParams.top = configs.linkToIssueDialogTop;
+      if (typeof configs.chooseIssueDialogLeft == 'number')
+        dialogParams.left = configs.chooseIssueDialogLeft;
+      if (typeof configs.chooseIssueDialogTop == 'number')
+        dialogParams.top = configs.chooseIssueDialogTop;
       try {
         await Dialog.open(
           dialogParams,
-          { message: messages[0].raw }
+          { message: messages[0].raw,
+            title: browser.i18n.getMessage('dialog_chooseIssue_title_link') }
         );
       }
       catch(_error) {

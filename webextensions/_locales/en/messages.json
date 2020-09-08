@@ -12,11 +12,12 @@
   "menu_openIssue_label": { "message": "Open linked issue" },
 
 
-  "dialog_linkToIssue_title": { "message": "Choose an issue to link this thread to" },
-  "dialog_linkToIssue_issueId_label": { "message": "Link to #" },
-  "dialog_linkToIssue_more_label": { "message": "Fetch next 10 issues" },
-  "dialog_linkToIssue_accept_label": { "message": "OK" },
-  "dialog_linkToIssue_cancel_label": { "message": "Cancel" },
+  "dialog_chooseIssue_title_general": { "message": "Choose an issue" },
+  "dialog_chooseIssue_title_link": { "message": "Choose an issue to link this thread to" },
+  "dialog_chooseIssue_issueId_label": { "message": "Link to #" },
+  "dialog_chooseIssue_more_label": { "message": "Fetch next 10 issues" },
+  "dialog_chooseIssue_accept_label": { "message": "OK" },
+  "dialog_chooseIssue_cancel_label": { "message": "Cancel" },
 
 
   "dialog_createIssue_title": { "message": "Create new issue" },
