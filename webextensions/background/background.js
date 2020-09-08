@@ -143,6 +143,28 @@ browser.menus.onClicked.addListener(async (info, tab) => {
       }
     }; break;
 
+    case 'createIssue': {
+      const dialogParams = {
+        url:    '/dialog/create-issue/create-issue.html',
+        modal:  !configs.debug,
+        opener: await browser.windows.get(tab.windowId),
+        width:  configs.createIssueDialogWidth,
+        height: configs.createIssueDialogHeight
+      };
+      if (typeof configs.createIssueDialogLeft == 'number')
+        dialogParams.left = configs.createIssueDialogLeft;
+      if (typeof configs.createIssueDialogTop == 'number')
+        dialogParams.top = configs.createIssueDialogTop;
+      try {
+        await Dialog.open(
+          dialogParams,
+          { message: messages[0].raw }
+        );
+      }
+      catch(_error) {
+      }
+    }; break;
+
     case 'openIssue': {
       const issueId = await getContextIssueId(info);
       if (!issueId)

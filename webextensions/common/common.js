@@ -38,6 +38,11 @@ export const configs = new Configs({
   linkToIssueDialogLeft: null,
   linkToIssueDialogTop: null,
 
+  createIssueDialogWidth: 640,
+  createIssueDialogHeight: 440,
+  createIssueDialogLeft: null,
+  createIssueDialogTop: null,
+
 
   configsVersion: 0,
   debug: false,

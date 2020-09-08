@@ -19,6 +19,11 @@
   "dialog_linkToIssue_cancel_label": { "message": "キャンセル" },
 
 
+  "dialog_createIssue_title": { "message": "チケット作成" },
+  "dialog_createIssue_accept_label": { "message": "OK" },
+  "dialog_createIssue_cancel_label": { "message": "キャンセル" },
+
+
   "config_title": { "message": "RedThunderMineBird Plusの設定" },
 
   "config_base_caption": { "message": "基本設定" },

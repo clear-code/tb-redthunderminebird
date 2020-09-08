@@ -4,12 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-@import url(/resources/base.css);
-
-
-#form > .flex-box {
-  min-height: 0; /* required to shrink #issues for too many contents */
-}
+@import url(/resources/dialog.css);
 
 #issues {
   background: -moz-field;

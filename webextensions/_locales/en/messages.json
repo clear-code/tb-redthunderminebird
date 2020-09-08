@@ -19,6 +19,11 @@
   "dialog_linkToIssue_cancel_label": { "message": "Cancel" },
 
 
+  "dialog_createIssue_title": { "message": "Create new issue" },
+  "dialog_createIssue_accept_label": { "message": "OK" },
+  "dialog_createIssue_cancel_label": { "message": "Cancel" },
+
+
   "config_title": { "message": "RedThunderMineBird Plus Configuration" },
 
   "config_base_caption": { "message": "Basic Settings" },
