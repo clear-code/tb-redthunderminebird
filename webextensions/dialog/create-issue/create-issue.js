@@ -21,6 +21,7 @@ let mParams;
 let mMessage;
 let mRedmineParams;
 
+const mProjectField      = document.querySelector('#project');
 const mDescriptionField  = document.querySelector('#description');
 const mParentIssueField  = document.querySelector('#parentIssue');
 const mStartDateEnabled  = document.querySelector('#startDateEnabled');
@@ -51,17 +52,26 @@ configs.$loaded.then(async () => {
   log('mMessage: ', mMessage);
   log('mRedmineParams ', mRedmineParams);
 
-  await Promise.all([
+  const [members, ] = await Promise.all([
+    Redmine.getMembers(mRedmineParams.project_id),
     initProjects(),
     initTrackers(mRedmineParams.project_id),
     initStatuses(),
-    initVersions(mRedmineParams.project_id),
-    initAssignees(mRedmineParams.project_id)
+    initVersions(mRedmineParams.project_id)
+  ]);
+  await Promise.all([
+    initAssignees(mRedmineParams.project_id, members),
+    initWatchers(mRedmineParams.project_id, members)
   ]);
 
+  applyFieldValues();
+
   for (const field of document.querySelectorAll('[data-field]')) {
-    if (field.dataset.field in mRedmineParams)
-      field.value = mRedmineParams[field.dataset.field];
+    field.addEventListener('change', () => {
+      onChangeFieldValue(field);
+      if (field == mProjectField)
+        reinitFieldsForProject();
+    });
   }
 
   Dialog.initButton(mAcceptButton, async _event => {
@@ -81,11 +91,14 @@ configs.$loaded.then(async () => {
 });
 
 function initSelect(field, items, itemTranslator) {
+  const oldValue = field.value;
+
   const range = document.createRange();
   range.selectNodeContents(field);
   range.deleteContents();
   range.detach();
 
+  let hasOldValueOption = false;
   const fragment = document.createDocumentFragment();
   for (const item of items) {
     const translated = itemTranslator(item);
@@ -94,15 +107,21 @@ function initSelect(field, items, itemTranslator) {
     const option = fragment.appendChild(document.createElement('option'));
     option.textContent = translated.label;
     option.value = translated.value;
+    if (oldValue && translated.value == oldValue)
+      hasOldValueOption = true;
   }
   field.appendChild(fragment);
-}
 
+  if (oldValue)
+    field.value = oldValue;
+  else
+    field.value = '';
+}
 
 async function initProjects() {
   const projects = await Redmine.getProjects();
   initSelect(
-    document.querySelector('#project'),
+    mProjectField,
     projects,
     project => ({ label: project.fullname, value: project.id })
   );
@@ -135,8 +154,8 @@ async function initVersions(projectId) {
   );
 }
 
-async function initAssignees(projectId) {
-  const members = await Redmine.getMembers(projectId);
+async function initAssignees(projectId, cachedMembers) {
+  const members = cachedMembers || await Redmine.getMembers(projectId);
   initSelect(
     document.querySelector('#assigned'),
     members,
@@ -146,4 +165,91 @@ async function initAssignees(projectId) {
       return { label: member.user.name, value: member.user.id };
     }
   );
+}
+
+async function initWatchers(projectId, cachedMembers) {
+  const members = cachedMembers || await Redmine.getMembers(projectId);
+  const container = document.querySelector('#watcherUsers');
+
+  const range = document.createRange();
+  range.selectNodeContents(container);
+  range.deleteContents();
+  range.detach();
+
+  const fragment = document.createDocumentFragment();
+  for (const member of members) {
+    if (!member.user)
+      continue;
+    const label = fragment.appendChild(document.createElement('label'));
+    const checkbox = label.appendChild(document.createElement('input'));
+    checkbox.type = 'checkbox';
+    checkbox.value = member.user.id;
+    checkbox.dataset.field = 'watcher_user_ids[]';
+    checkbox.dataset.valueType = 'integer';
+    label.appendChild(document.createTextNode(member.user.name));
+  }
+  container.appendChild(fragment);
+}
+
+async function reinitFieldsForProject() {
+  const [members, ] = await Promise.all([
+    Redmine.getMembers(mProjectField.value),
+    initTrackers(mProjectField.value),
+    initVersions(mProjectField.value)
+  ]);
+  await Promise.all([
+    initAssignees(mProjectField.value, members),
+    initWatchers(mProjectField.value, members)
+  ]);
+  applyFieldValues();
+}
+
+function applyFieldValues() {
+  for (const field of document.querySelectorAll('[data-field]')) {
+    if (!(field.dataset.field in mRedmineParams))
+      continue;
+    const name = field.dataset.field;
+    const paramName = name.replace(/\[\]$/, '');
+    const value = mRedmineParams[paramName];
+    const values = name.endsWith('[]') ? (value || []) : null;
+    if (field.matches('input[type="checkbox"]')) {
+      if (values)
+        field.checked = value.includes(field.value);
+      else
+        field.checked = !!value;
+    }
+    else {
+      field.value = value;
+    }
+  }
+}
+
+function onChangeFieldValue(field) {
+  if (field.$onChangeFieldValueTimer)
+    clearTimeout(field.$onChangeFieldValueTimer);
+  field.$onChangeFieldValueTimer = setTimeout(() => {
+    delete field.$onChangeFieldValueTimer;
+    const fieldValue = field.dataset.valueType == 'integer' ? parseInt(field.value || 0) : field.value;
+    const name = field.dataset.field;
+    const paramName = name.replace(/\[\]$/, '');
+    const value = mRedmineParams[paramName];
+    const values = name.endsWith('[]') ? (value || []) : null;
+    if (field.matches('input[type="checkbox"]')) {
+      if (values) {
+        const valuesSet = new Set(value);
+        if (field.checked)
+          valuesSet.add(fieldValue);
+        else
+          valuesSet.remove(fieldValue);
+        mRedmineParams[paramName] = Array.from(valuesSet);
+      }
+      else {
+        mRedmineParams[paramName] = field.checked;
+      }
+    }
+    else {
+      mRedmineParams[paramName] = fieldValue;
+    }
+    log('field value changed: ', field, fieldValue, mRedmineParams);
+  }, 150);
 }

@@ -5,3 +5,8 @@
 */
 
 @import url(/resources/dialog.css);
+
+#watcherUsers label {
+  display: inline-block;
+  white-space: nowrap;
+}
