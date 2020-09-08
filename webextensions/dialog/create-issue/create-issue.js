@@ -14,6 +14,7 @@ import {
 } from '/common/common.js';
 import { Message } from '/common/Message.js';
 import * as Redmine from '/common/redmine.js';
+import * as Commands from '/common/commands.js';
 
 Dialog.setLogger(log);
 
@@ -24,6 +25,7 @@ let mRedmineParams;
 const mProjectField      = document.querySelector('#project');
 const mDescriptionField  = document.querySelector('#description');
 const mParentIssueField  = document.querySelector('#parentIssue');
+const mParentIssueSubjectField = document.querySelector('#parentIssueSubject');
 const mStartDateEnabled  = document.querySelector('#startDateEnabled');
 const mStartDateField    = document.querySelector('#startDate');
 const mDueDateEnabled    = document.querySelector('#dueDateEnabled');
@@ -77,6 +79,24 @@ configs.$loaded.then(async () => {
         onChangeFieldValue(field);
       });
   }
+
+  Dialog.initButton(document.querySelector('#parentIssueChoose'), async _event => {
+    try {
+      const issue = await Commands.chooseIssue({
+        defaultId:      mRedmineParams.id,
+        projectId:      mRedmineParams.project_id,
+        openerWindowId: mParams.windowId
+      });
+      log('parent issue: ', issue);
+      if (issue) {
+        mParentIssueField.value = issue.id;
+        mParentIssueSubjectField.value = issue.subject;
+      }
+    }
+    catch(error) {
+      console.error(error);
+    }
+  });
 
   Dialog.initButton(mAcceptButton, async _event => {
   });
