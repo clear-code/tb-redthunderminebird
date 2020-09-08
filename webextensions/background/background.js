@@ -134,11 +134,19 @@ browser.menus.onClicked.addListener(async (info, tab) => {
       if (typeof configs.chooseIssueDialogTop == 'number')
         dialogParams.top = configs.chooseIssueDialogTop;
       try {
-        await Dialog.open(
+        const issueId = await Dialog.open(
           dialogParams,
           { message: messages[0].raw,
             title: browser.i18n.getMessage('dialog_chooseIssue_title_link') }
         );
+        if (issueId && issueId.detail) {
+          try {
+            await messages[0].setIssueId(issueId.detail);
+          }
+          catch(error) {
+            console.error(error);
+          }
+        }
       }
       catch(_error) {
       }

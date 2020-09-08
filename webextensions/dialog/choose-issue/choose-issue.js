@@ -47,6 +47,8 @@ configs.$loaded.then(async () => {
 
   mMessage = new Message(mParams.message);
   mRedmineParams = await mMessage.toRedmineParams();
+  log('mMessage: ', mMessage);
+  log('mRedmineParams ', mRedmineParams);
 
   mIssueIdField.addEventListener('input', _event => {
     if (mIssueIdField.throttled)
@@ -71,8 +73,7 @@ configs.$loaded.then(async () => {
     if (!mIssueIdField.value)
       return;
     try {
-      await mMessage.setIssueId(mIssueIdField.value);
-      Dialog.accept();
+      Dialog.accept(mIssueIdField.value);
     }
     catch(error) {
       console.error(error);
