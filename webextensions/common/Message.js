@@ -61,12 +61,26 @@ export class Message {
 
   async getBody() {
     const full = await this.getFull();
-    let lastPlaintext;
-    let lastHTML;
+    let lastMultipartPlaintext = '';
+    let lastMultipartHTML = '';
+    let lastPlaintext = '';
     for (const part of full.parts.slice(0).reverse()) {
       switch (part.contentType.replace(/\s*;.*$/, '')) {
-        case 'text/html':
-          lastHTML = part.body;
+        case 'multipart/alternative':
+          for (const subPart of part.parts) {
+            switch (subPart.contentType.replace(/\s*;.*$/, '')) {
+              case 'text/html':
+                lastMultipartHTML = subPart.body;
+                break;
+
+              case 'text/plain':
+                lastMultipartPlaintext = subPart.body;
+                break;
+
+              default:
+                break;
+            }
+          }
           break;
 
         case 'text/plain':
@@ -77,7 +91,8 @@ export class Message {
           break;
       }
     }
-    return (lastHTML ? Format.htmlToPlaintext(lastHTML) : lastPlaintext).replace(/\r\n?/g, '\n');
+    const bodyText = lastMultipartHTML ? Format.htmlToPlaintext(lastMultipartHTML) : lastMultipartPlaintext || lastPlaintext;
+    return bodyText.replace(/\r\n?/g, '\n');
   }
 
   async toRedmineParams() {
