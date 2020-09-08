@@ -1,0 +1,31 @@
+/*
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+
+@import url(./ui-color.css);
+@import url(/extlib/dialog.css);
+
+:root.debug .row {
+  outline: 1px dotted blue;
+}
+:root.debug .column {
+  outline: 1px dotted red;
+}
+:root.debug .column * {
+  outline: 1px dotted green;
+}
+
+.hidden {
+  display: none !important;
+}
+
+
+.row {
+  flex-direction: row;
+}
+.column {
+  flex-direction: column;
+}

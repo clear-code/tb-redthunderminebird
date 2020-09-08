@@ -4,30 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-@import url(/resources/ui-color.css);
-@import url(/extlib/dialog.css);
-
-:root.debug .row {
-  outline: 1px dotted blue;
-}
-:root.debug .column {
-  outline: 1px dotted red;
-}
-:root.debug .column * {
-  outline: 1px dotted green;
-}
-
-.hidden {
-  display: none !important;
-}
-
-
-.row {
-  flex-direction: row;
-}
-.column {
-  flex-direction: column;
-}
+@import url(/resources/base.css);
 
 
 #form > .flex-box {
