@@ -123,7 +123,7 @@ browser.menus.onClicked.addListener(async (info, tab) => {
 
     case 'linkToIssue': {
       const dialogParams = {
-        url:    '/dialog/link-to-issue/link-to-issue.html',
+        url:    '/dialog/choose-issue/choose-issue.html',
         modal:  !configs.debug,
         opener: await browser.windows.get(tab.windowId),
         width:  configs.chooseIssueDialogWidth,

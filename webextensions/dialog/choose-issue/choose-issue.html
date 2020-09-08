@@ -5,22 +5,22 @@
 <html class="dialog">
   <head>
     <meta charset="UTF-8">
-    <script type="module" src="./link-to-issue.js"></script>
-    <link rel="stylesheet" href="./link-to-issue.css">
+    <script type="module" src="./choose-issue.js"></script>
+    <link rel="stylesheet" href="./choose-issue.css">
     <title></title>
   </head>
   <body>
     <form id="form" class="dialog-content" action="#" method="GET">
       <div class="flex-box column">
-        <div><label>__MSG_dialog_linkToIssue_issueId_label__
+        <div><label>__MSG_dialog_chooseIssue_issueId_label__
                     <input id="issueId" type="number" style="width: 5em; text-align: right;"></label>
-             <button id="fetchMore">__MSG_dialog_linkToIssue_more_label__</button></div>
+             <button id="fetchMore">__MSG_dialog_chooseIssue_more_label__</button></div>
         <ul id="issues" class="flex-box column"></ul>
         <textarea id="description" rows="10" readonly="true"></textarea>
       </div>
       <div class="dialog-buttons">
-        <button id="accept" type="submit">__MSG_dialog_linkToIssue_accept_label__</button>
-        <button id="cancel">__MSG_dialog_linkToIssue_cancel_label__</button>
+        <button id="accept" type="submit">__MSG_dialog_chooseIssue_accept_label__</button>
+        <button id="cancel">__MSG_dialog_chooseIssue_cancel_label__</button>
       </div>
     </form>
   </body>
