@@ -19,8 +19,6 @@ import * as Redmine from '/common/redmine.js';
 Dialog.setLogger(log);
 
 let mParams;
-let mMessage;
-let mRedmineParams;
 
 const mIssueIdField      = document.querySelector('#issueId');
 const mFetchMoreButton   = document.querySelector('#fetchMore');
@@ -45,11 +43,6 @@ configs.$loaded.then(async () => {
 
   onConfigChange('debug');
 
-  mMessage = new Message(mParams.message);
-  mRedmineParams = await mMessage.toRedmineParams();
-  log('mMessage: ', mMessage);
-  log('mRedmineParams ', mRedmineParams);
-
   mIssueIdField.addEventListener('input', _event => {
     if (mIssueIdField.throttled)
       clearTimeout(mIssueIdField.throttled);
@@ -60,7 +53,7 @@ configs.$loaded.then(async () => {
   mIssuesContainer.addEventListener('change', _event => {
     onIssueChange();
   });
-  mAcceptButton.disabled = !!mRedmineParams.id;
+  mAcceptButton.disabled = !!mParams.defaultId;
 
   await fetchMore();
   onIssueChange();
@@ -73,7 +66,8 @@ configs.$loaded.then(async () => {
     if (!mIssueIdField.value)
       return;
     try {
-      Dialog.accept(mIssueIdField.value);
+      const radio = document.querySelector(`input[type="radio"][value="${mIssueIdField.value}"]`);
+      Dialog.accept(radio && radio.$issue);
     }
     catch(error) {
       console.error(error);
@@ -105,7 +99,7 @@ function onIssueChange() {
 let mLastOffset = 0;
 
 async function fetchMore() {
-  const issues = await Redmine.getIssues(mRedmineParams.project_id, {
+  const issues = await Redmine.getIssues(mParams.projectId, {
     offset: mLastOffset,
     limit:  10
   });
@@ -129,7 +123,8 @@ function createItem(issue) {
   radio.type = 'radio';
   radio.name = 'issueIds';
   radio.value = issue.id;
-  radio.checked = issue.id == mRedmineParams.id;
+  radio.checked = issue.id == mParams.defaultId;
+  radio.$issue = issue;
   const subject = label.appendChild(document.createElement('span'));
   subject.classList.add('subject');
   subject.textContent = `#${issue.id} ${issue.subject}`;
