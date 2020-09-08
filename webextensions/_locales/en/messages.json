@@ -14,6 +14,7 @@
 
   "dialog_chooseIssue_title_general": { "message": "Choose an issue" },
   "dialog_chooseIssue_title_link": { "message": "Choose an issue to link this thread to" },
+  "dialog_chooseIssue_title_parent": { "message": "Choose the parent issue" },
   "dialog_chooseIssue_issueId_label": { "message": "Link to #" },
   "dialog_chooseIssue_more_label": { "message": "Fetch next 10 issues" },
   "dialog_chooseIssue_accept_label": { "message": "OK" },

@@ -30,7 +30,7 @@ export async function chooseIssue({ defaultId, projectId, openerWindowId }) {
       dialogParams,
       { defaultId,
         projectId,
-        title: browser.i18n.getMessage('dialog_chooseIssue_title_link') }
+        title: browser.i18n.getMessage('dialog_chooseIssue_title_parent') }
     );
     if (result && result.detail) {
       log('chosen issue: ', result.detail);

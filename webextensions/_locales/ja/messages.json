@@ -14,6 +14,7 @@
 
   "dialog_chooseIssue_title_general": { "message": "チケット選択" },
   "dialog_chooseIssue_title_link": { "message": "チケット関連付け" },
+  "dialog_chooseIssue_title_parent": { "message": "親チケットを選択" },
   "dialog_linkToIssue_issueId_label": { "message": "関連チケット #" },
   "dialog_linkToIssue_more_label": { "message": "次の10件を取得" },
   "dialog_linkToIssue_accept_label": { "message": "OK" },
