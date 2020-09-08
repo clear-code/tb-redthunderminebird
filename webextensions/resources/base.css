@@ -43,6 +43,7 @@ div.grid-row {
 
 div.grid-row > * {
   display: table-cell;
+  padding-bottom: 0.25em;
   vertical-align: middle;
 }
 
