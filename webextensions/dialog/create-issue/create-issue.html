@@ -15,11 +15,11 @@
         <div class="grid">
           <div class="grid-row">
             <label for="project">__MSG_dialog_createIssue_project_label__</label>
-            <span class="grid-column"><select id="project" data-field="project_id"></select></span>
+            <span class="grid-column"><select id="project" data-field="project_id" data-value-type="integer"></select></span>
           </div>
           <div class="grid-row">
             <label for="tracker">__MSG_dialog_createIssue_tracker_label__</label>
-            <span class="grid-column"><select id="tracker" data-field="tracker_id"></select></span>
+            <span class="grid-column"><select id="tracker" data-field="tracker_id" data-value-type="integer"></select></span>
           </div>
           <div class="grid-row">
             <label for="subject">__MSG_dialog_createIssue_subject_label__</label>
@@ -32,18 +32,18 @@
           <div class="grid-row">
             <label for="parentIssue">__MSG_dialog_createIssue_parentIssue_label__</label>
             <span class="grid-column">
-              <input id="parentIssue" type="number" data-field="parent_issue_id">
+              <input id="parentIssue" type="number" data-field="parent_issue_id" data-value-type="integer">
               <input id="parentIssue_subject" type="text" disabled="true">
               <button id="parentIssue_choose">__MSG_dialog_createIssue_parentIssue_choose_label__</button>
             </span>
           </div>
           <div class="grid-row">
             <label for="status">__MSG_dialog_createIssue_status_label__</label>
-            <span class="grid-column"><select id="status" data-field="status_id"></select></span>
+            <span class="grid-column"><select id="status" data-field="status_id" data-value-type="integer"></select></span>
           </div>
           <div class="grid-row">
             <label for="assigned">__MSG_dialog_createIssue_assigned_label__</label>
-            <span class="grid-column"><select id="assigned" data-field="assigned_to_id"></select></span>
+            <span class="grid-column"><select id="assigned" data-field="assigned_to_id" data-value-type="integer"></select></span>
           </div>
           <div class="grid-row">
             <label>__MSG_dialog_createIssue_watcher_label__</label>
@@ -51,7 +51,7 @@
           </div>
           <div class="grid-row">
             <label for="version">__MSG_dialog_createIssue_version_label__</label>
-            <span class="grid-column"><select id="version" data-field="fixed_version_id"></select></span>
+            <span class="grid-column"><select id="version" data-field="fixed_version_id" data-value-type="integer"></select></span>
           </div>
           <div class="grid-row">
             <label>__MSG_dialog_createIssue_period_label__</label>
@@ -77,7 +77,7 @@
           <div class="grid-row">
             <label>__MSG_dialog_createIssue_other_label__</label>
             <div class="grid-column">
-              <label><input id="private" type="checkbox" data-field="is_private">
+              <label><input id="private" type="checkbox" data-field="is_private" data-value-type="boolean">
                      __MSG_dialog_createIssue_private_label__</label>
             </div>
           </div>
