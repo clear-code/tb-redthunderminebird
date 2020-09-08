@@ -33,16 +33,19 @@
 
 div.grid {
   display: table;
+  width: 100%;
 }
 
 div.grid-row {
   display: table-row;
+  width: 100%;
 }
 
 div.grid-row > * {
   display: table-cell;
   vertical-align: middle;
 }
-div.grid-row > *:last-child {
-  width: max-content;
+
+div.grid-row > *:last-child > *:first-child:last-child {
+  width: 100%;
 }
