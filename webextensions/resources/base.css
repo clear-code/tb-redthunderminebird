@@ -29,3 +29,20 @@
 .column {
   flex-direction: column;
 }
+
+
+div.grid {
+  display: table;
+}
+
+div.grid-row {
+  display: table-row;
+}
+
+div.grid-row > * {
+  display: table-cell;
+  vertical-align: middle;
+}
+div.grid-row > *:last-child {
+  width: max-content;
+}
