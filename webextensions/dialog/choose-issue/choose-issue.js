@@ -38,6 +38,7 @@ configs.$addObserver(onConfigChange);
 
 configs.$loaded.then(async () => {
   mParams = await Dialog.getParams();
+  log('mParams: ', mParams);
   document.title = mParams.title || browser.i18n.getMessage('dialog_chooseIssue_title_general');
 
   onConfigChange('debug');

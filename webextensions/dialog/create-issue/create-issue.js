@@ -46,6 +46,7 @@ configs.$addObserver(onConfigChange);
 
 configs.$loaded.then(async () => {
   mParams = await Dialog.getParams();
+  log('mParams: ', mParams);
 
   onConfigChange('debug');
 
@@ -87,7 +88,6 @@ configs.$loaded.then(async () => {
         projectId:      mRedmineParams.project_id,
         openerWindowId: mParams.windowId
       });
-      log('parent issue: ', issue);
       if (issue) {
         mParentIssueField.value = issue.id;
         mParentIssueSubjectField.value = issue.subject;
