@@ -72,6 +72,10 @@ configs.$loaded.then(async () => {
       if (field == mProjectField)
         reinitFieldsForProject();
     });
+    if (field.matches('textarea, input[type="text"], input[type="number"]'))
+      field.addEventListener('input', () => {
+        onChangeFieldValue(field);
+      });
   }
 
   Dialog.initButton(mAcceptButton, async _event => {
