@@ -54,9 +54,9 @@ export class Message {
   getSanitizedSubject() {
     const pattern = this.defaultTitleCleanupPattern;
     if (pattern)
-      return this.raw.subject.replace(new RegExp(pattern, 'gi'), '');
+      return this.raw.subject.replace(new RegExp(pattern, 'gi'), '').trim();
     else
-      return this.raw.subject;
+      return this.raw.subject.trim();
   }
 
   async getBody() {
@@ -92,7 +92,7 @@ export class Message {
       }
     }
     const bodyText = lastMultipartHTML ? Format.htmlToPlaintext(lastMultipartHTML) : lastMultipartPlaintext || lastPlaintext;
-    return bodyText.replace(/\r\n?/g, '\n');
+    return bodyText.replace(/\r\n?/g, '\n').trim();
   }
 
   async toRedmineParams() {
