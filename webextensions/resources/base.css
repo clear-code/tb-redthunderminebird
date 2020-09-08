@@ -22,6 +22,10 @@
   display: none !important;
 }
 
+textarea {
+  font: menu;
+}
+
 
 .row {
   flex-direction: row;
