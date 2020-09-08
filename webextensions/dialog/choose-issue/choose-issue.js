@@ -13,7 +13,6 @@ import {
   configs,
   log
 } from '/common/common.js';
-import { Message } from '/common/Message.js';
 import * as Redmine from '/common/redmine.js';
 
 Dialog.setLogger(log);

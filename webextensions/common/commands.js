@@ -11,9 +11,9 @@ import {
   configs,
   log
 } from '/common/common.js';
-import * as Redmine from '/common/redmine.js';
 
 export async function chooseIssue({ defaultId, projectId, openerWindowId }) {
+  log('choose issue: ', { defaultId, projectId, openerWindowId });
   const dialogParams = {
     url:    '/dialog/choose-issue/choose-issue.html',
     modal:  !configs.debug,
@@ -32,8 +32,10 @@ export async function chooseIssue({ defaultId, projectId, openerWindowId }) {
         projectId,
         title: browser.i18n.getMessage('dialog_chooseIssue_title_link') }
     );
-    if (result && result.detail)
+    if (result && result.detail) {
+      log('chosen issue: ', result.detail);
       return result.detail;
+    }
   }
   catch(_error) {
   }
