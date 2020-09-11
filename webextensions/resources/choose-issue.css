@@ -1,0 +1,55 @@
+/*
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+.choose-issues.issues {
+  background: -moz-field;
+  border: 1px solid;
+  color: -moz-fieldtext;
+  justify-content: flex-start;
+  margin: 0.5em 0;
+  min-height: 0; /* required to shrink this box for too many contents */
+  overflow-y: auto;
+  padding: 0;
+}
+
+.choose-issues.issues li {
+  flex-grow: 0;
+  list-style: none;
+}
+
+.choose-issues.issues li,
+.choose-issues.issues li label {
+  margin: 0;
+  padding: 0;
+}
+
+.choose-issues.issues .subject {
+  flex: 1;
+  line-height: 1.25;
+  padding: 0.25em;
+  /* We need to specify these properties instead of the flexible-container because text-overflow doesn't work for display:flex elements. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.choose-issues.issues .subject:hover {
+  background: var(--in-content-box-background-hover);
+}
+
+.choose-issues.issues input[type="radio"] {
+  opacity: 0;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.choose-issues.issues input[type="radio"]:checked + .subject {
+  background: Highlight;
+  color: HighlightText;
+}

@@ -6,23 +6,18 @@
 'use strict';
 
 import '/extlib/l10n.js';
-//import RichConfirm from '/extlib/RichConfirm.js';
 import * as Dialog from '/extlib/dialog.js';
 
 import {
   configs,
   log
 } from '/common/common.js';
-import * as Redmine from '/common/redmine.js';
+import * as ChooseIssue from '/common/choose-issue.js';
 
 Dialog.setLogger(log);
 
 let mParams;
 
-const mIssueIdField      = document.querySelector('#issueId');
-const mFetchMoreButton   = document.querySelector('#fetchMore');
-const mIssuesContainer   = document.querySelector('#issues');
-const mDescriptionField  = document.querySelector('#description');
 const mAcceptButton      = document.querySelector('#accept');
 const mCancelButton      = document.querySelector('#cancel');
 
@@ -43,30 +38,20 @@ configs.$loaded.then(async () => {
 
   onConfigChange('debug');
 
-  mIssueIdField.addEventListener('input', _event => {
-    if (mIssueIdField.throttled)
-      clearTimeout(mIssueIdField.throttled);
-    mIssueIdField.throttled = setTimeout(() => {
-      mAcceptButton.disabled = !!mIssueIdField.value;
-    }, 150);
+  await ChooseIssue.init(document.querySelector('choose-issues-container'), {
+    defaultId: mParams.defaultId,
+    projectId: mParams.projectId
   });
-  mIssuesContainer.addEventListener('change', _event => {
-    onIssueChange();
-  });
-  mAcceptButton.disabled = !!mParams.defaultId;
-
-  await fetchMore();
-  onIssueChange();
-
-  Dialog.initButton(mFetchMoreButton, _event => {
-    fetchMore();
+  ChooseIssue.onChanged.addListener(() => {
+    mAcceptButton.disabled = !!ChooseIssue.getIssueId();
   });
 
   Dialog.initButton(mAcceptButton, async _event => {
-    if (!mIssueIdField.value)
+    const id = ChooseIssue.getIssueId();
+    if (!id)
       return;
     try {
-      const radio = document.querySelector(`input[type="radio"][value="${mIssueIdField.value}"]`);
+      const radio = document.querySelector(`input[type="radio"][value="${id}"]`);
       Dialog.accept(radio && radio.$issue);
     }
     catch(error) {
@@ -86,48 +71,3 @@ configs.$loaded.then(async () => {
 
   Dialog.notifyReady();
 });
-
-function onIssueChange() {
-  const checkedRadio = mIssuesContainer.querySelector('input[type="radio"]:checked');
-  if (!checkedRadio)
-    return;
-  mDescriptionField.value = checkedRadio.closest('li').dataset.description;
-  mIssueIdField.value = checkedRadio.value;
-  mAcceptButton.disabled = false;
-}
-
-let mLastOffset = 0;
-
-async function fetchMore() {
-  const issues = await Redmine.getIssues(mParams.projectId, {
-    offset: mLastOffset,
-    limit:  10
-  });
-  const fragment = document.createDocumentFragment();
-  for (const issue of issues) {
-    fragment.appendChild(createItem(issue));
-  }
-  mIssuesContainer.appendChild(fragment);
-  mLastOffset += issues.length;
-}
-
-function createItem(issue) {
-  const row = document.createElement('li');
-  row.classList.add('flex-box');
-  row.classList.add('column');
-  row.dataset.description = issue.description.replace(/\r\n?/g, '\n');
-  const label = row.appendChild(document.createElement('label'));
-  label.classList.add('flex-box');
-  label.classList.add('row');
-  const radio = label.appendChild(document.createElement('input'));
-  radio.type = 'radio';
-  radio.name = 'issueIds';
-  radio.value = issue.id;
-  radio.checked = issue.id == mParams.defaultId;
-  radio.$issue = issue;
-  const subject = label.appendChild(document.createElement('span'));
-  subject.classList.add('subject');
-  subject.textContent = `#${issue.id} ${issue.subject}`;
-  row.setAttribute('title', subject.textContent);
-  return row;
-}

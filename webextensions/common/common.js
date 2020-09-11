@@ -66,3 +66,7 @@ export function log(message, ...args) {
   }
   console.log(`redthunderminebird: ${indent}${message}`, ...args);
 }
+
+export function sanitizeForHTMLText(text) {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
