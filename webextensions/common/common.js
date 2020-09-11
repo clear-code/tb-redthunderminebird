@@ -33,10 +33,10 @@ export const configs = new Configs({
   notesTemplate: '```\n%headers%\n\n%body%\n```',
 
 
-  chooseIssueDialogWidth: 500,
-  chooseIssueDialogHeight: 440,
-  chooseIssueDialogLeft: null,
-  chooseIssueDialogTop: null,
+  linkToIssueDialogWidth: 500,
+  linkToIssueDialogHeight: 440,
+  linkToIssueDialogLeft: null,
+  linkToIssueDialogTop: null,
 
   createIssueDialogWidth: 640,
   createIssueDialogHeight: 440,

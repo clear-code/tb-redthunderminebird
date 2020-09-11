@@ -34,11 +34,10 @@ configs.$addObserver(onConfigChange);
 configs.$loaded.then(async () => {
   mParams = await Dialog.getParams();
   log('mParams: ', mParams);
-  document.title = mParams.title || browser.i18n.getMessage('dialog_chooseIssue_title_general');
 
   onConfigChange('debug');
 
-  await ChooseIssue.init(document.querySelector('choose-issues-container'), {
+  await ChooseIssue.init(document.querySelector('choose-issue-container'), {
     defaultId: mParams.defaultId,
     projectId: mParams.projectId
   });
@@ -61,12 +60,12 @@ configs.$loaded.then(async () => {
   Dialog.initCancelButton(mCancelButton);
 
   window.addEventListener('resize', _event => {
-    configs.chooseIssueDialogWidth = window.outerWidth;
-    configs.chooseIssueDialogHeight = window.outerHeight;
+    configs.linkToIssueDialogWidth = window.outerWidth;
+    configs.linkToIssueDialogHeight = window.outerHeight;
   });
   window.addEventListener(Dialog.TYPE_MOVED, event => {
-    configs.chooseIssueDialogLeft = event.detail.left;
-    configs.chooseIssueDialogTop = event.detail.top;
+    configs.linkToIssueDialogLeft = event.detail.left;
+    configs.linkToIssueDialogTop = event.detail.top;
   });
 
   Dialog.notifyReady();

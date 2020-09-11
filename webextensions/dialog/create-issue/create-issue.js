@@ -14,7 +14,6 @@ import {
 } from '/common/common.js';
 import { Message } from '/common/Message.js';
 import * as Redmine from '/common/redmine.js';
-import * as Commands from '/common/commands.js';
 
 Dialog.setLogger(log);
 
@@ -82,6 +81,7 @@ configs.$loaded.then(async () => {
   }
 
   Dialog.initButton(document.querySelector('#parentIssueChoose'), async _event => {
+/*
     try {
       const issue = await Commands.chooseIssue({
         defaultId:      mRedmineParams.id,
@@ -96,6 +96,7 @@ configs.$loaded.then(async () => {
     catch(error) {
       console.error(error);
     }
+*/
   });
 
   Dialog.initButton(mAcceptButton, async _event => {

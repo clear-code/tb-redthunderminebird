@@ -13,7 +13,6 @@ import {
 } from '/common/common.js';
 import { Message } from '/common/Message.js';
 import * as Redmine from '/common/redmine.js';
-import * as Commands from '/common/commands.js';
 
 Dialog.setLogger(log);
 
@@ -124,13 +123,30 @@ browser.menus.onClicked.addListener(async (info, tab) => {
 
     case 'linkToIssue': {
       try {
-        const issue = await Commands.chooseIssue({
-          defaultId:      await messages[0].getIssueId(),
-          projectId:      messages[0].getProjectId(),
-          openerWindowId: tab.windowId
-        });
-        if (issue)
-          await messages[0].setIssueId(issue.id);
+        const dialogParams = {
+          url:    '/dialog/link-to-issue/link-to-issue.html',
+          modal:  !configs.debug,
+          opener: await browser.windows.get(tab.windowId),
+          width:  configs.linkToIssueDialogWidth,
+          height: configs.linkToIssueDialogHeight
+        };
+        if (typeof configs.linkToIssueDialogLeft == 'number')
+          dialogParams.left = configs.linkToIssueDialogLeft;
+        if (typeof configs.linkToIssueDialogTop == 'number')
+          dialogParams.top = configs.linkToIssueDialogTop;
+        try {
+          const result = await Dialog.open(
+            dialogParams,
+            { defaultId: await messages[0].getIssueId(),
+              projectId: messages[0].getProjectId() }
+          );
+          const issue = result && result.detail;
+          log('chosen issue: ', issue);
+          if (issue)
+            await messages[0].setIssueId(issue.id);
+        }
+        catch(_error) {
+        }
       }
       catch(error) {
         console.error(error);

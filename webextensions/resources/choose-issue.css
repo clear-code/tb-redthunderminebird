@@ -4,7 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-.choose-issues.issues {
+.choose-issue.issues {
   background: -moz-field;
   border: 1px solid;
   color: -moz-fieldtext;
@@ -15,18 +15,18 @@
   padding: 0;
 }
 
-.choose-issues.issues li {
+.choose-issue.issues li {
   flex-grow: 0;
   list-style: none;
 }
 
-.choose-issues.issues li,
-.choose-issues.issues li label {
+.choose-issue.issues li,
+.choose-issue.issues li label {
   margin: 0;
   padding: 0;
 }
 
-.choose-issues.issues .subject {
+.choose-issue.issues .subject {
   flex: 1;
   line-height: 1.25;
   padding: 0.25em;
@@ -36,11 +36,11 @@
   white-space: nowrap;
 }
 
-.choose-issues.issues .subject:hover {
+.choose-issue.issues .subject:hover {
   background: var(--in-content-box-background-hover);
 }
 
-.choose-issues.issues input[type="radio"] {
+.choose-issue.issues input[type="radio"] {
   opacity: 0;
   pointer-events: none;
   position: fixed;
@@ -49,7 +49,7 @@
   z-index: -1;
 }
 
-.choose-issues.issues input[type="radio"]:checked + .subject {
+.choose-issue.issues input[type="radio"]:checked + .subject {
   background: Highlight;
   color: HighlightText;
 }
