@@ -12,6 +12,7 @@ import * as Redmine from '/common/redmine.js';
 import * as Dialog from '/extlib/dialog.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 
+let mInitialized = false;
 let mDefaultId;
 let mProjectId;
 let mIssueIdField;
@@ -22,6 +23,10 @@ let mDescriptionField;
 export const onChanged = new EventListenerManager();
 
 export async function init(container, { defaultId, projectId }) {
+  if (!mInitialized)
+    return;
+  mInitialized = true;
+
   mDefaultId = defaultId;
   mProjectId = projectId;
 

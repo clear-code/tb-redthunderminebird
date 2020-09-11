@@ -14,6 +14,7 @@ import {
 } from '/common/common.js';
 import { Message } from '/common/Message.js';
 import * as Redmine from '/common/redmine.js';
+import * as ChooseIssue from '/common/choose-issue.js';
 
 Dialog.setLogger(log);
 
@@ -81,6 +82,11 @@ configs.$loaded.then(async () => {
   }
 
   Dialog.initButton(document.querySelector('#parentIssueChoose'), async _event => {
+    await ChooseIssue.init(document.querySelector('#choose-issue-dialog-contents-ui'), {
+      defaultId: 0,
+      projectId: mProjectField.value
+    });
+    document.querySelector('#choose-issue-dialog-container').classList.add('shown');
 /*
     try {
       const issue = await Commands.chooseIssue({
