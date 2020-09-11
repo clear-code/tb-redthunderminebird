@@ -29,10 +29,10 @@ export async function init(container, { defaultId, projectId }) {
   range.selectNodeContents(container);
   const fragment = range.createContextualFragment(`
     <div><label>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_chooseIssue_issueId_label'))}
-                <input class="choose-issues issue-id" type="number" style="width: 5em; text-align: right;"></label>
-         <button class="choose-issues fetch-more">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_chooseIssue_more_label'))}</button></div>
-    <ul class="choose-issues issues flex-box column"></ul>
-    <textarea class="choose-issues description" rows="10" readonly="true"></textarea>
+                <input class="choose-issue issue-id" type="number" style="width: 5em; text-align: right;"></label>
+         <button class="choose-issue fetch-more">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_chooseIssue_more_label'))}</button></div>
+    <ul class="choose-issue issues flex-box column"></ul>
+    <textarea class="choose-issue description" rows="10" readonly="true"></textarea>
   `.trim());
   range.insertNode(fragment);
   range.detach();
