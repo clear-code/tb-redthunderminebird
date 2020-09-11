@@ -37,7 +37,7 @@ configs.$loaded.then(async () => {
 
   onConfigChange('debug');
 
-  await ChooseIssue.init(document.querySelector('choose-issue-container'), {
+  await ChooseIssue.init(document.querySelector('#choose-issue-container'), {
     defaultId: mParams.defaultId,
     projectId: mParams.projectId
   });

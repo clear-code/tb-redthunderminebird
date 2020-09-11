@@ -33,7 +33,7 @@ export async function init(container, { defaultId, projectId }) {
          <button class="choose-issues fetch-more">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_chooseIssue_more_label'))}</button></div>
     <ul class="choose-issues issues flex-box column"></ul>
     <textarea class="choose-issues description" rows="10" readonly="true"></textarea>
-  `.strip());
+  `.trim());
   range.insertNode(fragment);
   range.detach();
   mIssueIdField      = container.querySelector('.issue-id');
