@@ -101,7 +101,7 @@ export class ChooseIssue {
       this.hide();
     });
 
-    return this.mDialog.querySelector('.choose-issue-dialog');
+    return this.mDialog.querySelector('.choose-issue-dialog-contents-ui');
   }
 
   get issue() {
