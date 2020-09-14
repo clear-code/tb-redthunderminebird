@@ -140,10 +140,8 @@ export async function createIssue(issue) {
   try {
     const files = issue.files;
     delete issue.files;
-    issue.uploads = [];
-    for (const file of files) {
-      issue.uploads.push(await upload(file));
-    }
+    if (files)
+      issue.uploads = await Promise.all(files.map(file => upload(file)));
     return request({
       method: 'POST',
       path:   'issues.json',
@@ -161,10 +159,8 @@ export async function updateIssue(issue) {
   try {
     const files = issue.files;
     delete issue.files;
-    issue.uploads = [];
-    for (const file of files) {
-      issue.uploads.push(await upload(file));
-    }
+    if (files)
+      issue.uploads = await Promise.all(files.map(file => upload(file)));
     const result = await request({
       method: 'PUT',
       path:   `issues/${issue.id}.json`,
