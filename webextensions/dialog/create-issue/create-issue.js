@@ -192,7 +192,7 @@ function initSelect(field, items, itemTranslator) {
       hasOldValueOption = true;
   }
 
-  if (oldValue)
+  if (oldValue && hasOldValueOption)
     field.value = oldValue;
   else
     field.value = '';
