@@ -24,10 +24,9 @@ let mParams;
 let mMessage;
 let mRedmineParams;
 let mIssueChooser;
-let mRelationsToBeRemoved = new Set();
+const mRelationsToBeRemoved = new Set();
 
 const mProjectField      = document.querySelector('#project');
-const mDescriptionField  = document.querySelector('#description');
 const mParentIssueField  = document.querySelector('#parentIssue');
 const mParentIssueSubjectField = document.querySelector('#parentIssueSubject');
 const mStartDateEnabled  = document.querySelector('#startDateEnabled');
@@ -35,7 +34,6 @@ const mStartDateField    = document.querySelector('#startDate');
 const mDueDateEnabled    = document.querySelector('#dueDateEnabled');
 const mDueDateField      = document.querySelector('#dueDate');
 const mRelationsField    = document.querySelector('#relations');
-const mPrivateField      = document.querySelector('#private');
 const mAcceptButton      = document.querySelector('#accept');
 const mCancelButton      = document.querySelector('#cancel');
 
