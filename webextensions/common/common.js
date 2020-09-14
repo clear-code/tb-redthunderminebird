@@ -31,8 +31,8 @@ export const configs = new Configs({
   defaultProject: '',
   mappedFolders: null,
 
-  descriptionTemplate: '```\n%headers%\n\n%body%\n```',
-  notesTemplate: '```\n%headers%\n\n%body%\n```',
+  descriptionTemplate: '<pre>\n%headers%\n\n%body%\n</pre>',
+  notesTemplate: '<pre>\n%headers%\n\n%body%\n</pre>',
 
 
   linkToIssueDialogWidth: 500,
