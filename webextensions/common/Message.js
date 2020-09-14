@@ -59,6 +59,21 @@ export class Message {
       return this.raw.subject.trim();
   }
 
+  // headers compatible to forwarded mails
+  getHeadersSummary(rawHeaders, fields) {
+    const headers = [];
+    for (const name of fields) {
+      if (!name)
+        continue;
+      const value = rawHeaders[name.toLowerCase()] || '';
+      const normalizedValue = (Array.isArray(value) ? value.join(', ') : value).trim();
+      if (!normalizedValue)
+        continue;
+      headers.push(`${name}: ${normalizedValue}`);
+    }
+    return headers.join('\n').trim();
+  }
+
   async getBody() {
     const full = await this.getFull();
     let lastMultipartPlaintext = '';
@@ -96,17 +111,18 @@ export class Message {
   }
 
   async toRedmineParams() {
-    const [issueId, body] = await Promise.all([
+    const [issueId, body, rawHeaders] = await Promise.all([
       this.getIssueId(),
-      this.getBody()
+      this.getBody(),
+      this.getFull().then(full => full.headers)
     ]);
     const params = {
       id:          issueId,
       subject:     this.getSanitizedSubject(),
       project_id:  this.getProjectId(),
       tracker_id:  configs.defaultTracker,
-      description: body,
-      note:        body
+      description: this.fillTemplate(configs.descriptionTemplate, { body, headers: this.getHeadersSummary(rawHeaders, configs.defaultDescriptionHeaders) }),
+      note:        this.fillTemplate(configs.notesTemplate, { body, headers: this.getHeadersSummary(rawHeaders, configs.defaultNotesHeaders) })
     };
 
     const dueDays = parseInt(configs.defaultDueDate);
@@ -114,5 +130,18 @@ export class Message {
       params.due_date = Format.formatDate(new Date(), dueDays);
 
     return params;
+  }
+
+  fillTemplate(template, { body, headers }) {
+    const bodyForMarkdown = body.trim().replace(/^(.*)(\r\n|\r|\n)/mg, (matched, prefix, linebreak) => {
+      if (matched.startsWith('>'))
+        return matched;
+      else
+        return `${prefix}  ${linebreak}`;
+    });
+    return template
+      .replace(/\%headers?\%/i, headers || '')
+      .replace(/\%body_?for_?markdown\%/i, bodyForMarkdown || '')
+      .replace(/\%body\%/i, body.trim() || '');
   }
 }
