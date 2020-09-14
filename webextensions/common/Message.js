@@ -103,11 +103,13 @@ export class Message {
           for (const subPart of part.parts) {
             switch (subPart.contentType.replace(/\s*;.*$/, '')) {
               case 'text/html':
-                lastHTML = subPart.body;
+                if (!subPart.name)
+                  lastHTML = subPart.body;
                 break;
 
               case 'text/plain':
-                lastPlaintext = subPart.body;
+                if (!subPart.name)
+                  lastPlaintext = subPart.body;
                 break;
 
               default:
@@ -117,11 +119,13 @@ export class Message {
           break;
 
         case 'text/plain':
-          lastPlaintext = part.body;
+          if (!part.name)
+            lastPlaintext = part.body;
           break;
 
         case 'text/html':
-          lastHTML = part.body;
+          if (!part.name)
+            lastHTML = part.body;
           break;
 
         default:
