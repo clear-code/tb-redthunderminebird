@@ -5,7 +5,7 @@
 */
 
 @import url(/resources/dialog.css);
-@import url(/resources/choose-issue.css);
+@import url(/resources/ChooseIssue.css);
 
 #watcherUsers label {
   display: inline-block;

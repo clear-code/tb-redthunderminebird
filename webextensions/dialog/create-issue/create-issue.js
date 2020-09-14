@@ -14,13 +14,14 @@ import {
 } from '/common/common.js';
 import { Message } from '/common/Message.js';
 import * as Redmine from '/common/redmine.js';
-import * as ChooseIssue from '/common/choose-issue.js';
+import { ChooseIssue } from '/common/ChooseIssue.js';
 
 Dialog.setLogger(log);
 
 let mParams;
 let mMessage;
 let mRedmineParams;
+let mIssueChooser;
 
 const mProjectField      = document.querySelector('#project');
 const mDescriptionField  = document.querySelector('#description');
@@ -81,28 +82,13 @@ configs.$loaded.then(async () => {
       });
   }
 
+  mIssueChooser = new ChooseIssue({
+    defaultId: 0,
+    projectId: mProjectField.value
+  });
+
   Dialog.initButton(document.querySelector('#parentIssueChoose'), async _event => {
-    await ChooseIssue.init(document.querySelector('#choose-issue-dialog-contents-ui'), {
-      defaultId: 0,
-      projectId: mProjectField.value
-    });
-    document.querySelector('#choose-issue-dialog-container').classList.add('shown');
-/*
-    try {
-      const issue = await Commands.chooseIssue({
-        defaultId:      mRedmineParams.id,
-        projectId:      mRedmineParams.project_id,
-        openerWindowId: mParams.windowId
-      });
-      if (issue) {
-        mParentIssueField.value = issue.id;
-        mParentIssueSubjectField.value = issue.subject;
-      }
-    }
-    catch(error) {
-      console.error(error);
-    }
-*/
+    mIssueChooser.show();
   });
 
   Dialog.initButton(mAcceptButton, async _event => {

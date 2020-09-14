@@ -12,7 +12,7 @@ import {
   configs,
   log
 } from '/common/common.js';
-import * as ChooseIssue from '/common/choose-issue.js';
+import { ChooseIssue } from '/common/ChooseIssue.js';
 
 Dialog.setLogger(log);
 
@@ -37,16 +37,17 @@ configs.$loaded.then(async () => {
 
   onConfigChange('debug');
 
-  await ChooseIssue.init(document.querySelector('#choose-issue-container'), {
+  const issueChooser = new ChooseIssue({
+    container: document.querySelector('#choose-issue-container'),
     defaultId: mParams.defaultId,
     projectId: mParams.projectId
   });
-  ChooseIssue.onChanged.addListener(() => {
-    mAcceptButton.disabled = !!ChooseIssue.getIssueId();
+  issueChooser.onChanged.addListener(() => {
+    mAcceptButton.disabled = !!issueChooser.issueId;
   });
 
   Dialog.initButton(mAcceptButton, async _event => {
-    const id = ChooseIssue.getIssueId();
+    const id = issueChooser.issueId;
     if (!id)
       return;
     try {
