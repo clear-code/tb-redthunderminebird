@@ -50,6 +50,8 @@
   "dialog_createIssue_relations_type_copiedFrom": { "message": "コピー元" },
   "dialog_createIssue_relation_delay_label_before": { "message": "遅延：" },
   "dialog_createIssue_relation_delay_label_after": { "message":  "日" },
+  "dialog_createIssue_relation_chooseIssue": { "message": "参照..." },
+  "dialog_createIssue_relation_remove": { "message":  "削除" },
   "dialog_createIssue_other_label": { "message": "その他" },
   "dialog_createIssue_private_label": { "message": "プライベート" },
   "dialog_createIssue_accept_label": { "message": "OK" },

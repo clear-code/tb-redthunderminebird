@@ -16,7 +16,7 @@ import EventListenerManager from '/extlib/EventListenerManager.js';
 export class ChooseIssue {
   constructor({ container, defaultId, projectId } = {}) {
     this.onChanged = new EventListenerManager();
-    this.onAccepted = new EventListenerManager();
+    this.onChose = new EventListenerManager();
 
     this.mDefaultId = defaultId;
     this.mProjectId = projectId;
@@ -65,6 +65,13 @@ export class ChooseIssue {
     range.detach();
     await this.fetchMore();
     this.mDialog.classList.add('shown');
+    return new Promise((resolve, _reject) => {
+      const onChose = issue => {
+        this.onChose.removeListener(onChose);
+        resolve(issue);
+      };
+      this.onChose.addListener(onChose);
+    });
   }
 
   hide() {
@@ -86,10 +93,11 @@ export class ChooseIssue {
     this.mDialog = document.body.lastChild;
 
     Dialog.initButton(this.mDialog.querySelector('.choose-issue-accept'), async _event => {
-      this.onAccepted.dispatch(this.issue);
+      this.onChose.dispatch(this.issue);
       this.hide();
     });
     Dialog.initButton(this.mDialog.querySelector('.choose-issue-cancel'), async _event => {
+      this.onChose.dispatch(null);
       this.hide();
     });
 

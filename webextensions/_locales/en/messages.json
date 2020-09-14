@@ -50,6 +50,8 @@
   "dialog_createIssue_relations_type_copiedFrom": { "message": "Copied from" },
   "dialog_createIssue_relation_delay_label_before": { "message": "Delay:" },
   "dialog_createIssue_relation_delay_label_after": { "message":  "day(s)" },
+  "dialog_createIssue_relation_chooseIssue": { "message": "Choose…" },
+  "dialog_createIssue_relation_remove": { "message":  "Remove" },
   "dialog_createIssue_other_label": { "message": "Other" },
   "dialog_createIssue_private_label": { "message": "Private" },
   "dialog_createIssue_accept_label": { "message": "OK" },

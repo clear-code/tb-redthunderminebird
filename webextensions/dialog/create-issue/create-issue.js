@@ -33,6 +33,7 @@ const mStartDateEnabled  = document.querySelector('#startDateEnabled');
 const mStartDateField    = document.querySelector('#startDate');
 const mDueDateEnabled    = document.querySelector('#dueDateEnabled');
 const mDueDateField      = document.querySelector('#dueDate');
+const mRelationsField    = document.querySelector('#relations');
 const mPrivateField      = document.querySelector('#private');
 const mAcceptButton      = document.querySelector('#accept');
 const mCancelButton      = document.querySelector('#cancel');
@@ -101,14 +102,48 @@ configs.$loaded.then(async () => {
     projectId: mProjectField.value
   });
   Dialog.initButton(document.querySelector('#parentIssueChoose'), async _event => {
-    mIssueChooser.show({
+    const issue = await mIssueChooser.show({
       defaultId: parseInt(mParentIssueField.value || 0),
       projectId: mProjectField.value
     });
+    if (issue) {
+      mParentIssueField.value = issue.id;
+      mParentIssueSubjectField.value = issue.subject;
+    }
   });
-  mIssueChooser.onAccepted.addListener(issue => {
-    mParentIssueField.value = issue.id;
-    mParentIssueSubjectField.value = issue.subject;
+
+  Dialog.initButton(document.querySelector('#addRelation'), _event => {
+    addRelationRow();
+  });
+  mRelationsField.addEventListener('change', event => {
+    const select = event.target && event.target.closest('select');
+    if (!select)
+      return;
+    const row = select.closest('li');
+    const relationDelayFields = row.querySelector('.relation-delay-fields');
+    const shouldShowDelayFields = select.value == 'precedes' || select.value == 'follows';
+    relationDelayFields.style.display = shouldShowDelayFields ? '' : 'none';
+  });
+  Dialog.initButton(mRelationsField, async event => {
+    const button = event.target && event.target.closest('button');
+    if (!button)
+      return;
+    const row = button.closest('li');
+    if (button.matches('.choose-related-issue')) {
+      const issueIdField = row.querySelector('.related-issue-id');
+      const issueSubjectField = row.querySelector('.related-issue-subject');
+      const issue = await mIssueChooser.show({
+        defaultId: parseInt(issueIdField.value || 0),
+        projectId: mProjectField.value
+      });
+      if (issue) {
+        issueIdField.value = issue.id;
+        issueSubjectField.value = issue.subject;
+      }
+    }
+    else if (button.matches('.remove-relation')) {
+      mRelationsField.removeChild(row);
+    }
   });
 
   Dialog.initButton(mAcceptButton, async _event => {
@@ -284,4 +319,33 @@ function onChangeFieldValue(field) {
     }
     log('field value changed: ', field, fieldValue, mRedmineParams);
   }, 150);
+}
+
+function addRelationRow() {
+  appendContents(mRelationsField, `
+    <li class="flex-box row">
+      <select class="relation-type" value="relates">
+        <option value="relates">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_relates'))}</option>
+        <option value="duplicates">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_duplicates'))}</option>
+        <option value="duplicated">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_duplicated'))}</option>
+        <option value="blocks">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_blocks'))}</option>
+        <option value="blocked">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_blocked'))}</option>
+        <option value="precedes">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_precedes'))}</option>
+        <option value="follows">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_follows'))}</option>
+        <option value="copied_to">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_copiedTo'))}</option>
+        <option value="copied_from">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_copiedFrom'))}</option>
+      </select>
+      <input class="related-issue-id" type="number" data-value-type="integer">
+      <span class="flex-box row">
+        <input class="related-issue-subject" type="text" disabled="true">
+        <label class="relation-delay-fields"
+               style="display:none"
+              >${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relation_delay_label_before'))}
+               <input class="relation-delay" type="number" data-value-type="integer" value="0" size="3">
+               ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relation_delay_label_after'))}</label>
+      </span>
+      <button class="choose-related-issue">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relation_chooseIssue'))}</button>
+      <button class="remove-relation">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relation_remove'))}</button>
+    </li>
+  `);
 }
