@@ -112,7 +112,7 @@ export class Message {
       }
     }
     const bodyText = lastMultipartHTML ? Format.htmlToPlaintext(lastMultipartHTML) : lastMultipartPlaintext || lastPlaintext;
-    return (bodyText || Format.htmlToPlaintext(lastHTML)).replace(/\r\n?/g, '\n').trim();
+    return (bodyText || lastHTML && Format.htmlToPlaintext(lastHTML) || '').replace(/\r\n?/g, '\n').trim();
   }
 
   async toRedmineParams() {
