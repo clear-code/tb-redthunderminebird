@@ -86,9 +86,15 @@ configs.$loaded.then(async () => {
     defaultId: 0,
     projectId: mProjectField.value
   });
-
   Dialog.initButton(document.querySelector('#parentIssueChoose'), async _event => {
-    mIssueChooser.show();
+    mIssueChooser.show({
+      defaultId: parseInt(mParentIssueField.value || 0),
+      projectId: mProjectField.value
+    });
+  });
+  mIssueChooser.onAccepted.addListener(issue => {
+    mParentIssueField.value = issue.id;
+    mParentIssueSubjectField.value = issue.subject;
   });
 
   Dialog.initButton(mAcceptButton, async _event => {

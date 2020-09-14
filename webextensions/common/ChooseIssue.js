@@ -15,17 +15,21 @@ import EventListenerManager from '/extlib/EventListenerManager.js';
 export class ChooseIssue {
   constructor({ container, defaultId, projectId } = {}) {
     this.onChanged = new EventListenerManager();
+    this.onAccepted = new EventListenerManager();
 
     this.mDefaultId = defaultId;
     this.mProjectId = projectId;
     this.mLastOffset = 0;
+
+    if (!container)
+      container = this.createDialog();
 
     const range = document.createRange();
     range.selectNodeContents(container);
     const fragment = range.createContextualFragment(`
       <div><label>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_chooseIssue_issueId_label'))}
                   <input class="choose-issue issue-id" type="number" style="width: 5em; text-align: right;"></label>
-           <button class="choose-issue fetch-more">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_chooseIssue_more_label'))}</button></div  >
+           <button class="choose-issue fetch-more">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_chooseIssue_more_label'))}</button></div>
       <ul class="choose-issue issues flex-box column"></ul>
       <textarea class="choose-issue description" rows="10" readonly="true"></textarea>
     `.trim());
@@ -50,12 +54,24 @@ export class ChooseIssue {
     Dialog.initButton(this.mFetchMoreButton, _event => {
       this.fetchMore();
     });
-
-    this.fetchMore().then(() => this.onIssueChange());
   }
 
-  show() {
+  async show({ defaultId, projectId } = {}) {
+    if (defaultId)
+      this.mDefaultId = defaultId;
+    if (projectId)
+      this.mProjectId = projectId;
+    this.mLastOffset = 0;
+    const range = document.createRange();
+    range.selectNodeContents(this.mIssuesContainer);
+    range.deleteContents();
+    range.detach();
+    await this.fetchMore();
     this.mDialog.classList.add('shown');
+  }
+
+  hide() {
+    this.mDialog.classList.remove('shown');
   }
 
   createDialog() {
@@ -63,12 +79,12 @@ export class ChooseIssue {
     range.selectNodeContents(document.body);
     range.collapse(false);
     const fragment = range.createContextualFragment(`
-      <div id="choose-issue-dialog-container">
-        <div id="choose-issue-dialog">
-          <div id="choose-issue-dialog-contents-ui"></div>
+      <div class="choose-issue-dialog-container">
+        <div class="choose-issue-dialog">
+          <div class="choose-issue-dialog-contents-ui"></div>
           <div class="dialog-buttons">
-            <button id="choose-issue-accept" type="submit">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_accept_label'))}</  button>
-            <button id="choose-issue-cancel">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_cancel_label'))}</button>
+            <button class="choose-issue-accept">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_accept_label'))}</button>
+            <button class="choose-issue-cancel">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_cancel_label'))}</button>
           </div>
         </div>
       </div>
@@ -79,9 +95,14 @@ export class ChooseIssue {
     this.mDialog = document.body.lastChild;
 
     Dialog.initButton(this.mDialog.querySelector('.choose-issue-accept'), async _event => {
+      this.onAccepted.dispatch(this.issue);
+      this.hide();
     });
     Dialog.initButton(this.mDialog.querySelector('.choose-issue-cancel'), async _event => {
+      this.hide();
     });
+
+    return this.mDialog;
   }
 
   get issue() {
@@ -103,6 +124,7 @@ export class ChooseIssue {
   }
 
   async fetchMore() {
+    const lastIssue = this.issue;
     const issues = await Redmine.getIssues(this.mProjectId, {
       offset: this.mLastOffset,
       limit:  10
@@ -113,6 +135,9 @@ export class ChooseIssue {
     }
     this.mIssuesContainer.appendChild(fragment);
     this.mLastOffset += issues.length;
+
+    if ((this.issue || {}).id != (lastIssue || {}).id)
+      this.onIssueChange(this.issue);
   }
 
   createItem(issue) {

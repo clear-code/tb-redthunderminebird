@@ -45,6 +45,7 @@ configs.$loaded.then(async () => {
   issueChooser.onChanged.addListener(issue => {
     mAcceptButton.disabled = !issue;
   });
+  await issueChooser.fetchMore(); // initial fetch
 
   Dialog.initButton(mAcceptButton, async _event => {
     const issue = issueChooser.issue;
