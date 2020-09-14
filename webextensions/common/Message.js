@@ -79,6 +79,7 @@ export class Message {
     let lastMultipartPlaintext = '';
     let lastMultipartHTML = '';
     let lastPlaintext = '';
+    let lastHTML;
     for (const part of full.parts.slice(0).reverse()) {
       switch (part.contentType.replace(/\s*;.*$/, '')) {
         case 'multipart/alternative':
@@ -102,12 +103,16 @@ export class Message {
           lastPlaintext = part.body;
           break;
 
+        case 'text/html':
+          lastHTML = part.body;
+          break;
+
         default:
           break;
       }
     }
     const bodyText = lastMultipartHTML ? Format.htmlToPlaintext(lastMultipartHTML) : lastMultipartPlaintext || lastPlaintext;
-    return bodyText.replace(/\r\n?/g, '\n').trim();
+    return (bodyText || Format.htmlToPlaintext(lastHTML)).replace(/\r\n?/g, '\n').trim();
   }
 
   async toRedmineParams() {
