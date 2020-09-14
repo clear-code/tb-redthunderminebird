@@ -116,13 +116,23 @@ export class Message {
       this.getBody(),
       this.getFull().then(full => full.headers)
     ]);
+    const description = this.fillTemplate(
+      configs.descriptionTemplate,
+      { body,
+        headers: this.getHeadersSummary(rawHeaders, configs.defaultDescriptionHeaders) }
+    );
+    const note = this.fillTemplate(
+      configs.notesTemplate,
+      { body,
+        headers: this.getHeadersSummary(rawHeaders, configs.defaultNotesHeaders) }
+    );
     const params = {
       id:          issueId,
       subject:     this.getSanitizedSubject(),
       project_id:  this.getProjectId(),
       tracker_id:  configs.defaultTracker,
-      description: this.fillTemplate(configs.descriptionTemplate, { body, headers: this.getHeadersSummary(rawHeaders, configs.defaultDescriptionHeaders) }),
-      note:        this.fillTemplate(configs.notesTemplate, { body, headers: this.getHeadersSummary(rawHeaders, configs.defaultNotesHeaders) })
+      description,
+      note
     };
 
     const dueDays = parseInt(configs.defaultDueDate);
