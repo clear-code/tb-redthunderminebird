@@ -81,7 +81,7 @@ export class ChooseIssue {
     const fragment = range.createContextualFragment(`
       <div class="choose-issue-dialog-container">
         <div class="choose-issue-dialog">
-          <div class="choose-issue-dialog-contents-ui"></div>
+          <div class="choose-issue-dialog-contents-ui flex-box column"></div>
           <div class="dialog-buttons">
             <button class="choose-issue-accept">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_accept_label'))}</button>
             <button class="choose-issue-cancel">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_cancel_label'))}</button>
@@ -102,7 +102,7 @@ export class ChooseIssue {
       this.hide();
     });
 
-    return this.mDialog;
+    return this.mDialog.querySelector('.choose-issue-dialog');
   }
 
   get issue() {

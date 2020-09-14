@@ -54,11 +54,20 @@
   color: HighlightText;
 }
 
+.choose-issue.description {
+  width: 100%;
+}
+
 
 /* dialog */
 
 .choose-issue-dialog-container {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.45);
   bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   left: 0;
   opacity: 1;
   position: fixed;
@@ -74,4 +83,5 @@
 .choose-issue-dialog {
   background: var(--bg-color);
   padding: 1em;
+  resize: both;
 }
