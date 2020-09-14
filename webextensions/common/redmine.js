@@ -138,10 +138,12 @@ async function upload(file) {
 export async function createIssue(issue) {
   log('create:', issue);
   try {
+    /*
     const files = issue.files;
     delete issue.files;
     if (files)
       issue.uploads = await Promise.all(files.map(file => upload(file)));
+    */
     return request({
       method: 'POST',
       path:   'issues.json',
@@ -157,10 +159,12 @@ export async function createIssue(issue) {
 export async function updateIssue(issue) {
   log('update:', issue);
   try {
+    /*
     const files = issue.files;
     delete issue.files;
     if (files)
       issue.uploads = await Promise.all(files.map(file => upload(file)));
+    */
     const result = await request({
       method: 'PUT',
       path:   `issues/${issue.id}.json`,

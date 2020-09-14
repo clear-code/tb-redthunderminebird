@@ -136,6 +136,23 @@ export class Message {
     return (bodyText || lastHTML && Format.htmlToPlaintext(lastHTML) || '').replace(/\r\n?/g, '\n').trim();
   }
 
+  /*
+  async getAttachments() {
+    const full = await this.getFull();
+    const attachments = [];
+    for (const part of full.parts) {
+      if (!part.name)
+        continue;
+
+      attachments.push({
+        name: part.name,
+        size: part.size
+      });
+    }
+    return attachments;
+  }
+  */
+
   async toRedmineParams() {
     const [issueId, body, rawHeaders] = await Promise.all([
       this.getIssueId(),
