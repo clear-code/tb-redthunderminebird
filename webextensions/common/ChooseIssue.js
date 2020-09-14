@@ -84,6 +84,11 @@ export class ChooseIssue {
     });
   }
 
+  get issue() {
+    const checkedRadio = this.mIssuesContainer.querySelector('input[type="radio"]:checked');
+    return checkedRadio && checkedRadio.$issue || null;
+  }
+
   get issueId() {
     return parseInt(this.mIssueIdField.value || 0);
   }
@@ -94,7 +99,7 @@ export class ChooseIssue {
       return;
     this.mDescriptionField.value = checkedRadio.closest('li').dataset.description;
     this.mIssueIdField.value = checkedRadio.value;
-    this.onChanged.dispatch();
+    this.onChanged.dispatch(checkedRadio.$issue);
   }
 
   async fetchMore() {

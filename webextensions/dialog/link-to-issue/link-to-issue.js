@@ -42,17 +42,16 @@ configs.$loaded.then(async () => {
     defaultId: mParams.defaultId,
     projectId: mParams.projectId
   });
-  issueChooser.onChanged.addListener(() => {
-    mAcceptButton.disabled = !!issueChooser.issueId;
+  issueChooser.onChanged.addListener(issue => {
+    mAcceptButton.disabled = !issue;
   });
 
   Dialog.initButton(mAcceptButton, async _event => {
-    const id = issueChooser.issueId;
-    if (!id)
+    const issue = issueChooser.issue;
+    if (!issue)
       return;
     try {
-      const radio = document.querySelector(`input[type="radio"][value="${id}"]`);
-      Dialog.accept(radio && radio.$issue);
+      Dialog.accept(issue);
     }
     catch(error) {
       console.error(error);
