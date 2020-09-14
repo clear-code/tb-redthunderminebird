@@ -39,7 +39,7 @@ export class Message {
 
     // We should return the ID of the most root level message in the thread,
     // because issue information can be modified with a message middle of the thread.
-    return issueIds[0];
+    return parseInt(issueIds[0]);
   }
 
   async setIssueId(issueId) {
@@ -48,7 +48,7 @@ export class Message {
   }
 
   getProjectId() {
-    return configs.mappedFolders[this.raw.folder.path] || configs.defaultProject || null;
+    return parseInt(configs.mappedFolders[this.raw.folder.path] || configs.defaultProject || 0);
   }
 
   getSanitizedSubject() {
