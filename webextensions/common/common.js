@@ -67,6 +67,15 @@ export function log(message, ...args) {
   console.log(`redthunderminebird: ${indent}${message}`, ...args);
 }
 
+export function appendContents(parent, source) {
+  const range = document.createRange();
+  range.selectNodeContents(parent);
+  range.collapse(false);
+  const fragment = range.createContextualFragment(source.trim());
+  range.insertNode(fragment);
+  range.detach();
+}
+
 export function sanitizeForHTMLText(text) {
-  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return String(text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }

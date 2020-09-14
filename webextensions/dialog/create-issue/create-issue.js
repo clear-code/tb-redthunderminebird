@@ -10,7 +10,9 @@ import * as Dialog from '/extlib/dialog.js';
 
 import {
   configs,
-  log
+  log,
+  appendContents,
+  sanitizeForHTMLText
 } from '/common/common.js';
 import { Message } from '/common/Message.js';
 import * as Redmine from '/common/redmine.js';
@@ -134,18 +136,16 @@ function initSelect(field, items, itemTranslator) {
   range.detach();
 
   let hasOldValueOption = false;
-  const fragment = document.createDocumentFragment();
   for (const item of items) {
     const translated = itemTranslator(item);
     if (!translated)
       continue;
-    const option = fragment.appendChild(document.createElement('option'));
-    option.textContent = translated.label;
-    option.value = translated.value;
+    appendContents(field, `
+      <option value=${JSON.strigify(sanitizeForHTMLText(translated.value))}>${sanitizeForHTMLText(translated.label)}</option>
+    `);
     if (oldValue && translated.value == oldValue)
       hasOldValueOption = true;
   }
-  field.appendChild(fragment);
 
   if (oldValue)
     field.value = oldValue;
@@ -211,19 +211,16 @@ async function initWatchers(projectId, cachedMembers) {
   range.deleteContents();
   range.detach();
 
-  const fragment = document.createDocumentFragment();
   for (const member of members) {
     if (!member.user)
       continue;
-    const label = fragment.appendChild(document.createElement('label'));
-    const checkbox = label.appendChild(document.createElement('input'));
-    checkbox.type = 'checkbox';
-    checkbox.value = member.user.id;
-    checkbox.dataset.field = 'watcher_user_ids[]';
-    checkbox.dataset.valueType = 'integer';
-    label.appendChild(document.createTextNode(member.user.name));
+    appendContents(container, `
+      <label><input type="checkbox"
+                    value=${JSON.stringify(sanitizeForHTMLText(member.user.id))}
+                    data-field="watcher_user_ids[]"
+                    data-value-type="integer">${sanitizeForHTMLText(member.user.name)}</label>
+    `);
   }
-  container.appendChild(fragment);
 }
 
 async function reinitFieldsForProject() {

@@ -6,6 +6,7 @@
 'use strict';
 
 import {
+  appendContents,
   sanitizeForHTMLText
 } from '/common/common.js';
 import * as Redmine from '/common/redmine.js';
@@ -24,17 +25,13 @@ export class ChooseIssue {
     if (!container)
       container = this.createDialog();
 
-    const range = document.createRange();
-    range.selectNodeContents(container);
-    const fragment = range.createContextualFragment(`
+    appendContents(container, `
       <div><label>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_chooseIssue_issueId_label'))}
                   <input class="choose-issue issue-id" type="number" style="width: 5em; text-align: right;"></label>
            <button class="choose-issue fetch-more">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_chooseIssue_more_label'))}</button></div>
       <ul class="choose-issue issues flex-box column"></ul>
       <textarea class="choose-issue description" rows="10" readonly="true"></textarea>
-    `.trim());
-    range.insertNode(fragment);
-    range.detach();
+    `);
     this.mIssueIdField      = container.querySelector('.issue-id');
     this.mFetchMoreButton   = container.querySelector('.fetch-more');
     this.mIssuesContainer   = container.querySelector('.issues');
@@ -75,10 +72,7 @@ export class ChooseIssue {
   }
 
   createDialog() {
-    const range = document.createRange();
-    range.selectNodeContents(document.body);
-    range.collapse(false);
-    const fragment = range.createContextualFragment(`
+    appendContents(document.body, `
       <div class="choose-issue-dialog-container">
         <div class="choose-issue-dialog">
           <div class="choose-issue-dialog-contents-ui flex-box column"></div>
@@ -88,10 +82,7 @@ export class ChooseIssue {
           </div>
         </div>
       </div>
-    `.trim());
-    range.insertNode(fragment);
-    range.detach();
-
+    `);
     this.mDialog = document.body.lastChild;
 
     Dialog.initButton(this.mDialog.querySelector('.choose-issue-accept'), async _event => {
@@ -118,7 +109,7 @@ export class ChooseIssue {
     const checkedRadio = this.mIssuesContainer.querySelector('input[type="radio"]:checked');
     if (!checkedRadio)
       return;
-    this.mDescriptionField.value = checkedRadio.closest('li').dataset.description;
+    this.mDescriptionField.value = checkedRadio.$issue.description.replace(/\r\n?/g, '\n');
     this.mIssueIdField.value = checkedRadio.value;
     this.onChanged.dispatch(checkedRadio.$issue);
   }
@@ -129,35 +120,23 @@ export class ChooseIssue {
       offset: this.mLastOffset,
       limit:  10
     });
-    const fragment = document.createDocumentFragment();
     for (const issue of issues) {
-      fragment.appendChild(this.createItem(issue));
+      appendContents(this.mIssuesContainer, `
+        <li class="flex-box column"
+            title=${JSON.stringify(sanitizeForHTMLText(issue.subject))}
+           ><label class="flex-box row"
+                  ><input type="radio"
+                          name="issueIds"
+                          value=${JSON.stringify(sanitizeForHTMLText(issue.id))}
+                          ${issue.id == this.mDefaultId ? 'checked' : ''}
+                         ><span class="subject"
+                               >#${sanitizeForHTMLText(issue.id)} ${sanitizeForHTMLText(issue.subject)}</span></label></li>
+      `);
+      this.mIssuesContainer.lastChild.querySelector('input[type="radio"]').$issue = issue;
     }
-    this.mIssuesContainer.appendChild(fragment);
     this.mLastOffset += issues.length;
 
     if ((this.issue || {}).id != (lastIssue || {}).id)
-      this.onIssueChange(this.issue);
-  }
-
-  createItem(issue) {
-    const row = document.createElement('li');
-    row.classList.add('flex-box');
-    row.classList.add('column');
-    row.dataset.description = issue.description.replace(/\r\n?/g, '\n');
-    const label = row.appendChild(document.createElement('label'));
-    label.classList.add('flex-box');
-    label.classList.add('row');
-    const radio = label.appendChild(document.createElement('input'));
-    radio.type = 'radio';
-    radio.name = 'issueIds';
-    radio.value = issue.id;
-    radio.checked = issue.id == this.mDefaultId;
-    radio.$issue = issue;
-    const subject = label.appendChild(document.createElement('span'));
-    subject.classList.add('subject');
-    subject.textContent = `#${issue.id} ${issue.subject}`;
-    row.setAttribute('title', subject.textContent);
-    return row;
+      this.onIssueChange();
   }
 }
