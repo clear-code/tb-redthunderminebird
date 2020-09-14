@@ -24,6 +24,7 @@ let mParams;
 let mMessage;
 let mRedmineParams;
 let mIssueChooser;
+let mRelationsToBeRemoved = new Set();
 
 const mProjectField      = document.querySelector('#project');
 const mDescriptionField  = document.querySelector('#description');
@@ -143,11 +144,20 @@ configs.$loaded.then(async () => {
       }
     }
     else if (button.matches('.remove-relation')) {
+      if (row.dataset.id)
+        mRelationsToBeRemoved.add(row.dataset.id);
       mRelationsField.removeChild(row);
     }
   });
 
   Dialog.initButton(mAcceptButton, async _event => {
+    try {
+      const issue = await createIssue();
+      Dialog.accept(issue);
+    }
+    catch(error) {
+      console.error(error);
+    }
   });
   Dialog.initCancelButton(mCancelButton);
 
@@ -324,9 +334,37 @@ function onChangeFieldValue(field) {
   }, 150);
 }
 
+async function createIssue() {
+  if (!mProjectField.value) {
+    alert(browser.i18n.getMessage('dialog_createIssue_error_missingProjectId'));
+    return;
+  }
+
+  const paramNames = new Set();
+  for (const field of document.querySelectorAll('[data-field]')) {
+    const name = field.dataset.field;
+    paramNames.add(name.replace(/\[\]$/, ''));
+  }
+  const createParams = {};
+  for (const paramName of paramNames) {
+    createParams[paramName] = mRedmineParams[paramName];
+  }
+  createParams.start_date = mStartDateEnabled.checked ? mStartDateField.value : '';
+  createParams.due_date = mDueDateEnabled.checked ? mDueDateField.value : '';
+
+  const result = await Redmine.createIssue(createParams);
+  const issue = result && result.issue;
+  console.log('created issue: ', issue);
+  if (issue && issue.id)
+    await saveRelations(issue.id);
+
+  return issue;
+}
+
 function addRelationRow() {
   appendContents(mRelationsField, `
-    <li class="flex-box row">
+    <li class="flex-box row"
+        data-id="">
       <select class="relation-type" value="relates">
         <option value="relates">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_relates'))}</option>
         <option value="duplicates">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_duplicates'))}</option>
@@ -351,4 +389,46 @@ function addRelationRow() {
       <button class="remove-relation">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relation_remove'))}</button>
     </li>
   `);
+}
+
+async function saveRelations(issueId) {
+  const requests = [];
+
+  for (const id of mRelationsToBeRemoved) {
+    requests.push(Redmine.deleteRelation(id));
+  }
+  mRelationsToBeRemoved.clear();
+
+  for (const row of mRelationsField.childNodes) {
+    const relation = {
+      relation_type: row.querySelector('.relation-type').value,
+      issue_id:      issueId,
+      issue_to_id:   parseInt(row.querySelector('.related-issue-id').value || 0)
+    };
+    if (row.dataset.id)
+      relation.id = parseInt(row.dataset.id);
+    if (relation.relation_type == 'precedes' ||
+        relation.relation_type == 'follows')
+      relation.delay = parseInt(row.querySelector('.relation-delay').value || 0);
+
+    if (relation.id &&
+        row.$originalRelation &&
+        row.$originalRelation.relation_type == relation.relation_type &&
+        row.$originalRelation.issue_to_id == relation.issue_to_id &&
+        row.$originalRelation.delay == relation.delay)
+      continue;
+
+    if (relation.issue_to_id) {
+      requests.push(Redmine.saveRelation(relation));
+    }
+    else {
+      if (relation.id)
+        requests.push(Redmine.deleteRelation(row.dataset.id));
+      delete row.$originalRelation;
+    }
+  }
+
+  const results = await Promise.all(requests);
+  console.log('saved relations: ', results);
+  return results;
 }
