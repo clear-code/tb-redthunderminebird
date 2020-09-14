@@ -99,6 +99,23 @@ export class Message {
           }
           break;
 
+        case 'multipart/mixed':
+          for (const subPart of part.parts) {
+            switch (subPart.contentType.replace(/\s*;.*$/, '')) {
+              case 'text/html':
+                lastHTML = subPart.body;
+                break;
+
+              case 'text/plain':
+                lastPlaintext = subPart.body;
+                break;
+
+              default:
+                break;
+            }
+          }
+          break;
+
         case 'text/plain':
           lastPlaintext = part.body;
           break;
