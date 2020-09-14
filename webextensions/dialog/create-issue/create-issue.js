@@ -176,7 +176,8 @@ function initSelect(field, items, itemTranslator) {
     if (!translated)
       continue;
     appendContents(field, `
-      <option value=${JSON.stringify(sanitizeForHTMLText(translated.value))}>${sanitizeForHTMLText(translated.label)}</option>
+      <option value=${JSON.stringify(sanitizeForHTMLText(translated.value))}
+             >${sanitizeForHTMLText(translated.label)}</option>
     `);
     if (oldValue && translated.value == oldValue)
       hasOldValueOption = true;
@@ -253,7 +254,8 @@ async function initWatchers(projectId, cachedMembers) {
       <label><input type="checkbox"
                     value=${JSON.stringify(sanitizeForHTMLText(member.user.id))}
                     data-field="watcher_user_ids[]"
-                    data-value-type="integer">${sanitizeForHTMLText(member.user.name)}</label>
+                    data-value-type="integer"
+                   >${sanitizeForHTMLText(member.user.name)}</label>
     `);
   }
 }
