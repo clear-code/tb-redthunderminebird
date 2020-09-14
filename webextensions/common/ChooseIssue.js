@@ -81,7 +81,7 @@ export class ChooseIssue {
   createDialog() {
     appendContents(document.body, `
       <div class="choose-issue-dialog-container">
-        <div class="choose-issue-dialog">
+        <div class="choose-issue-dialog flex-box column">
           <div class="choose-issue-dialog-contents-ui flex-box column"></div>
           <div class="dialog-buttons">
             <button class="choose-issue-accept">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_accept_label'))}</button>

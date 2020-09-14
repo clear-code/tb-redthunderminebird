@@ -80,8 +80,14 @@
   opacity: 0;
 }
 
+.choose-issue-dialog-contents-ui {
+  min-height: 0;
+}
+
 .choose-issue-dialog {
   background: var(--bg-color);
+  max-height: 90%;
+  max-width: 90%;
   padding: 1em;
   resize: both;
 }
