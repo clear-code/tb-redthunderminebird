@@ -48,14 +48,19 @@ configs.$loaded.then(async () => {
   await issueChooser.fetchMore(); // initial fetch
 
   Dialog.initButton(mAcceptButton, async _event => {
+    mAcceptButton.disabled = mCancelButton.disabled = true;
     const issue = issueChooser.issue;
-    if (!issue)
-      return;
     try {
+      if (!issue)
+        return;
       Dialog.accept(issue);
     }
     catch(error) {
       console.error(error);
+    }
+    finally {
+      mAcceptButton.disabled = !issue;
+      mCancelButton.disabled = false;
     }
   });
   Dialog.initCancelButton(mCancelButton);

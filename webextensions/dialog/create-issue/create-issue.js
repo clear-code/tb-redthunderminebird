@@ -149,12 +149,16 @@ configs.$loaded.then(async () => {
   });
 
   Dialog.initButton(mAcceptButton, async _event => {
+    mAcceptButton.disabled = mCancelButton.disabled = true;
     try {
       const issue = await createIssue();
       Dialog.accept(issue);
     }
     catch(error) {
       console.error(error);
+    }
+    finally {
+      mAcceptButton.disabled = mCancelButton.disabled = false;
     }
   });
   Dialog.initCancelButton(mCancelButton);
