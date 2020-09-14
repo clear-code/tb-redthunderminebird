@@ -119,6 +119,7 @@ export async function ping() {
     });
 }
 
+/*
 async function upload(file) {
   log('upload:', file.name, file.data.byteLength);
   const result = await request({
@@ -134,6 +135,7 @@ async function upload(file) {
     description:  ''
   };
 }
+*/
 
 export async function createIssue(issue) {
   log('create:', issue);
