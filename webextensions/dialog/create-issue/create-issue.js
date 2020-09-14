@@ -82,6 +82,18 @@ configs.$loaded.then(async () => {
       });
   }
 
+  mStartDateEnabled.checked = false;
+  mStartDateEnabled.addEventListener('change', () => {
+    mStartDateField.disabled = !mStartDateEnabled.checked;
+  });
+  mStartDateField.disabled = true;
+
+  mDueDateEnabled.checked = false;
+  mDueDateEnabled.addEventListener('change', () => {
+    mDueDateField.disabled = !mDueDateEnabled.checked;
+  });
+  mDueDateField.disabled = true;
+
   mIssueChooser = new ChooseIssue({
     defaultId: 0,
     projectId: mProjectField.value
