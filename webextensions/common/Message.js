@@ -65,11 +65,11 @@ export class Message {
     for (const name of fields) {
       if (!name)
         continue;
-      const value = rawHeaders[name.toLowerCase()] || '';
-      const normalizedValue = (Array.isArray(value) ? value.join(', ') : value).trim();
-      if (!normalizedValue)
+      const normalizedName = name.toLowerCase();
+      const value = (normalizedName == 'subject') ? this.raw.subject.trim() : (rawHeaders[normalizedName] || []).join(', ').trim();
+      if (!value)
         continue;
-      headers.push(`${name}: ${normalizedValue}`);
+      headers.push(`${name}: ${value}`);
     }
     return headers.join('\n').trim();
   }
