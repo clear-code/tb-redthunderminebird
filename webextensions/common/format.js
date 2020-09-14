@@ -6,9 +6,41 @@
 'use strict';
 
 export function htmlToPlaintext(source) {
-  return source
-    .replace(/<br(\s[^>]*)?>|<\/(h[0-5]|p|div|pre|li|ul|ol)(\s[^>]*)?>/g, '\n')
-    .replace(/<[^>]+>/g, '');
+  const doc = (new DOMParser()).parseFromString(source, 'text/html');
+  return nodeToText(doc.body || doc);
+}
+
+function nodeToText(node, preformatted = false) {
+  let suffix = '';
+  switch (node.nodeType) {
+    case Node.ELEMENT_NODE:
+      switch (node.localName.toLowerCase()) {
+        case 'br':
+          return '\n';
+
+        case 'pre':
+          preformatted = true;
+        case 'h0':
+        case 'h1':
+        case 'h2':
+        case 'h3':
+        case 'h4':
+        case 'h5':
+        case 'p':
+        case 'div':
+        case 'li':
+          suffix = '\n';
+          break;
+      }
+    case Node.DOCUMENT_NODE:
+      return `${Array.from(node.childNodes, node => nodeToText(node)).join('')}${suffix}`;
+
+    case Node.TEXT_NODE:
+      return preformatted ? node.nodeValue : node.nodeValue.replace(/\s\s+/g, ' ');
+
+    default:
+      return '';
+  }
 }
 
 export function formatDate(base, deltaDays) {
