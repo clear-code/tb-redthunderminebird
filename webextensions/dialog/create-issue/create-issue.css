@@ -11,6 +11,11 @@
   white-space: nowrap;
 }
 
+#description {
+  width: 100%;
+  resize: vertical;
+}
+
 #watcherUsers label {
   display: inline-block;
   white-space: nowrap;

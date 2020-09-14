@@ -56,6 +56,7 @@
 
 .choose-issue.description {
   width: 100%;
+  resize: vertical;
 }
 
 
