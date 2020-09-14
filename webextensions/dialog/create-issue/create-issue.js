@@ -176,7 +176,7 @@ function initSelect(field, items, itemTranslator) {
     if (!translated)
       continue;
     appendContents(field, `
-      <option value=${JSON.strigify(sanitizeForHTMLText(translated.value))}>${sanitizeForHTMLText(translated.label)}</option>
+      <option value=${JSON.stringify(sanitizeForHTMLText(translated.value))}>${sanitizeForHTMLText(translated.label)}</option>
     `);
     if (oldValue && translated.value == oldValue)
       hasOldValueOption = true;
