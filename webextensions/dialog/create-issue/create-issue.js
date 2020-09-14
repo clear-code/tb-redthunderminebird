@@ -109,6 +109,7 @@ configs.$loaded.then(async () => {
     if (issue) {
       mParentIssueField.value = issue.id;
       mParentIssueSubjectField.value = issue.subject;
+      onChangeFieldValue(mParentIssueField);
     }
   });
 
