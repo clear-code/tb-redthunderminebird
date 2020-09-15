@@ -90,7 +90,10 @@ async function createIssue() {
 
   if (issue && issue.id) {
     mIssueEditor.issueId = issue.id;
-    await mIssueEditor.saveRelations();
+    await Promise.all([
+      mMessage.setIssueId(issue.id),
+      mIssueEditor.saveRelations()
+    ]);
   }
 
   return issue;
