@@ -164,7 +164,7 @@ export class Message {
       { body,
         headers: this.getHeadersSummary(rawHeaders, configs.defaultDescriptionHeaders) }
     );
-    const note = this.fillTemplate(
+    const notes = this.fillTemplate(
       configs.notesTemplate,
       { body,
         headers: this.getHeadersSummary(rawHeaders, configs.defaultNotesHeaders) }
@@ -175,7 +175,7 @@ export class Message {
       project_id:  this.getProjectId(),
       tracker_id:  configs.defaultTracker,
       description,
-      note
+      notes
     };
 
     const dueDays = parseInt(configs.defaultDueDate);
