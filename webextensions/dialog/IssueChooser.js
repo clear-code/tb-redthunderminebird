@@ -64,7 +64,7 @@ export class IssueChooser {
     range.deleteContents();
     range.detach();
     await this.fetchMore();
-    this.mDialog.classList.add('shown');
+    this.mDialog.show();
     return new Promise((resolve, _reject) => {
       const onChose = issue => {
         this.onChose.removeListener(onChose);
@@ -75,33 +75,26 @@ export class IssueChooser {
   }
 
   hide() {
-    this.mDialog.classList.remove('shown');
+    this.mDialog.hide();
   }
 
   createDialog() {
-    appendContents(document.body, `
-      <div class="choose-issue-dialog-container">
-        <div class="choose-issue-dialog flex-box column">
-          <div class="choose-issue-dialog-contents-ui flex-box column"></div>
-          <div class="dialog-buttons">
-            <button class="choose-issue-accept">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_accept_label'))}</button>
-            <button class="choose-issue-cancel">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_cancel_label'))}</button>
-          </div>
-        </div>
-      </div>
+    this.mDialog =  new Dialog.InPageDialog();
+    appendContents(this.mDialog.buttons, `
+      <button class="choose-issue-accept">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_accept_label'))}</button>
+      <button class="choose-issue-cancel">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_cancel_label'))}</button>
     `);
-    this.mDialog = document.body.lastChild;
 
-    Dialog.initButton(this.mDialog.querySelector('.choose-issue-accept'), async _event => {
+    Dialog.initButton(this.mDialog.buttons.firstChild, async _event => {
       this.onChose.dispatch(this.issue);
       this.hide();
     });
-    Dialog.initButton(this.mDialog.querySelector('.choose-issue-cancel'), async _event => {
+    Dialog.initButton(this.mDialog.buttons.lastChild, async _event => {
       this.onChose.dispatch(null);
       this.hide();
     });
 
-    return this.mDialog.querySelector('.choose-issue-dialog-contents-ui');
+    return this.mDialog.contents;
   }
 
   get issue() {
