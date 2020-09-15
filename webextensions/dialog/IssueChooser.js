@@ -47,6 +47,12 @@ export class IssueChooser {
     this.mIssuesContainer.addEventListener('change', _event => {
       this.onIssueChange();
     });
+    this.mIssuesContainer.addEventListener('dblclick', event => {
+      if (event.target.closest('li') &&
+          this.issue)
+        this.onChose.dispatch(this.issue);
+        this.mDialog.hide();
+    });
 
     Dialog.initButton(this.mFetchMoreButton, _event => {
       this.fetchMore();
