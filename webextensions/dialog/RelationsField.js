@@ -10,7 +10,7 @@ import {
   sanitizeForHTMLText
 } from '/common/common.js';
 import * as Redmine from '/common/redmine.js';
-import { ChooseIssue } from '/common/ChooseIssue.js';
+import { ChooseIssue } from '/dialog/ChooseIssue.js';
 import * as Dialog from '/extlib/dialog.js';
 
 export class RelationsField {

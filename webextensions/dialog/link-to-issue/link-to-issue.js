@@ -12,7 +12,7 @@ import {
   configs,
   log
 } from '/common/common.js';
-import { ChooseIssue } from '/common/ChooseIssue.js';
+import { ChooseIssue } from '/dialog/ChooseIssue.js';
 
 Dialog.setLogger(log);
 
