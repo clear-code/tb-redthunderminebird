@@ -82,6 +82,9 @@ export class IssueEditor {
           subjectField.value = '';
         }
       };
+      this.initialized.then(() => {
+        updateSubject();
+      });
 
       let onChangeFieldValueTimer;
       idField.addEventListener('input', () => {
