@@ -28,7 +28,7 @@ async function request({ method, path, params, data, type } = {}) {
     type = 'application/json';
 
   const url = getURL(path, {
-    ...params,
+    ...(params || {}),
     ...(method == 'GET' && data !== undefined ? data : {}),
     key: configs.redmineAPIKey
   });
