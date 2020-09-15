@@ -72,6 +72,27 @@ export class IssueEditor {
     for (const chooser of document.querySelectorAll('.issue-chooser')) {
       const idField = chooser.querySelector('.issue-id');
       const subjectField = chooser.querySelector('.issue-subject');
+
+      const updateSubject = async () => {
+        if (idField.value) {
+          const issue = await Redmine.getIssue(idField.value);
+          subjectField.value = issue.subject || '';
+        }
+        else {
+          subjectField.value = '';
+        }
+      };
+
+      let onChangeFieldValueTimer;
+      idField.addEventListener('input', () => {
+        if (onChangeFieldValueTimer)
+          clearTimeout(onChangeFieldValueTimer);
+        onChangeFieldValueTimer = setTimeout(() => {
+          onChangeFieldValueTimer = null;
+          updateSubject();
+        }, 150);
+      });
+
       Dialog.initButton(chooser.querySelector('.issue-choose'), async _event => {
         const issue = await this.mIssueChooser.show({
           defaultId: parseInt(idField.value || 0),
