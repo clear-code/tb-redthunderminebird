@@ -17,7 +17,6 @@
   "dialog_chooseIssue_issueId_label": { "message": "Link to #" },
   "dialog_chooseIssue_more_label": { "message": "Fetch next 10 issues" },
 
-  "dialog_relations_label": { "message": "Related Issues" },
   "dialog_relations_add_label": { "message": "Add" },
   "dialog_relations_type_relates": { "message": "Relates" },
   "dialog_relations_type_duplicates": { "message": "Duplicates" },
@@ -38,7 +37,7 @@
   "dialog_linkToIssue_accept_label": { "message": "OK" },
   "dialog_linkToIssue_cancel_label": { "message": "Cancel" },
 
-  "dialog_createIssue_title": { "message": "Create new issue" },
+  "dialog_createIssue_title": { "message": "Create New Issue" },
   "dialog_createIssue_project_label": { "message": "Project" },
   "dialog_createIssue_tracker_label": { "message": "Tracker" },
   "dialog_createIssue_subject_label": { "message": "Subject" },
@@ -53,6 +52,7 @@
   "dialog_createIssue_startDate_label": { "message": "Start Date" },
   "dialog_createIssue_dueDate_label": { "message": "Due Date" },
   "dialog_createIssue_file_label": { "message": "File" },
+  "dialog_createIssue_relations_label": { "message": "Related Issues" },
   "dialog_createIssue_other_label": { "message": "Other" },
   "dialog_createIssue_private_label": { "message": "Private" },
   "dialog_createIssue_accept_label": { "message": "OK" },

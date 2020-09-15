@@ -17,7 +17,6 @@
   "dialog_chooseIssue_issueId_label": { "message": "関連チケット #" },
   "dialog_chooseIssue_more_label": { "message": "次の10件を取得" },
 
-  "dialog_relations_label": { "message": "関連チケット" },
   "dialog_relations_add_label": { "message": "追加" },
   "dialog_relations_type_relates": { "message": "関連している" },
   "dialog_relations_type_duplicates": { "message": "次のチケットと重複" },
@@ -53,6 +52,7 @@
   "dialog_createIssue_startDate_label": { "message": "開始日" },
   "dialog_createIssue_dueDate_label": { "message": "期日" },
   "dialog_createIssue_file_label": { "message": "ファイル" },
+  "dialog_createIssue_relations_label": { "message": "関連チケット" },
   "dialog_createIssue_other_label": { "message": "その他" },
   "dialog_createIssue_private_label": { "message": "プライベート" },
   "dialog_createIssue_accept_label": { "message": "OK" },

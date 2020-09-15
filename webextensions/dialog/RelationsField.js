@@ -108,12 +108,12 @@ export class RelationsField {
 
   async save({ issueId } = {}) {
     const requests = [];
-  
-    for (const id of this.mRelationsToBeRemoved.clear) {
+
+    for (const id of this.mRelationsToBeRemoved) {
       requests.push(Redmine.deleteRelation(id));
     }
     this.mRelationsToBeRemoved.clear();
-  
+
     for (const row of this.mContainer.childNodes) {
       const relation = {
         relation_type: row.querySelector('.relation-type').value,
@@ -125,14 +125,14 @@ export class RelationsField {
       if (relation.relation_type == 'precedes' ||
           relation.relation_type == 'follows')
         relation.delay = parseInt(row.querySelector('.relation-delay').value || 0);
-  
+
       if (relation.id &&
           row.$originalRelation &&
           row.$originalRelation.relation_type == relation.relation_type &&
           row.$originalRelation.issue_to_id == relation.issue_to_id &&
           row.$originalRelation.delay == relation.delay)
         continue;
-  
+
       if (relation.issue_to_id) {
         requests.push(Redmine.saveRelation(relation));
       }
@@ -142,7 +142,7 @@ export class RelationsField {
         delete row.$originalRelation;
       }
     }
-  
+
     const results = await Promise.all(requests);
     console.log('saved relations: ', results);
     return results;
