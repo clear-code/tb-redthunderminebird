@@ -34,7 +34,7 @@ export class RelationsField {
 
     appendContents(container, `
       <ul class="relations" class="flex-box column"></ul>
-      <button class="add-relation">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_add_label'))}</button>
+      <button class="add-relation">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_add_label'))}</button>
     `);
     this.mContainer = container.querySelector('.relations');
     this.mAddButton = container.querySelector('.add-relation');
@@ -81,27 +81,27 @@ export class RelationsField {
       <li class="flex-box row"
           data-id="">
         <select class="relation-type" value="relates">
-          <option value="relates">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_relates'))}</option>
-          <option value="duplicates">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_duplicates'))}</option>
-          <option value="duplicated">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_duplicated'))}</option>
-          <option value="blocks">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_blocks'))}</option>
-          <option value="blocked">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_blocked'))}</option>
-          <option value="precedes">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_precedes'))}</option>
-          <option value="follows">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_follows'))}</option>
-          <option value="copied_to">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_copiedTo'))}</option>
-          <option value="copied_from">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_type_copiedFrom'))}</option>
+          <option value="relates">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_relates'))}</option>
+          <option value="duplicates">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_duplicates'))}</option>
+          <option value="duplicated">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_duplicated'))}</option>
+          <option value="blocks">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_blocks'))}</option>
+          <option value="blocked">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_blocked'))}</option>
+          <option value="precedes">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_precedes'))}</option>
+          <option value="follows">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_follows'))}</option>
+          <option value="copied_to">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_copiedTo'))}</option>
+          <option value="copied_from">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_copiedFrom'))}</option>
         </select>
         <input class="related-issue-id" type="number" data-value-type="integer">
         <span class="flex-box row">
           <input class="related-issue-subject" type="text" disabled="true">
           <label class="relation-delay-fields"
                  style="display:none"
-                >${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relation_delay_label_before'))}
+                >${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_delay_label_before'))}
                  <input class="relation-delay" type="number" data-value-type="integer" value="0" size="3">
-                 ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relation_delay_label_after'))}</label>
+                 ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_delay_label_after'))}</label>
         </span>
-        <button class="choose-related-issue">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relation_chooseIssue'))}</button>
-        <button class="remove-relation">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relation_remove'))}</button>
+        <button class="choose-related-issue">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_chooseIssue'))}</button>
+        <button class="remove-relation">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_remove'))}</button>
       </li>
     `);
   }
