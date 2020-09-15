@@ -256,6 +256,8 @@ export class IssueEditor {
   getRequestParams() {
     const paramNames = new Set();
     for (const field of document.querySelectorAll('[data-field]')) {
+      if (field.disabled)
+        continue;
       const name = field.dataset.field;
       paramNames.add(name.replace(/\[\]$/, ''));
     }
