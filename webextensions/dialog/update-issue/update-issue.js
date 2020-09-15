@@ -24,6 +24,8 @@ let mParams;
 let mMessage;
 let mIssueEditor;
 
+const mDescriptionToggler = document.querySelector('#toggleDescription');
+const mDescriptionField  = document.querySelector('#description');
 const mAcceptButton      = document.querySelector('#accept');
 const mCancelButton      = document.querySelector('#cancel');
 
@@ -48,23 +50,40 @@ configs.$loaded.then(async () => {
   log('mMessage: ', mMessage);
   log('redmineParams ', redmineParams);
 
+  mDescriptionField.disabled = true;
+  mDescriptionToggler.addEventListener('click', event => {
+    if (event.button != 0)
+      return;
+    event.preventDefault();
+    event.stopPropagation();
+    toggleDescriptionField();
+  });
+  mDescriptionToggler.addEventListener('keydown', event => {
+    if (event.key != 'Enter' &&
+        event.key != ' ')
+      return;
+    event.preventDefault();
+    event.stopPropagation();
+    toggleDescriptionField();
+  });
+
   mIssueEditor = new IssueEditor(redmineParams);
   await mIssueEditor.initialized;
 
   Dialog.initButton(mAcceptButton, async _event => {
     mAcceptButton.disabled = mCancelButton.disabled = true;
     try {
-      const issue = await createIssue();
+      const issue = await updateIssue();
       if (issue) {
         const url = Redmine.getIssueURL(issue.id, true);
         const completedMessage = new Dialog.InPageDialog();
         appendContents(completedMessage.contents, `
-          <p>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_complete_message'))}</p>
+          <p>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_updateIssue_complete_message'))}</p>
           <p><a href=${JSON.stringify(sanitizeForHTMLText(url))}
                >${sanitizeForHTMLText(Redmine.getIssueURL(issue.id))}</a></p>
         `);
         appendContents(completedMessage.buttons, `
-          <button>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_complete_button_label'))}</button>
+          <button>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_updateIssue_complete_button_label'))}</button>
         `);
         Dialog.initButton(completedMessage.buttons.firstChild, async _event => {
           Dialog.accept(issue);
@@ -103,36 +122,43 @@ configs.$loaded.then(async () => {
   Dialog.initCancelButton(mCancelButton);
 
   window.addEventListener('resize', _event => {
-    configs.createIssueDialogWidth = window.outerWidth;
-    configs.createIssueDialogHeight = window.outerHeight;
+    configs.updateIssueDialogWidth = window.outerWidth;
+    configs.updateIssueDialogHeight = window.outerHeight;
   });
   window.addEventListener(Dialog.TYPE_MOVED, event => {
-    configs.createIssueDialogLeft = event.detail.left;
-    configs.createIssueDialogTop = event.detail.top;
+    configs.updateIssueDialogLeft = event.detail.left;
+    configs.updateIssueDialogTop = event.detail.top;
   });
 
   Dialog.notifyReady();
 });
 
-async function createIssue() {
-  if (!document.querySelector('#project').value) {
-    alert(browser.i18n.getMessage('dialog_createIssue_error_missingProjectId'));
+function toggleDescriptionField() {
+  mDescriptionField.disabled = !mDescriptionField.disabled;
+  mDescriptionField.classList.toggle('shown', !mDescriptionField.disabled);
+}
+
+async function updateIssue() {
+  if (!document.querySelector('#issue').value) {
+    alert(browser.i18n.getMessage('dialog_updateIssue_error_missingIssueId'));
     return;
   }
 
-  const createParams = mIssueEditor.getRequestParams();
-
-  const result = await Redmine.createIssue(createParams);
-  const issue = result && result.issue;
-  log('created issue: ', issue);
-
-  if (issue && issue.id) {
-    mIssueEditor.issueId = issue.id;
-    await Promise.all([
-      mMessage.setIssueId(issue.id),
-      mIssueEditor.saveRelations()
-    ]);
+  const updateParams = mIssueEditor.getRequestParams();
+  const oldIssue = await Redmine.getIssue(updateParams.id);
+  if (!oldIssue || !oldIssue.id) {
+    alert(browser.i18n.getMessage('dialog_updateIssue_error_missingIssue', [updateParams.id]));
+    return;
   }
 
-  return issue;
+  try {
+    const result = await Redmine.updateIssue(updateParams);
+    log('updated issue: ', result);
+    await mIssueEditor.saveRelations();
+    return Redmine.getIssue(updateParams.id);
+  }
+  catch(error) {
+    log('update failed: ', error);
+    return null;
+  }
 }

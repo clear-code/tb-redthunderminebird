@@ -61,6 +61,35 @@
   "dialog_createIssue_complete_message": { "message": "作成しました" },
   "dialog_createIssue_complete_button_label": { "message": "OK" },
 
+  "dialog_updateIssue_title": { "message": "チケット更新" },
+  "dialog_updateIssue_issue_label": { "message": "対象チケット" },
+  "dialog_updateIssue_issue_choose_label": { "message": "参照..." },
+  "dialog_updateIssue_description_label": { "message": "説明" },
+  "dialog_updateIssue_description_edit_label": { "message": "編集" },
+  "dialog_updateIssue_parentIssue_label": { "message": "親チケット" },
+  "dialog_updateIssue_parentIssue_choose_label": { "message": "参照..." },
+  "dialog_updateIssue_notes_label": { "message": "ノート追記" },
+  "dialog_updateIssue_status_label": { "message": "ステータス" },
+  "dialog_updateIssue_assigned_label": { "message": "担当者（管理者のみ）" },
+  "dialog_updateIssue_watcher_label": { "message": "ウォッチャー（管理者のみ）" },
+  "dialog_updateIssue_version_label": { "message": "対象バージョン" },
+  "dialog_updateIssue_period_label": { "message": "期間" },
+  "dialog_updateIssue_startDate_label": { "message": "開始日" },
+  "dialog_updateIssue_dueDate_label": { "message": "期日" },
+  "dialog_updateIssue_file_label": { "message": "ファイル" },
+  "dialog_updateIssue_relations_label": { "message": "関連チケット" },
+  "dialog_updateIssue_other_label": { "message": "その他" },
+  "dialog_updateIssue_private_label": { "message": "プライベート" },
+  "dialog_updateIssue_accept_label": { "message": "OK" },
+  "dialog_updateIssue_cancel_label": { "message": "キャンセル" },
+  "dialog_updateIssue_error_missingIssueId": { "message": "対象チケットが指定されていません" },
+  "dialog_updateIssue_error_missingIssue": { "message": "チケット #$ID$ が見つかりません",
+    "placeholders": {
+      "id": { "content": "$1", "example": "1234" }
+    }},
+  "dialog_updateIssue_complete_message": { "message": "更新しました" },
+  "dialog_updateIssue_complete_button_label": { "message": "OK" },
+
 
   "config_title": { "message": "RedThunderMineBird Plusの設定" },
 

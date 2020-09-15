@@ -175,6 +175,28 @@ browser.menus.onClicked.addListener(async (info, tab) => {
       }
     }; break;
 
+    case 'updateIssue': {
+      const dialogParams = {
+        url:    '/dialog/update-issue/update-issue.html',
+        modal:  !configs.debug,
+        opener: await browser.windows.get(tab.windowId),
+        width:  configs.updateIssueDialogWidth,
+        height: configs.updateIssueDialogHeight
+      };
+      if (typeof configs.updateIssueDialogLeft == 'number')
+        dialogParams.left = configs.updateIssueDialogLeft;
+      if (typeof configs.updateIssueDialogTop == 'number')
+        dialogParams.top = configs.updateIssueDialogTop;
+      try {
+        await Dialog.open(
+          dialogParams,
+          { message: messages[0].raw }
+        );
+      }
+      catch(_error) {
+      }
+    }; break;
+
     case 'openIssue': {
       const issueId = await getContextIssueId(info);
       if (!issueId)

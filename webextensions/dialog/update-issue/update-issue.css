@@ -1,0 +1,23 @@
+/*
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+@import url(/resources/dialog.css);
+@import url(/resources/IssueChooser.css);
+@import url(/resources/RelationsField.css);
+
+.grid-row > label:first-of-type {
+  white-space: nowrap;
+}
+
+#description,
+#notes {
+  width: 100%;
+  resize: vertical;
+}
+
+#description:not(.shown) {
+  display: none;
+}

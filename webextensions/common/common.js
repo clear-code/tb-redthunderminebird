@@ -45,6 +45,11 @@ export const configs = new Configs({
   createIssueDialogLeft: null,
   createIssueDialogTop: null,
 
+  updateIssueDialogWidth: 640,
+  updateIssueDialogHeight: 440,
+  updateIssueDialogLeft: null,
+  updateIssueDialogTop: null,
+
 
   configsVersion: 0,
   debug: false,
