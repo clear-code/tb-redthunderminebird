@@ -10,7 +10,9 @@ import * as Dialog from '/extlib/dialog.js';
 
 import {
   configs,
-  log
+  log,
+  appendContents,
+  sanitizeForHTMLText
 } from '/common/common.js';
 import { Message } from '/common/Message.js';
 import * as Redmine from '/common/redmine.js';
@@ -53,7 +55,43 @@ configs.$loaded.then(async () => {
     mAcceptButton.disabled = mCancelButton.disabled = true;
     try {
       const issue = await createIssue();
-      Dialog.accept(issue);
+      if (issue) {
+        const url = Redmine.getIssueURL(issue.id, true);
+        const completedMessage = new Dialog.InPageDialog();
+        appendContents(completedMessage.contents, `
+          <p>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_complete_message'))}</p>
+          <p><a href=${JSON.stringify(sanitizeForHTMLText(url))}
+               >${sanitizeForHTMLText(Redmine.getIssueURL(issue.id))}</a></p>
+        `);
+        appendContents(completedMessage.buttons, `
+          <button>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_complete_button_label'))}</button>
+        `);
+        Dialog.initButton(completedMessage.buttons.firstChild, async _event => {
+          Dialog.accept(issue);
+        });
+        const link = completedMessage.contents.querySelector('a');
+        const openLink = event => {
+          event.preventDefault();
+          event.stopPropagation();
+          browser.tabs.create({
+            active: true,
+            url
+          });
+        };
+        link.addEventListener('click', event => {
+          if (event.button != 0)
+            return;
+          openLink(event);
+        });
+        link.addEventListener('keydown', event => {
+          if (event.key != 'Enter' &&
+              event.key != ' ')
+            return;
+          openLink(event);
+        });
+        // delay is required to apply CSS transition
+        setTimeout(() => completedMessage.show(), 0);
+      }
     }
     catch(error) {
       console.error(error);

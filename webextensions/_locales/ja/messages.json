@@ -58,6 +58,8 @@
   "dialog_createIssue_accept_label": { "message": "OK" },
   "dialog_createIssue_cancel_label": { "message": "キャンセル" },
   "dialog_createIssue_error_missingProjectId": { "message": "プロジェクトを選択してください" },
+  "dialog_createIssue_complete_message": { "message": "作成しました" },
+  "dialog_createIssue_complete_button_label": { "message": "OK" },
 
 
   "config_title": { "message": "RedThunderMineBird Plusの設定" },
