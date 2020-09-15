@@ -13,7 +13,7 @@ import * as Redmine from '/common/redmine.js';
 import * as Dialog from '/extlib/dialog.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 
-export class ChooseIssue {
+export class IssueChooser {
   constructor({ container, defaultId, projectId } = {}) {
     this.onChanged = new EventListenerManager();
     this.onChose = new EventListenerManager();

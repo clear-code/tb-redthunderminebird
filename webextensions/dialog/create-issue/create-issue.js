@@ -16,7 +16,7 @@ import {
 } from '/common/common.js';
 import { Message } from '/common/Message.js';
 import * as Redmine from '/common/redmine.js';
-import { ChooseIssue } from '/dialog/ChooseIssue.js';
+import { IssueChooser } from '/dialog/IssueChooser.js';
 import { RelationsField } from '/dialog/RelationsField.js';
 
 Dialog.setLogger(log);
@@ -96,7 +96,7 @@ configs.$loaded.then(async () => {
   });
   mDueDateField.disabled = true;
 
-  mIssueChooser = new ChooseIssue({
+  mIssueChooser = new IssueChooser({
     defaultId: 0,
     projectId: mProjectField.value
   });

@@ -5,7 +5,7 @@
 */
 
 @import url(/resources/dialog.css);
-@import url(/resources/ChooseIssue.css);
+@import url(/resources/IssueChooser.css);
 @import url(/resources/RelationsField.css);
 
 .grid-row > label:first-of-type {

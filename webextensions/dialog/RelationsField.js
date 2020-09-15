@@ -10,7 +10,7 @@ import {
   sanitizeForHTMLText
 } from '/common/common.js';
 import * as Redmine from '/common/redmine.js';
-import { ChooseIssue } from '/dialog/ChooseIssue.js';
+import { IssueChooser } from '/dialog/IssueChooser.js';
 import * as Dialog from '/extlib/dialog.js';
 
 export class RelationsField {
@@ -27,7 +27,7 @@ export class RelationsField {
       this.mProjectId = projectId;
 
     this.mRelationsToBeRemoved = new Set();
-    this.mIssueChooser = new ChooseIssue({
+    this.mIssueChooser = new IssueChooser({
       defaultId: 0,
       projectId: this.mProjectId
     });

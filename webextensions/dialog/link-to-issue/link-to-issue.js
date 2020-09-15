@@ -12,7 +12,7 @@ import {
   configs,
   log
 } from '/common/common.js';
-import { ChooseIssue } from '/dialog/ChooseIssue.js';
+import { IssueChooser } from '/dialog/IssueChooser.js';
 
 Dialog.setLogger(log);
 
@@ -37,7 +37,7 @@ configs.$loaded.then(async () => {
 
   onConfigChange('debug');
 
-  const issueChooser = new ChooseIssue({
+  const issueChooser = new IssueChooser({
     container: document.querySelector('#choose-issue-container'),
     defaultId: mParams.defaultId,
     projectId: mParams.projectId
