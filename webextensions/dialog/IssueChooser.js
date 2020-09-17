@@ -27,7 +27,7 @@ export class IssueChooser {
 
     appendContents(container, `
       <div><label>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_chooseIssue_issueId_label'))}
-                  <input class="choose-issue issue-id" type="number" style="width: 5em; text-align: right;"></label>
+                  <input class="choose-issue issue-id" type="number" min="0" style="width: 5em; text-align: right;"></label>
            <button class="choose-issue fetch-more">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_chooseIssue_more_label'))}</button></div>
       <ul class="choose-issue issues flex-box column"></ul>
       <textarea class="choose-issue description" rows="10" readonly="true"></textarea>
