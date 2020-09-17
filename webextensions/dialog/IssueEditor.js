@@ -76,6 +76,8 @@ export class IssueEditor {
       defaultId: 0,
       projectId: this.params.project_id
     });
+
+    const postInitializations = [];
     for (const chooser of document.querySelectorAll('.issue-chooser')) {
       const idField = chooser.querySelector('.issue-id');
       const subjectField = chooser.querySelector('.issue-subject');
@@ -89,11 +91,11 @@ export class IssueEditor {
             await this.reinitFieldsForIssue(issue);
             break;
         }
-        this.validateFields();
+        await this.validateFields();
       };
-      this.initialized.then(() => {
-        onIssueChanged();
-      });
+      postInitializations.push(
+        this.initialized.then(() => onIssueChanged())
+      );
 
       let onChangeFieldValueTimer;
       idField.addEventListener('input', () => {
@@ -124,6 +126,9 @@ export class IssueEditor {
     });
     this.mRelationsField.onValid.addListener(() => this.onValid.dispatch());
     this.mRelationsField.onInvalid.addListener(() => this.onInvalid.dispatch());
+
+    if (postInitializations.length)
+      this.initialized = Promise.all(postInitializations);
   }
 
   initSelect(field, items, itemTranslator) {
@@ -269,7 +274,7 @@ export class IssueEditor {
     this.mStartDateField.value = issue.start_date || '';
     this.mDueDateField.value = issue.due_date || '';
 
-    this.mRelationsField.reinit({
+    /*await */this.mRelationsField.reinit({
       issueId:   issue.id,
       relations: issue.relations
     });

@@ -6,6 +6,7 @@
 'use strict';
 
 import {
+  log,
   appendContents,
   sanitizeForHTMLText
 } from '/common/common.js';
@@ -74,38 +75,41 @@ export class RelationsField {
     });
 
     this.mContainer.addEventListener('change', event => {
-      const select = event.target && event.target.closest('select');
-      if (!select)
-        return;
-      const row = select.closest('li');
-      const relationDelayFields = row.querySelector('.relation-delay-fields');
-      const shouldShowDelayFields = select.value == 'precedes' || select.value == 'follows';
-      relationDelayFields.style.display = shouldShowDelayFields ? '' : 'none';
+      this.showHideDelayFieldFor(event.target.closest('select'));
     });
 
     this.mContainer.addEventListener('input', event => {
       const idField = event.target.closest('input.related-issue-id');
-      this.fillSubjectFor(idField);
+
+      if (idField.onChangeRelatedIssueFieldValueTimer)
+        clearTimeout(idField.onChangeRelatedIssueFieldValueTimer);
+
+      idField.onChangeRelatedIssueFieldValueTimer = setTimeout(async () => {
+        delete idField.onChangeRelatedIssueFieldValueTimer;
+        this.fillSubjectFor(idField);
+      }, 150);
     });
 
     if (this.mIssueId)
       this.reinit();
   }
 
-  fillSubjectFor(idField) {
+  async fillSubjectFor(idField) {
     if (!idField)
       return;
 
-    if (idField.onChangeRelatedIssueFieldValueTimer)
-      clearTimeout(idField.onChangeRelatedIssueFieldValueTimer);
+    const issue = idField.value ? await Redmine.getIssue(idField.value) : null;
+    const subjectField = idField.closest('li').querySelector('input.related-issue-subject');
+    subjectField.value = issue && issue.subject || '';
+    this.validateFields();
+  }
 
-    idField.onChangeRelatedIssueFieldValueTimer = setTimeout(async () => {
-      delete idField.onChangeRelatedIssueFieldValueTimer;
-      const issue = idField.value ? await Redmine.getIssue(idField.value) : null;
-      const subjectField = idField.parentNode.querySelector('input.related-issue-subject');
-      subjectField.value = issue && issue.subject || '';
-      this.validateFields();
-    }, 150);
+  showHideDelayFieldFor(select) {
+    if (!select)
+      return;
+    const relationDelayFields = select.closest('li').querySelector('.relation-delay-fields');
+    const shouldShowDelayFields = select.value == 'precedes' || select.value == 'follows';
+    relationDelayFields.style.display = shouldShowDelayFields ? '' : 'none';
   }
 
   addRow(relation = {}) {
@@ -115,8 +119,7 @@ export class RelationsField {
     appendContents(this.mContainer, `
       <li class="flex-box row"
           data-id=${JSON.stringify(String(relation.id || ''))}>
-        <select class="relation-type"
-                value=${JSON.stringify(String(relation.relation_type || 'relates'))}>
+        <select class="relation-type">
           <option value="relates">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_relates'))}</option>
           <option value="duplicates">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_duplicates'))}</option>
           <option value="duplicated">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_duplicated'))}</option>
@@ -142,7 +145,14 @@ export class RelationsField {
         <button class="remove-relation">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_remove'))}</button>
       </li>
     `);
-    this.fillSubjectFor(this.mContainer.lastChild.querySelector('.related-issue-id'));
+    const row = this.mContainer.lastChild;
+    row.$originalRelation = relation;
+
+    const select = row.querySelector('.relation-type');
+    select.value = relation.relation_type || 'relates';
+    this.showHideDelayFieldFor(select);
+
+    return this.fillSubjectFor(row.querySelector('.related-issue-id'));
   }
 
   clearRows() {
@@ -161,11 +171,13 @@ export class RelationsField {
     if (!relations)
       relations = await Redmine.getRelations(this.mIssueId);
 
+    if (!relations)
+      return;
+
+    this.mRelationsToBeRemoved.clear();
     this.clearRows();
 
-    for (const relation of relations) {
-      this.addRow(relation);
-    }
+    await Promise.all(relations.map(relation => this.addRow(relation)));
   }
 
   async save({ issueId } = {}) {
@@ -189,24 +201,26 @@ export class RelationsField {
         relation.delay = parseInt(row.querySelector('.relation-delay').value || 0);
 
       if (relation.id &&
-          row.$originalRelation &&
           row.$originalRelation.relation_type == relation.relation_type &&
-          row.$originalRelation.issue_to_id == relation.issue_to_id &&
+          (row.$originalRelation.issue_id == relation.issue_to_id ||
+           row.$originalRelation.issue_to_id == relation.issue_to_id) &&
           row.$originalRelation.delay == relation.delay)
         continue;
 
       if (relation.issue_to_id) {
-        requests.push(Redmine.saveRelation(relation));
+        requests.push(Redmine.saveRelation(relation).then(() => {
+          row.$originalRelation = relation;
+        }));
       }
       else {
         if (relation.id)
           requests.push(Redmine.deleteRelation(row.dataset.id));
-        delete row.$originalRelation;
+        row.$originalRelation = {};
       }
     }
 
     const results = await Promise.all(requests);
-    console.log('saved relations: ', results);
+    log('saved relations: ', results);
     return results;
   }
 
