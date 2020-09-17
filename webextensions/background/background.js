@@ -121,81 +121,17 @@ browser.menus.onClicked.addListener(async (info, tab) => {
       });
     }; break;
 
-    case 'linkToIssue': {
-      try {
-        const dialogParams = {
-          url:    '/dialog/link-to-issue/link-to-issue.html',
-          modal:  !configs.debug,
-          opener: await browser.windows.get(tab.windowId),
-          width:  configs.linkToIssueDialogWidth,
-          height: configs.linkToIssueDialogHeight
-        };
-        if (typeof configs.linkToIssueDialogLeft == 'number')
-          dialogParams.left = configs.linkToIssueDialogLeft;
-        if (typeof configs.linkToIssueDialogTop == 'number')
-          dialogParams.top = configs.linkToIssueDialogTop;
-        try {
-          const result = await Dialog.open(
-            dialogParams,
-            { defaultId: await messages[0].getIssueId(),
-              projectId: messages[0].getProjectId() }
-          );
-          const issue = result && result.detail;
-          log('chosen issue: ', issue);
-          if (issue)
-            await messages[0].setIssueId(issue.id);
-        }
-        catch(_error) {
-        }
-      }
-      catch(error) {
-        console.error(error);
-      }
-    }; break;
+    case 'linkToIssue':
+      linkToIssue(messages[0], tab);
+      break;
 
-    case 'createIssue': {
-      const dialogParams = {
-        url:    '/dialog/create-issue/create-issue.html',
-        modal:  !configs.debug,
-        opener: await browser.windows.get(tab.windowId),
-        width:  configs.createIssueDialogWidth,
-        height: configs.createIssueDialogHeight
-      };
-      if (typeof configs.createIssueDialogLeft == 'number')
-        dialogParams.left = configs.createIssueDialogLeft;
-      if (typeof configs.createIssueDialogTop == 'number')
-        dialogParams.top = configs.createIssueDialogTop;
-      try {
-        await Dialog.open(
-          dialogParams,
-          { message: messages[0].raw }
-        );
-      }
-      catch(_error) {
-      }
-    }; break;
+    case 'createIssue':
+      createIssue(messages[0], tab);
+      break;
 
-    case 'updateIssue': {
-      const dialogParams = {
-        url:    '/dialog/update-issue/update-issue.html',
-        modal:  !configs.debug,
-        opener: await browser.windows.get(tab.windowId),
-        width:  configs.updateIssueDialogWidth,
-        height: configs.updateIssueDialogHeight
-      };
-      if (typeof configs.updateIssueDialogLeft == 'number')
-        dialogParams.left = configs.updateIssueDialogLeft;
-      if (typeof configs.updateIssueDialogTop == 'number')
-        dialogParams.top = configs.updateIssueDialogTop;
-      try {
-        await Dialog.open(
-          dialogParams,
-          { message: messages[0].raw }
-        );
-      }
-      catch(_error) {
-      }
-    }; break;
+    case 'updateIssue':
+      updateIssue(messages[0], tab);
+      break;
 
     case 'openIssue': {
       const issueId = await getContextIssueId(info);
@@ -210,3 +146,80 @@ browser.menus.onClicked.addListener(async (info, tab) => {
     }; break;
   }
 });
+
+
+async function linkToIssue(message, tab) {
+  try {
+    const dialogParams = {
+      url:    '/dialog/link-to-issue/link-to-issue.html',
+      modal:  !configs.debug,
+      opener: await browser.windows.get(tab.windowId),
+      width:  configs.linkToIssueDialogWidth,
+      height: configs.linkToIssueDialogHeight
+    };
+    if (typeof configs.linkToIssueDialogLeft == 'number')
+      dialogParams.left = configs.linkToIssueDialogLeft;
+    if (typeof configs.linkToIssueDialogTop == 'number')
+      dialogParams.top = configs.linkToIssueDialogTop;
+    try {
+      const result = await Dialog.open(
+        dialogParams,
+        { defaultId: await message.getIssueId(),
+          projectId: message.getProjectId() }
+      );
+      const issue = result && result.detail;
+      log('chosen issue: ', issue);
+      if (issue)
+        await message.setIssueId(issue.id);
+    }
+    catch(_error) {
+    }
+  }
+  catch(error) {
+    console.error(error);
+  }
+}
+
+async function createIssue(message, tab) {
+  const dialogParams = {
+    url:    '/dialog/create-issue/create-issue.html',
+    modal:  !configs.debug,
+    opener: await browser.windows.get(tab.windowId),
+    width:  configs.createIssueDialogWidth,
+    height: configs.createIssueDialogHeight
+  };
+  if (typeof configs.createIssueDialogLeft == 'number')
+    dialogParams.left = configs.createIssueDialogLeft;
+  if (typeof configs.createIssueDialogTop == 'number')
+    dialogParams.top = configs.createIssueDialogTop;
+  try {
+    await Dialog.open(
+      dialogParams,
+      { message: message.raw }
+    );
+  }
+  catch(_error) {
+  }
+}
+
+async function updateIssue(message, tab) {
+  const dialogParams = {
+    url:    '/dialog/update-issue/update-issue.html',
+    modal:  !configs.debug,
+    opener: await browser.windows.get(tab.windowId),
+    width:  configs.updateIssueDialogWidth,
+    height: configs.updateIssueDialogHeight
+  };
+  if (typeof configs.updateIssueDialogLeft == 'number')
+    dialogParams.left = configs.updateIssueDialogLeft;
+  if (typeof configs.updateIssueDialogTop == 'number')
+    dialogParams.top = configs.updateIssueDialogTop;
+  try {
+    await Dialog.open(
+      dialogParams,
+      { message: message.raw }
+    );
+  }
+  catch(_error) {
+  }
+}
