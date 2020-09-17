@@ -12,10 +12,15 @@ import {
 import * as Redmine from '/common/redmine.js';
 import { IssueChooser } from '/dialog/IssueChooser.js';
 import * as Dialog from '/extlib/dialog.js';
+import EventListenerManager from '/extlib/EventListenerManager.js';
 
 export class RelationsField {
   constructor({ container, issueId, projectId } = {}) {
     this.mIssueId = issueId;
+    this.unavailableIds = new Set();
+
+    this.onValid = new EventListenerManager();
+    this.onInvalid = new EventListenerManager();
 
     if (typeof projectId == 'function')
       Object.defineProperty(this, 'mProjectId', {
@@ -42,15 +47,7 @@ export class RelationsField {
     Dialog.initButton(this.mAddButton, _event => {
       this.addRow();
     });
-    this.mContainer.addEventListener('change', event => {
-      const select = event.target && event.target.closest('select');
-      if (!select)
-        return;
-      const row = select.closest('li');
-      const relationDelayFields = row.querySelector('.relation-delay-fields');
-      const shouldShowDelayFields = select.value == 'precedes' || select.value == 'follows';
-      relationDelayFields.style.display = shouldShowDelayFields ? '' : 'none';
-    });
+
     Dialog.initButton(this.mContainer, async event => {
       const button = event.target && event.target.closest('button');
       if (!button)
@@ -66,6 +63,7 @@ export class RelationsField {
         if (issue) {
           issueIdField.value = issue.id;
           issueSubjectField.value = issue.subject;
+          this.validateFields();
         }
       }
       else if (button.matches('.remove-relation')) {
@@ -73,6 +71,29 @@ export class RelationsField {
           this.mRelationsToBeRemoved.add(row.dataset.id);
         this.mContainer.removeChild(row);
       }
+    });
+
+    this.mContainer.addEventListener('change', event => {
+      const select = event.target && event.target.closest('select');
+      if (!select)
+        return;
+      const row = select.closest('li');
+      const relationDelayFields = row.querySelector('.relation-delay-fields');
+      const shouldShowDelayFields = select.value == 'precedes' || select.value == 'follows';
+      relationDelayFields.style.display = shouldShowDelayFields ? '' : 'none';
+    });
+
+    this.mContainer.addEventListener('input', event => {
+      const idField = event.target.closest('input.related-issue-id');
+      if (idField.onChangeRelatedIssueFieldValueTimer)
+        clearTimeout(idField.onChangeRelatedIssueFieldValueTimer);
+      idField.onChangeRelatedIssueFieldValueTimer = setTimeout(async () => {
+        delete idField.onChangeRelatedIssueFieldValueTimer;
+        const issue = idField.value ? await Redmine.getIssue(idField.value) : null;
+        const subjectField = idField.parentNode.querySelector('input.related-issue-subject');
+        subjectField.value = issue && issue.subject || '';
+        this.validateFields();
+      }, 150);
     });
   }
 
@@ -91,7 +112,7 @@ export class RelationsField {
           <option value="copied_to">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_copiedTo'))}</option>
           <option value="copied_from">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_copiedFrom'))}</option>
         </select>
-        <input class="related-issue-id" type="number" data-value-type="integer">
+        <input class="related-issue-id" type="number" min="0" data-value-type="integer">
         <span class="flex-box row">
           <input class="related-issue-subject" type="text" disabled="true">
           <label class="relation-delay-fields"
@@ -146,5 +167,32 @@ export class RelationsField {
     const results = await Promise.all(requests);
     console.log('saved relations: ', results);
     return results;
+  }
+
+  validateFields() {
+    const counts = new Map();
+    for (const unavailableId of this.unavailableIds) {
+      const count = counts.get(unavailableId) || 0;
+      counts.set(unavailableId, count + 1);
+    }
+
+    const fields = this.mContainer.querySelectorAll('.related-issue-id');
+    for (const field of fields) {
+      const id = parseInt(field.value || 0);
+      const count = counts.get(id) || 0;
+      counts.set(id, count + 1);
+    }
+
+    counts.delete(0);
+
+    for (const field of fields) {
+      const count = counts.get(parseInt(field.value || 0)) || 0;
+      field.classList.toggle('invalid', count > 1);
+    }
+
+    if (this.mContainer.querySelector('.invalid'))
+      this.onInvalid.dispatch();
+    else
+      this.onValid.dispatch();
   }
 }

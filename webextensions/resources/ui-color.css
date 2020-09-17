@@ -151,6 +151,13 @@ input:focus:not(:disabled) {
   box-shadow: 0 0 0 1px var(--in-content-border-active),
               0 0 0 4px var(--in-content-border-active-shadow);
 }
+textarea.invalid:not(:disabled)
+textarea.invalid:focus:not(:disabled),
+input.invalid:not(:disabled),
+input.invalid:focus:not(:disabled) {
+  box-shadow: 0 0 0 1px var(--red-50),
+              0 0 0 4px var(--red-50-a30);
+}
 button,
 select {
   background: var(--in-content-button-background-mixed);

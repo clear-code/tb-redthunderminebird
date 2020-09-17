@@ -15,6 +15,7 @@ import {
 import * as Redmine from '/common/redmine.js';
 import { IssueChooser } from '/dialog/IssueChooser.js';
 import { RelationsField } from '/dialog/RelationsField.js';
+import EventListenerManager from '/extlib/EventListenerManager.js';
 
 export class IssueEditor {
   constructor(params) {
@@ -28,6 +29,9 @@ export class IssueEditor {
     this.mStartDateField    = document.querySelector('#startDate');
     this.mDueDateEnabled    = document.querySelector('#dueDateEnabled');
     this.mDueDateField      = document.querySelector('#dueDate');
+
+    this.onValid = new EventListenerManager();
+    this.onInvalid = new EventListenerManager();
 
     this.initialized = Promise.all([
       Redmine.getMembers(this.params.project_id),
@@ -80,17 +84,15 @@ export class IssueEditor {
       const subjectField = chooser.querySelector('.issue-subject');
 
       const onIssueChanged = async () => {
-        if (idField.value) {
-          const issue = await Redmine.getIssue(idField.value);
-          subjectField.value = issue.subject || '';
-          if (idField.dataset.field == 'id')
-            this.reinitFieldsForIssue(issue);
+        const issue = idField.value ? await Redmine.getIssue(idField.value) : null;
+        subjectField.value = issue && issue.subject || '';
+
+        switch (idField.dataset.field) {
+          case 'id':
+            await this.reinitFieldsForIssue(issue);
+            break;
         }
-        else {
-          subjectField.value = '';
-          if (idField.dataset.field == 'id')
-            this.reinitFieldsForIssue();
-        }
+        this.validateFields();
       };
       this.initialized.then(() => {
         onIssueChanged();
@@ -123,6 +125,8 @@ export class IssueEditor {
       container: document.querySelector('#relations'),
       projectId: () => this.mProjectField ? this.mProjectField.value : this.params.project_id
     });
+    this.mRelationsField.onValid.addListener(() => this.onValid.dispatch());
+    this.mRelationsField.onInvalid.addListener(() => this.onInvalid.dispatch());
   }
 
   initSelect(field, items, itemTranslator) {
@@ -318,7 +322,25 @@ export class IssueEditor {
         this.params[paramName] = fieldValue;
       }
       log('field value changed: ', field, fieldValue, this.params);
+      this.validateFields();
     }, 150);
+  }
+
+  async validateFields() {
+    this.mParentIssueField.classList.toggle('invalid', !!(this.params.id && this.mParentIssueField.value && (this.mParentIssueField.value == this.params.id)));
+
+    this.mRelationsField.unavailableIds.clear();
+    if (this.params.id)
+      this.mRelationsField.unavailableIds.add(this.params.id);
+    if (this.mParentIssueField.value)
+      this.mRelationsField.unavailableIds.add(parseInt(this.mParentIssueField.value || 0));
+
+    await this.mRelationsField.validateFields();
+
+    if (document.querySelector('.invalid'))
+      this.onInvalid.dispatch();
+    else
+      this.onValid.dispatch();
   }
 
   getRequestParams() {

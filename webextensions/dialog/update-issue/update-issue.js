@@ -68,6 +68,12 @@ configs.$loaded.then(async () => {
   });
 
   mIssueEditor = new IssueEditor(redmineParams);
+  mIssueEditor.onValid.addListener(() => {
+    mAcceptButton.disabled = false;
+  });
+  mIssueEditor.onInvalid.addListener(() => {
+    mAcceptButton.disabled = true;
+  });
   await mIssueEditor.initialized;
 
   Dialog.initButton(mAcceptButton, async _event => {

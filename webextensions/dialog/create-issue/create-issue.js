@@ -47,8 +47,15 @@ configs.$loaded.then(async () => {
   const redmineParams = await mMessage.toRedmineParams();
   log('mMessage: ', mMessage);
   log('redmineParams ', redmineParams);
+  delete redmineParams.id; // force to create new issue
 
   mIssueEditor = new IssueEditor(redmineParams);
+  mIssueEditor.onValid.addListener(() => {
+    mAcceptButton.disabled = false;
+  });
+  mIssueEditor.onInvalid.addListener(() => {
+    mAcceptButton.disabled = true;
+  });
   await mIssueEditor.initialized;
 
   Dialog.initButton(mAcceptButton, async _event => {
