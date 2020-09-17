@@ -21,6 +21,9 @@ export class IssueEditor {
     this.params = params;
 
     this.mProjectField      = document.querySelector('#project'); // create
+    this.mIssueField        = document.querySelector('#issue'); // update
+    this.mParentIssueField  = document.querySelector('#parentIssue');
+    this.mParentIssueSubject = document.querySelector('#parentIssueSubject');
     this.mStartDateEnabled  = document.querySelector('#startDateEnabled');
     this.mStartDateField    = document.querySelector('#startDate');
     this.mDueDateEnabled    = document.querySelector('#dueDateEnabled');
@@ -38,7 +41,10 @@ export class IssueEditor {
         this.mProjectField && this.initWatchers(this.params.project_id, members) // create
       ]);
 
-      this.applyFieldValues();
+      if (this.params.id)
+        await this.reinitFieldsForIssue(await Redmine.getIssue(this.params.id));
+      else
+        this.applyFieldValues();
 
       for (const field of document.querySelectorAll('[data-field]')) {
         field.addEventListener('change', () => {
@@ -73,17 +79,21 @@ export class IssueEditor {
       const idField = chooser.querySelector('.issue-id');
       const subjectField = chooser.querySelector('.issue-subject');
 
-      const updateSubject = async () => {
+      const onIssueChanged = async () => {
         if (idField.value) {
           const issue = await Redmine.getIssue(idField.value);
           subjectField.value = issue.subject || '';
+          if (idField.dataset.field == 'id')
+            this.reinitFieldsForIssue(issue);
         }
         else {
           subjectField.value = '';
+          if (idField.dataset.field == 'id')
+            this.reinitFieldsForIssue();
         }
       };
       this.initialized.then(() => {
-        updateSubject();
+        onIssueChanged();
       });
 
       let onChangeFieldValueTimer;
@@ -92,7 +102,7 @@ export class IssueEditor {
           clearTimeout(onChangeFieldValueTimer);
         onChangeFieldValueTimer = setTimeout(() => {
           onChangeFieldValueTimer = null;
-          updateSubject();
+          onIssueChanged();
         }, 150);
       });
 
@@ -224,6 +234,40 @@ export class IssueEditor {
       this.initAssignees(projectId, members),
       this.mProjectField && this.initWatchers(projectId, members) // create
     ]);
+    this.applyFieldValues();
+  }
+
+  async reinitFieldsForIssue(issue) {
+    if (!issue || !issue.id)
+      issue = {
+        id: parseInt(this.mIssueField && this.mIssueField.value || 0)
+      };
+
+    this.params.id = issue.id;
+
+    this.params.description = issue.description || '';
+    this.params.status_id = issue.status && issue.status.id || null;
+    this.params.assigned_to_id = issue.assigned_to && issue.assigned_to.id || null;
+    this.params.fixed_version_id = issue.fixed_version && issue.fixed_version.id || null;
+
+    if (issue.parent) {
+      this.mParentIssueField.value = issue.parent.id;
+      if (issue.parent.subject) {
+        this.mParentIssueSubject.value = issue.parent.subject;
+      }
+      else {
+        const parent = await Redmine.getIssue(issue.parent.id);
+        this.mParentIssueSubject.value = parent.subject;
+      }
+    }
+    else {
+      this.mParentIssueField.value = '';
+      this.mParentIssueSubject.value = '';
+    }
+
+    this.mStartDateField.value = issue.start_date || '';
+    this.mDueDateField.value = issue.due_date || '';
+
     this.applyFieldValues();
   }
 
