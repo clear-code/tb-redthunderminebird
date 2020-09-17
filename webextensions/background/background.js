@@ -203,6 +203,12 @@ async function createIssue(message, tab) {
 }
 
 async function updateIssue(message, tab) {
+  if (!(await message.getIssueId())) {
+    await linkToIssue(message, tab);
+    if (!(await message.getIssueId()))
+      return;
+  }
+
   const dialogParams = {
     url:    '/dialog/update-issue/update-issue.html',
     modal:  !configs.debug,
