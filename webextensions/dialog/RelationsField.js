@@ -85,23 +85,38 @@ export class RelationsField {
 
     this.mContainer.addEventListener('input', event => {
       const idField = event.target.closest('input.related-issue-id');
-      if (idField.onChangeRelatedIssueFieldValueTimer)
-        clearTimeout(idField.onChangeRelatedIssueFieldValueTimer);
-      idField.onChangeRelatedIssueFieldValueTimer = setTimeout(async () => {
-        delete idField.onChangeRelatedIssueFieldValueTimer;
-        const issue = idField.value ? await Redmine.getIssue(idField.value) : null;
-        const subjectField = idField.parentNode.querySelector('input.related-issue-subject');
-        subjectField.value = issue && issue.subject || '';
-        this.validateFields();
-      }, 150);
+      this.fillSubjectFor(idField);
     });
+
+    if (this.mIssueId)
+      this.reinit();
   }
 
-  addRow() {
+  fillSubjectFor(idField) {
+    if (!idField)
+      return;
+
+    if (idField.onChangeRelatedIssueFieldValueTimer)
+      clearTimeout(idField.onChangeRelatedIssueFieldValueTimer);
+
+    idField.onChangeRelatedIssueFieldValueTimer = setTimeout(async () => {
+      delete idField.onChangeRelatedIssueFieldValueTimer;
+      const issue = idField.value ? await Redmine.getIssue(idField.value) : null;
+      const subjectField = idField.parentNode.querySelector('input.related-issue-subject');
+      subjectField.value = issue && issue.subject || '';
+      this.validateFields();
+    }, 150);
+  }
+
+  addRow(relation = {}) {
+    let anotherIssueId = relation && relation.issue_to_id || null;
+    if (relation && anotherIssueId == this.mIssueId)
+      anotherIssueId = relation.issue_id;
     appendContents(this.mContainer, `
       <li class="flex-box row"
-          data-id="">
-        <select class="relation-type" value="relates">
+          data-id=${JSON.stringify(String(relation.id || ''))}>
+        <select class="relation-type"
+                value=${JSON.stringify(String(relation.relation_type || 'relates'))}>
           <option value="relates">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_relates'))}</option>
           <option value="duplicates">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_duplicates'))}</option>
           <option value="duplicated">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_duplicated'))}</option>
@@ -112,19 +127,45 @@ export class RelationsField {
           <option value="copied_to">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_copiedTo'))}</option>
           <option value="copied_from">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_copiedFrom'))}</option>
         </select>
-        <input class="related-issue-id" type="number" min="0" data-value-type="integer">
+        <input class="related-issue-id" type="number" min="0" data-value-type="integer"
+               value=${JSON.stringify(String(anotherIssueId || ''))}>
         <span class="flex-box row">
           <input class="related-issue-subject" type="text" disabled="true">
           <label class="relation-delay-fields"
                  style="display:none"
                 >${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_delay_label_before'))}
-                 <input class="relation-delay" type="number" data-value-type="integer" value="0" size="3">
+                 <input class="relation-delay" type="number" data-value-type="integer" size="3"
+                        value=${JSON.stringify(String(relation.delay || '0'))}>
                  ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_delay_label_after'))}</label>
         </span>
         <button class="choose-related-issue">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_chooseIssue'))}</button>
         <button class="remove-relation">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_remove'))}</button>
       </li>
     `);
+    this.fillSubjectFor(this.mContainer.lastChild.querySelector('.related-issue-id'));
+  }
+
+  clearRows() {
+    const range = document.createRange();
+    range.selectNodeContents(this.mContainer);
+    range.deleteContents();
+    range.detach();
+  }
+
+  async reinit({ issueId, relations } = {}) {
+    if (issueId)
+      this.mIssueId = issueId;
+    if (!this.mIssueId)
+      return;
+
+    if (!relations)
+      relations = await Redmine.getRelations(this.mIssueId);
+
+    this.clearRows();
+
+    for (const relation of relations) {
+      this.addRow(relation);
+    }
   }
 
   async save({ issueId } = {}) {

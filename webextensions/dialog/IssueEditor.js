@@ -45,10 +45,7 @@ export class IssueEditor {
         this.mProjectField && this.initWatchers(this.params.project_id, members) // create
       ]);
 
-      if (this.params.id)
-        await this.reinitFieldsForIssue(await Redmine.getIssue(this.params.id));
-      else
-        this.applyFieldValues();
+      this.applyFieldValues();
 
       for (const field of document.querySelectorAll('[data-field]')) {
         field.addEventListener('change', () => {
@@ -271,6 +268,11 @@ export class IssueEditor {
 
     this.mStartDateField.value = issue.start_date || '';
     this.mDueDateField.value = issue.due_date || '';
+
+    this.mRelationsField.reinit({
+      issueId:   issue.id,
+      relations: issue.relations
+    });
 
     this.applyFieldValues();
   }
