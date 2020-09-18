@@ -311,28 +311,6 @@ export class IssueEditor {
       clearTimeout(field.$onChangeFieldValueTimer);
     field.$onChangeFieldValueTimer = setTimeout(() => {
       delete field.$onChangeFieldValueTimer;
-      const fieldValue = field.dataset.valueType == 'integer' ? parseInt(field.value || 0) : field.value;
-      const name = field.dataset.field;
-      const paramName = name.replace(/\[\]$/, '');
-      const value = this.params[paramName];
-      const values = name.endsWith('[]') ? (value || []) : null;
-      if (field.matches('input[type="checkbox"]')) {
-        if (values) {
-          const valuesSet = new Set(value);
-          if (field.checked)
-            valuesSet.add(fieldValue);
-          else
-            valuesSet.remove(fieldValue);
-          this.params[paramName] = Array.from(valuesSet);
-        }
-        else {
-          this.params[paramName] = field.checked;
-        }
-      }
-      else {
-        this.params[paramName] = fieldValue;
-      }
-      log('field value changed: ', field, fieldValue, this.params);
       this.validateFields();
     }, 150);
   }
@@ -362,9 +340,27 @@ export class IssueEditor {
       const name = field.dataset.field;
       paramNames.add(name.replace(/\[\]$/, ''));
     }
+
     const params = {};
     for (const paramName of paramNames) {
-      params[paramName] = this.params[paramName];
+      const field = document.querySelector(`[data-field=${JSON.stringify(paramName)}]`);
+      const checkboxes = document.querySelectorAll(`[data-field=${JSON.stringify(paramName + '[]')}][type="checkbox"]`);
+      if (checkboxes.length > 0) {
+        const checkedValues = Array.from(
+          checkboxes,
+          checkbox => checkbox.dataset.valueType == 'integer' ? parseInt(checkbox.value || 0) : checkbox.value
+        );
+        params[paramName] = Array.from(new Set(checkedValues));
+      }
+      else if (field) {
+        if (field.matches('select, input[data-value-type="integer"]') && field.value === '')
+          continue;
+        params[paramName] = (
+          field.matches('input[type="checkbox"]') ? field.checked :
+            field.dataset.valueType == 'integer' ? parseInt(field.value || 0) :
+              field.value
+        );
+      }
     }
 
     if (this.mStartDateEnabled.checked)
