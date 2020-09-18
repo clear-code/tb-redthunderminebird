@@ -122,14 +122,14 @@ export async function ping() {
     });
 }
 
-/*
 async function upload(file) {
   log('upload:', file.name, file.data.byteLength);
   const result = await request({
     method: 'POST',
     path:   'uploads.json',
     type:   'application/octet-stream',
-    data:    file.data
+    data:    file.data,
+    response: { upload: { token: '' } }
   }).catch(_error => null);
   return {
     token:        result && result.upload.token,
@@ -138,17 +138,14 @@ async function upload(file) {
     description:  ''
   };
 }
-*/
 
 export async function createIssue(issue) {
   log('create:', issue);
   try {
-    /*
     const files = issue.files;
     delete issue.files;
     if (files)
       issue.uploads = await Promise.all(files.map(file => upload(file)));
-    */
     return request({
       method: 'POST',
       path:   'issues.json',
@@ -165,12 +162,10 @@ export async function createIssue(issue) {
 export async function updateIssue(issue) {
   log('update:', issue);
   try {
-    /*
     const files = issue.files;
     delete issue.files;
     if (files)
       issue.uploads = await Promise.all(files.map(file => upload(file)));
-    */
     const result = await request({
       method: 'PUT',
       path:   `issues/${issue.id}.json`,

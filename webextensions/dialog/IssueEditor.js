@@ -488,6 +488,8 @@ export class IssueEditor {
     else if (this.params.due_date)
       params.due_date = this.params.due_date;
 
+    params.files = this.mFilesField.filesToBeUpload;
+
     return params;
   }
 
