@@ -53,12 +53,14 @@ export const configs = new Configs({
 
   configsVersion: 0,
   debug: false,
+  dryRun: false,
 
   ...OVERRIDE_DEFAULT_CONFIGS
 }, {
   localKeys: [
     'configsVersion',
-    'debug'
+    'debug',
+    'dryRun'
   ]
 });
 

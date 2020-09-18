@@ -126,5 +126,6 @@
   "config_debug_caption": { "message": "Development" },
 
   "config_debug_label": { "message": "Debug mode" },
+  "config_dryRun_label": { "message": "Simulation mode" },
   "config_all_caption": { "message": "All Configs" }
 }

@@ -19,7 +19,7 @@ function getURL(path = '', params = {}) {
   return `${configs.redmineURL.replace(/\/$/, '')}/${path.replace(/^\//, '')}${Object.keys(params).length > 0 ? '?' : ''}${queryParams.toString()}`;
 }
 
-async function request({ method, path, params, data, type } = {}) {
+async function request({ method, path, params, data, type, response } = {}) {
   if (!method)
     method = 'GET';
   log('request:', method, path);
@@ -47,6 +47,9 @@ async function request({ method, path, params, data, type } = {}) {
     }
   }
 
+  if (configs.dryRun && method != 'GET') {
+    return response || {};
+  }
 
   const request = new XMLHttpRequest();
   return new Promise((resolve, reject) => {
@@ -149,7 +152,8 @@ export async function createIssue(issue) {
     return request({
       method: 'POST',
       path:   'issues.json',
-      data:   { issue: issue }
+      data:   { issue },
+      response: { issue: { id: 0, ...issue } }
     });
   }
   catch(error) {
@@ -170,7 +174,8 @@ export async function updateIssue(issue) {
     const result = await request({
       method: 'PUT',
       path:   `issues/${issue.id}.json`,
-      data:   { issue: issue }
+      data:   { issue },
+      response: { issue }
     });
     //Cache.remove(`redmine:issue:${issue.id}`);
     return result;
@@ -257,7 +262,8 @@ export async function saveRelation(relation) {
     return request({
       method: 'POST',
       path:   `issues/${relation.issue_id}/relations.json`,
-      data
+      data,
+      response: {}
     });
   }
   catch(error) {
@@ -271,7 +277,8 @@ export async function deleteRelation(relationId) {
   try {
     return request({
       method: 'DELETE',
-      path:   `relations/${relationId}.json`
+      path:   `relations/${relationId}.json`,
+      response: {}
     });
   }
   catch(error) {
