@@ -15,6 +15,7 @@ import {
 } from '/common/common.js';
 import * as Redmine from '/common/redmine.js';
 import { IssueChooser } from '/dialog/IssueChooser.js';
+import { FilesField } from '/dialog/FilesField.js';
 import { RelationsField } from '/dialog/RelationsField.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 
@@ -131,6 +132,10 @@ export class IssueEditor {
     });
     this.mRelationsField.onValid.addListener(() => this.onValid.dispatch());
     this.mRelationsField.onInvalid.addListener(() => this.onInvalid.dispatch());
+
+    this.mFilesField = new FilesField({
+      container: document.querySelector('#files')
+    });
 
     if (postInitializations.length)
       this.initialized = Promise.all(postInitializations);

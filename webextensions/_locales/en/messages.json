@@ -32,6 +32,8 @@
   "dialog_relation_chooseIssue": { "message": "Choose…" },
   "dialog_relation_remove": { "message":  "Remove" },
 
+  "dialog_files_add_label": { "message": "Add" },
+
 
   "dialog_linkToIssue_title": { "message": "Choose an issue to link this thread to" },
   "dialog_linkToIssue_accept_label": { "message": "OK" },

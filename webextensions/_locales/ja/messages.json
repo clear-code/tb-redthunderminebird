@@ -32,6 +32,8 @@
   "dialog_relation_chooseIssue": { "message": "参照..." },
   "dialog_relation_remove": { "message":  "削除" },
 
+  "dialog_files_add_label": { "message": "追加" },
+
 
   "dialog_linkToIssue_title": { "message": "チケット関連付け" },
   "dialog_linkToIssue_accept_label": { "message": "OK" },
