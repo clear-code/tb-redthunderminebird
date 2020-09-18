@@ -109,6 +109,7 @@
 
   "config_defaultValue_caption": { "message": "Default Values" },
   "config_defaultTracker_label": { "message": "Tracker" },
+  "config_defaultTracker_blank_label": { "message": "(blank)" },
   "config_defaultDueDate_label": { "message": "Due Date (days)" },
   "config_defaultTitleCleanupPattern_label": { "message": "Parts to be Removed from Subject (regular expression)" },
   "config_defaultUploadAttachments_label": { "message": "Upload Attachments by Default" },

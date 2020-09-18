@@ -110,6 +110,7 @@
 
   "config_defaultValue_caption": { "message": "入力の初期値" },
   "config_defaultTracker_label": { "message": "トラッカー" },
+  "config_defaultTracker_blank_label": { "message": "（未指定）" },
   "config_defaultDueDate_label": { "message": "期日（日）" },
   "config_defaultTitleCleanupPattern_label": { "message": "件名から削除する部分（正規表現）" },
   "config_defaultUploadAttachments_label": { "message": "初期状態で添付ファイルをアップロードする" },
