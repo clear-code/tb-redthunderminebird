@@ -51,7 +51,7 @@ async function initTrackers() {
   const trackers = await Redmine.getTrackers();
   initSelect(
     document.querySelector('#defaultTracker'),
-    trackers,
+    [{ name: '', value: '' }, ...trackers],
     tracker => ({ label: tracker.name, value: tracker.id })
   );
 }
