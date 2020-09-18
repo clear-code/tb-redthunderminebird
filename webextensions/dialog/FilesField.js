@@ -35,17 +35,18 @@ export class FilesField {
   }
 
   async addFiles(files) {
-    const promisedFiles = [];
-    for (const file of files) {
-      promisedFiles.push(file.arrayBuffer().then(buffer => ({
-        name:        file.name,
-        contentType: file.type,
-        data:        new Int8Array(buffer)
-      })));
-    }
-
-    const uploadableFiles = await Promise.all(promisedFiles);
-
+    const uploadableFiles = Array.from(files, file => ({
+      name:        file.name,
+      contentType: file.type,
+      get promisedData() {
+        if (this.data)
+          return Promise.resolve(this.data);
+        return file.arrayBuffer().then(buffer => {
+          this.data = new Int8Array(buffer);
+          return this.data;
+        });
+      }
+    }));
     for (const file of uploadableFiles) {
       appendContents(this.mContainer, `
         <label><input type="checkbox" checked>

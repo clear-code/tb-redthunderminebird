@@ -123,12 +123,13 @@ export async function ping() {
 }
 
 async function upload(file) {
-  log('upload:', file.name, file.data.byteLength);
+  const data = file.data || await file.promisedData;
+  log('upload:', file.name, data.byteLength);
   const result = await request({
     method: 'POST',
     path:   'uploads.json',
     type:   'application/octet-stream',
-    data:    file.data,
+    data,
     response: { upload: { token: '' } }
   }).catch(_error => null);
   return {
