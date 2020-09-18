@@ -8,6 +8,7 @@
 import * as Dialog from '/extlib/dialog.js';
 
 import {
+  configs,
   log,
   appendContents,
   sanitizeForHTMLText
@@ -29,6 +30,7 @@ export class IssueEditor {
     this.mStartDateField    = document.querySelector('#startDate');
     this.mDueDateEnabled    = document.querySelector('#dueDateEnabled');
     this.mDueDateField      = document.querySelector('#dueDate');
+    this.mFieldsContainer   = document.querySelector('#fields');
 
     this.onValid = new EventListenerManager();
     this.onInvalid = new EventListenerManager();
@@ -44,6 +46,9 @@ export class IssueEditor {
         this.initAssignees(this.params.project_id, members),
         this.mProjectField && this.initWatchers(this.params.project_id, members) // create
       ]);
+
+      if (!this.mIssueField) // create
+        this.rebuildCustomFields();
 
       this.applyFieldValues();
 
@@ -223,8 +228,9 @@ export class IssueEditor {
         <label><input type="checkbox"
                       value=${JSON.stringify(sanitizeForHTMLText(member.user.id))}
                       data-field="watcher_user_ids[]"
-                      data-value-type="integer"
-                     >${sanitizeForHTMLText(member.user.name)}</label>
+                      data-field-is-array="true"
+                      data-value-type="integer">
+               ${sanitizeForHTMLText(member.user.name)}</label>
       `);
     }
   }
@@ -279,19 +285,113 @@ export class IssueEditor {
       relations: issue.relations
     });
 
+    this.rebuildCustomFields(issue.custom_fields);
+
     this.applyFieldValues();
+  }
+
+  rebuildCustomFields(fields) {
+    if (!fields) {
+      try {
+        fields = JSON.parse(configs.customFields || '[]');
+        if (!Array.isArray(fields) && fields && fields.custom_fields)
+          fields = fields.custom_fields;
+      }
+      catch(_error) {
+        fields = [];
+      }
+    }
+    log('rebuildCustomFields ', fields);
+
+    for (const row of this.mFieldsContainer.querySelectorAll('.grid-row.custom-field')) {
+      row.parentNode.removeChild(row);
+    }
+
+    for (const field of fields) {
+      const source = `
+        <div class="grid-row custom-field"
+             data-field-id=${JSON.stringify(sanitizeForHTMLText(field.id))}
+             data-field-format=${JSON.stringify(sanitizeForHTMLText(field.field_format) + (field.multiple ? '-multiple' : ''))}>
+          <label for="custom-field-${sanitizeForHTMLText(field.id)}${field.multiple ? '-0' : ''}">${sanitizeForHTMLText(field.name)}</label>
+          <span class="grid-column">${this.customFieldUISource(field)}</span>
+        </div>
+      `.trim();
+      log(' => ', field, source);
+
+      appendContents(this.mFieldsContainer, source);
+
+      const select = this.mFieldsContainer.lastChild.querySelector('select');
+      if (select) // selectbox need to be initialized with its property instead of attribute!
+        select.value = ('value' in field ? field.value : field.default_value) || '';
+    }
+  }
+
+  customFieldUISource(field) {
+    const commonAttributes = `
+      data-field="custom_fields[]"
+      data-field-id=${JSON.stringify(sanitizeForHTMLText(field.id))}
+    `;
+    switch (field.field_format) {
+      case 'date':
+        return `
+          <span>
+            <input id="custom-field-${field.id}"
+                   type="date"
+                   value=${JSON.stringify(sanitizeForHTMLText('value' in field ? field.value : (field.default_value || '')))}
+                   data-original-value=${JSON.stringify(sanitizeForHTMLText(field.value || ''))}
+                   data-field-type="string"
+                   ${commonAttributes}>
+          </span>
+        `.trim();
+
+      case 'list':
+        if (field.multiple) {
+          return field.possible_values.map((value, index) => `
+            <label><input id="custom-field-${field.id}-${index}"
+                          type="checkbox"
+                          value=${JSON.stringify(sanitizeForHTMLText(value.value || ''))}
+                          data-field-type="string"
+                          data-field-is-array="true"
+                          ${commonAttributes}
+                          ${Array.isArray(field.value) && field.value.includes(value.value) ? 'checked' : ''}>
+                   ${sanitizeForHTMLText(value.label)}</label>
+          `.trim()).join(' ');
+        }
+        else {
+          const options = field.possible_values.map(value => `
+            <option value=${JSON.stringify(sanitizeForHTMLText(value.value || ''))}>${sanitizeForHTMLText(value.label)}</option>
+          `.trim()).join('');
+          return `
+            <select id="custom-field-${field.id}"
+                    data-original-value=${JSON.stringify(sanitizeForHTMLText(field.value || ''))}
+                    data-field-type="string"
+                    ${commonAttributes}>${options}</select>
+          `.trim();
+        }
+
+      default:
+        return `
+          <input id="custom-field-${field.id}"
+                 type="text"
+                 value=${JSON.stringify(sanitizeForHTMLText('value' in field ? field.value : (field.default_value || '')))}
+                 data-original-value=${JSON.stringify(sanitizeForHTMLText(field.value || ''))}
+                 data-field-type="string"
+                 ${commonAttributes}>
+        `.trim();
+    }
   }
 
   applyFieldValues() {
     for (const field of document.querySelectorAll('[data-field]')) {
-      if (!(field.dataset.field in this.params))
-        continue;
       const name = field.dataset.field;
       const paramName = name.replace(/\[\]$/, '');
-      const value = this.params[paramName];
-      const values = name.endsWith('[]') ? (value || []) : null;
+      if (!(paramName in this.params))
+        continue;
+
+      const valueHolder = field.dataset.fieldId ? (this.params[paramName] || []).find(field => field.id == field.dataset.fieldId) : this.params[paramName];
+      const value = field.dataset.fieldId ? (valueHolder && valueHolder.value) : valueHolder;
       if (field.matches('input[type="checkbox"]')) {
-        if (values)
+        if (field.dataset.fieldIsArray == 'true')
           field.checked = value.includes(field.value);
         else
           field.checked = !!value;
@@ -300,6 +400,7 @@ export class IssueEditor {
         field.value = value;
       }
     }
+
     if (this.params.start_date)
       this.mStartDateField.value = this.params.start_date;
     if (this.params.due_date)
@@ -340,28 +441,37 @@ export class IssueEditor {
       const name = field.dataset.field;
       paramNames.add(name.replace(/\[\]$/, ''));
     }
+    paramNames.delete('custom_fields');
 
     const params = {};
     for (const paramName of paramNames) {
-      const field = document.querySelector(`[data-field=${JSON.stringify(paramName)}]`);
-      const checkboxes = document.querySelectorAll(`[data-field=${JSON.stringify(paramName + '[]')}][type="checkbox"]`);
-      if (checkboxes.length > 0) {
-        const checkedValues = Array.from(
-          checkboxes,
-          checkbox => checkbox.dataset.valueType == 'integer' ? parseInt(checkbox.value || 0) : checkbox.value
-        );
-        params[paramName] = Array.from(new Set(checkedValues));
-      }
-      else if (field) {
-        if (field.matches('select, input[data-value-type="integer"]') && field.value === '')
-          continue;
-        params[paramName] = (
-          field.matches('input[type="checkbox"]') ? field.checked :
-            field.dataset.valueType == 'integer' ? parseInt(field.value || 0) :
-              field.value
-        );
+      const value = this.getRequestParamValueFor(paramName);
+      if (value !== null)
+        params[paramName] = value;
+    }
+
+    const customFields = [];
+    for (const customFieldRow of this.mFieldsContainer.querySelectorAll('.grid-row.custom-field')) {
+      const id = parseInt(customFieldRow.dataset.fieldId);
+      switch (customFieldRow.dataset.fieldFormat) {
+        case 'list-multiple': {
+          const checkboxes = customFieldRow.querySelectorAll(`[type="checkbox"]`);
+          customFields.push({
+            id,
+            value: this.getRequestParamValueFromCheckboxes(checkboxes)
+          });
+        }; continue;
+
+        default: {
+          const field = customFieldRow.querySelector(`[data-field]`);
+          const value = this.getRequestParamValueFromField(field);
+          if (value !== null)
+            customFields.push({ id, value });
+        }; continue;
       }
     }
+    if (customFields.length > 0)
+      params.custom_fields = customFields;
 
     if (this.mStartDateEnabled.checked)
       params.start_date = this.mStartDateField.value;
@@ -374,6 +484,39 @@ export class IssueEditor {
       params.due_date = this.params.due_date;
 
     return params;
+  }
+
+  getRequestParamValueFor(paramName) {
+    const checkboxes = document.querySelectorAll(`[data-field=${JSON.stringify(paramName + '[]')}][type="checkbox"]`);
+    if (checkboxes.length > 0)
+      return this.getRequestParamValueFromCheckboxes(checkboxes);
+
+    const field = document.querySelector(`[data-field=${JSON.stringify(paramName)}]`);
+    if (field)
+      return this.getRequestParamValueFromField(field);
+
+    return null;
+  }
+
+  getRequestParamValueFromCheckboxes(checkboxes) {
+    const checkedValues = Array.from(
+      checkboxes,
+      checkbox => !checkbox.checked ? null : (checkbox.dataset.valueType == 'integer' ? parseInt(checkbox.value || 0) : checkbox.value)
+    );
+    return Array.from(new Set(checkedValues.filter(value => value !== null)));
+  }
+
+  getRequestParamValueFromField(field) {
+    if (field.value === '' &&
+        (field.matches('input[data-value-type="integer"]') ||
+         (field.matches('select') &&
+          !field.querySelector('option[value=""]'))))
+      return null;
+    return (
+      field.matches('input[type="checkbox"]') ? field.checked :
+        field.dataset.valueType == 'integer' ? parseInt(field.value || 0) :
+          field.value
+    );
   }
 
   set issueId(issueId) {

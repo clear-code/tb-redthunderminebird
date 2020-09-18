@@ -10,3 +10,7 @@
 #form > .flex-box {
   min-height: 0; /* required to shrink dialog content */
 }
+
+label + label {
+  margin-left: 0.5em;
+}
