@@ -126,9 +126,26 @@ function onConfigChanged(key) {
     case 'debug':
       document.documentElement.classList.toggle('debugging', configs.debug);
       break;
+
+    case 'redmineURL':
+    case 'redmineAPIKey':
+      onRedmineChanged();
+      break;
   }
 }
 configs.$addObserver(onConfigChanged);
+
+function onRedmineChanged() {
+  if (onRedmineChanged.timer)
+    clearTimeout(onRedmineChanged.timer);
+  onRedmineChanged.timer = setTimeout(() => {
+    delete onRedmineChanged.timer;
+    if (document.querySelector('#redmineURL:blank, #redmineAPIKey:blank'))
+      return;
+    initTrackers();
+    initFolderMappings();
+  }, 250);
+}
 
 window.addEventListener('DOMContentLoaded', async () => {
   const [accounts, ] = await Promise.all([
@@ -166,6 +183,10 @@ window.addEventListener('DOMContentLoaded', async () => {
       continue;
     const lockedFields = container.querySelectorAll('.locked input, .locked textarea, .locked select, input.locked, textarea.locked, select.locked');
     container.classList.toggle('locked', allFields.length == lockedFields.length);
+  }
+
+  for (const field of document.querySelectorAll('#redmineURL, #redmineAPIKey')) {
+    field.addEventListener('change', () => onRedmineChanged());
   }
 
   document.documentElement.classList.add('initialized');
