@@ -24,9 +24,8 @@ export class FilesField {
     this.mContainer = container.querySelector('.files');
 
     this.mFileField = container.querySelector('.file-field');
-    this.mFileField.addEventListener('change', async _event => {
-      const files = await this.readFiles();
-      this.addFiles(files);
+    this.mFileField.addEventListener('change', _event => {
+      this.addFiles(this.mFileField.files);
     });
 
     this.mAddButton = container.querySelector('.add-file');
@@ -35,20 +34,19 @@ export class FilesField {
     });
   }
 
-  async readFiles() {
+  async addFiles(files) {
     const promisedFiles = [];
-    for (const file of this.mFileField.files) {
+    for (const file of files) {
       promisedFiles.push(file.arrayBuffer().then(buffer => ({
         name:        file.name,
         contentType: file.type,
         data:        new Int8Array(buffer)
       })));
     }
-    return Promise.all(promisedFiles);
-  }
 
-  addFiles(files) {
-    for (const file of files) {
+    const uploadableFiles = await Promise.all(promisedFiles);
+
+    for (const file of uploadableFiles) {
       appendContents(this.mContainer, `
         <label><input type="checkbox" checked>
                ${sanitizeForHTMLText(file.name)}</label>
