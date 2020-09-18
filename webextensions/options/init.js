@@ -30,13 +30,10 @@ function initSelect(field, items, itemTranslator) {
 
   let hasOldValueOption = false;
   for (const item of items) {
-    const translated = itemTranslator(item);
+    const translated = itemTranslator ? itemTranslator(item) : item;
     if (!translated)
       continue;
-    appendContents(field, `
-      <option value=${JSON.stringify(sanitizeForHTMLText(translated.value))}
-             >${sanitizeForHTMLText(translated.label)}</option>
-    `);
+    appendContents(field, generateOptionSource(translated));
     if (oldValue && translated.value == oldValue)
       hasOldValueOption = true;
   }
@@ -45,6 +42,12 @@ function initSelect(field, items, itemTranslator) {
     field.value = oldValue;
   else
     field.value = '';
+}
+function generateOptionSource(item) {
+  return `
+    <option value=${JSON.stringify(sanitizeForHTMLText(item.value))}
+           >${sanitizeForHTMLText(item.label)}</option>
+  `.trim();
 }
 
 async function initTrackers() {
@@ -58,57 +61,48 @@ async function initTrackers() {
 }
 
 async function initFolderMappings() {
-  const defaultChooser = document.querySelector('#defaultProject');
   const rowsContainer = document.querySelector('#mappedFoldersRows');
   const range = document.createRange();
-
-  range.selectNodeContents(defaultChooser);
-  range.setStartAfter(defaultChooser.firstChild);
-  range.deleteContents();
-
   range.selectNodeContents(rowsContainer);
   range.deleteContents();
+  range.detach();
 
   const accounts = mAccounts || await browser.accounts.list();
   if (accounts.length > 0) {
     const projects = await Redmine.getProjects();
     const allProjects = new Set(projects.map(project => String(project.id)));
-    const projectsChooser = document.createElement('select');
-    const defaultOption = projectsChooser.appendChild(document.createElement('option'));
-    defaultOption.textContent = browser.i18n.getMessage('config_mappedFolders_fallbackToDefault_label');
-    defaultOption.setAttribute('value', '');
-    for (const project of projects) {
-      const option = defaultChooser.appendChild(document.createElement('option'));
-      option.textContent = project.fullname;
-      option.setAttribute('value', project.id);
-      projectsChooser.appendChild(option.cloneNode(true));
-    }
+
+    const defaultChooser = document.querySelector('#defaultProject');
+    initSelect(
+      defaultChooser,
+      projects,
+      project => ({ label: project.fullname, value: project.id })
+    );
     defaultChooser.value = configs.defaultProject;
 
-    const rows = document.createDocumentFragment();
-    const addRow = (folder, parent) => {
-      const row = document.createElement('tr');
-      row.dataset.folderPath = folder.path;
+    const projectOptionsSource = [
+      generateOptionSource({ label: browser.i18n.getMessage('config_mappedFolders_fallbackToDefault_label'), value: '' }),
+      projects.map(project => generateOptionSource({ label: project.fullname, value: project.id }))
+    ].join('');
 
+    const addRow = (folder, parent) => {
       const readablePath = parent ? `${parent}/${folder.name}` : folder.name;
       const chooserId = `folder-mapping-${encodeURIComponent(folder.path)}`;
-
-      const folderCell = row.appendChild(document.createElement('td'));
-      const label = folderCell.appendChild(document.createElement('label'));
-      label.setAttribute('for', chooserId);
-      label.textContent = readablePath;
-
-      const projectsCell = row.appendChild(document.createElement('td'));
-      const clonedProjectChooser = projectsCell.appendChild(projectsChooser.cloneNode(true));
-      clonedProjectChooser.setAttribute('id', chooserId);
+      appendContents(rowsContainer, `
+        <tr data-folder-path=${JSON.stringify(sanitizeForHTMLText(folder.path))}>
+          <td><label for=${JSON.stringify(sanitizeForHTMLText(chooserId))}
+                    >${sanitizeForHTMLText(readablePath)}</label></td>
+          <td><select id=${JSON.stringify(sanitizeForHTMLText(chooserId))}
+                     >${projectOptionsSource}</select></td>
+        </tr>
+      `);
+      const projectChooser = rowsContainer.lastChild.querySelector('select');
       if (configs.mappedFolders &&
           folder.path in configs.mappedFolders &&
           allProjects.has(configs.mappedFolders[folder.path]))
-        clonedProjectChooser.value = configs.mappedFolders[folder.path];
+        projectChooser.value = configs.mappedFolders[folder.path];
       else
-        clonedProjectChooser.value = '';
-
-      rows.appendChild(row);
+        projectChooser.value = '';
 
       for (const subFolder of folder.subFolders) {
         addRow(subFolder, readablePath);
@@ -116,10 +110,7 @@ async function initFolderMappings() {
     };
     const account = accounts.find(account => account.id == configs.account) || accounts[0];
     account.folders.forEach(folder => addRow(folder));
-    range.insertNode(rows);
   }
-
-  range.detach();
 }
 
 function onConfigChanged(key) {
