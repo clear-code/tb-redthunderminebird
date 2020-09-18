@@ -152,7 +152,7 @@ export class IssueEditor {
       event.preventDefault();
 
       const dt = event.dataTransfer;
-      const hasFile = Array.from(dt.items, item => item.kind).some(kind == 'file');
+      const hasFile = Array.from(dt.items, item => item.kind).some(kind => kind == 'file');
       dt.dropEffect = hasFile ? 'link' : 'none';
     });
     document.addEventListener('drop', event => {
