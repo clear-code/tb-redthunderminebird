@@ -7,7 +7,8 @@
 
 import {
   configs,
-  //sendToHost
+  appendContents,
+  sanitizeForHTMLText
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import Options from '/extlib/Options.js';
@@ -17,7 +18,45 @@ import * as Redmine from '/common/redmine.js';
 
 const options = new Options(configs);
 
-async function initFolderMappings(givenAccounts) {
+let mAccounts;
+
+function initSelect(field, items, itemTranslator) {
+  const oldValue = field.value;
+
+  const range = document.createRange();
+  range.selectNodeContents(field);
+  range.deleteContents();
+  range.detach();
+
+  let hasOldValueOption = false;
+  for (const item of items) {
+    const translated = itemTranslator(item);
+    if (!translated)
+      continue;
+    appendContents(field, `
+      <option value=${JSON.stringify(sanitizeForHTMLText(translated.value))}
+             >${sanitizeForHTMLText(translated.label)}</option>
+    `);
+    if (oldValue && translated.value == oldValue)
+      hasOldValueOption = true;
+  }
+
+  if (oldValue && hasOldValueOption)
+    field.value = oldValue;
+  else
+    field.value = '';
+}
+
+async function initTrackers() {
+  const trackers = await Redmine.getTrackers();
+  initSelect(
+    document.querySelector('#defaultTracker'),
+    trackers,
+    tracker => ({ label: tracker.name, value: tracker.id })
+  );
+}
+
+async function initFolderMappings() {
   const defaultChooser = document.querySelector('#defaultProject');
   const rowsContainer = document.querySelector('#mappedFoldersRows');
   const range = document.createRange();
@@ -29,7 +68,7 @@ async function initFolderMappings(givenAccounts) {
   range.selectNodeContents(rowsContainer);
   range.deleteContents();
 
-  const accounts = givenAccounts || await browser.accounts.list();
+  const accounts = mAccounts || await browser.accounts.list();
   if (accounts.length > 0) {
     const projects = await Redmine.getProjects();
     const allProjects = new Set(projects.map(project => String(project.id)));
@@ -96,18 +135,19 @@ window.addEventListener('DOMContentLoaded', async () => {
     browser.accounts.list(),
     configs.$loaded
   ]);
+  mAccounts = accounts;
 
   const accountsSelect = document.querySelector('#account');
-  for (const account of accounts) {
-    const option = document.createElement('option');
-    option.textContent = account.name;
-    option.setAttribute('value', account.id);
-    accountsSelect.appendChild(option);
-  }
+  initSelect(
+    accountsSelect,
+    accounts,
+    account => ({ label: account.name, value: account.id })
+  );
   accountsSelect.value = configs.account || (accounts.length > 0 ? accounts[0].id : '');
 
+  initTrackers();
+  initFolderMappings();
 
-  initFolderMappings(accounts);
   const mappingRows = document.querySelector('#mappedFoldersRows');
   mappingRows.addEventListener('change', _event => {
     const mapping = {};
@@ -116,7 +156,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
     configs.mappedFolders = mapping;
   });
-
 
   options.buildUIForAllConfigs(document.querySelector('#debug-configs'));
   onConfigChanged('debug');
