@@ -5,6 +5,7 @@
 */
 
 
+@import url(/extlib/dialog.css);
 @import url(./base.css);
 
 #form > .flex-box {

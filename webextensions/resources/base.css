@@ -6,7 +6,6 @@
 
 
 @import url(./ui-color.css);
-@import url(/extlib/dialog.css);
 
 :root.debug .row {
   outline: 1px dotted blue;
@@ -26,6 +25,15 @@ textarea {
   font: menu;
 }
 
+
+/* copied from /extlib/dialog.css */
+.flex-box {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
 
 .row {
   align-items: center;
