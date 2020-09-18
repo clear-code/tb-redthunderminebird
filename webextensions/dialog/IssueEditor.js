@@ -300,6 +300,10 @@ export class IssueEditor {
         field.value = value;
       }
     }
+    if (this.params.start_date)
+      this.mStartDateField.value = this.params.start_date;
+    if (this.params.due_date)
+      this.mDueDateField.value = this.params.due_date;
   }
 
   onChangeFieldValue(field) {
@@ -362,8 +366,16 @@ export class IssueEditor {
     for (const paramName of paramNames) {
       params[paramName] = this.params[paramName];
     }
-    params.start_date = this.mStartDateEnabled.checked ? this.mStartDateField.value : '';
-    params.due_date = this.mDueDateEnabled.checked ? this.mDueDateField.value : '';
+
+    if (this.mStartDateEnabled.checked)
+      params.start_date = this.mStartDateField.value;
+    else if (this.params.start_date)
+      params.start_date = this.params.start_date;
+
+    if (this.mDueDateEnabled.checked)
+      params.due_date = this.mDueDateField.value;
+    else if (this.params.due_date)
+      params.due_date = this.params.due_date;
 
     return params;
   }
