@@ -24,7 +24,7 @@ export const configs = new Configs({
   defaultTracker: null,
   defaultDueDate: 7,
   defaultTitleCleanupPattern: '((fwd:)|(re:))\s?',
-  defaultUploadAttachments: true,
+  //defaultUploadAttachments: true,
   defaultDescriptionHeaders: ['Subject', 'From', 'Resent-From', 'Date', 'To', 'Cc', 'Newsgroups'],
   defaultNotesHeaders: ['Subject', 'From', 'Resent-From', 'Date', 'To', 'Cc', 'Newsgroups'],
 
