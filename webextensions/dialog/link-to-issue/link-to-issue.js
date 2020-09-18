@@ -65,6 +65,8 @@ configs.$loaded.then(async () => {
   });
   Dialog.initCancelButton(mCancelButton);
 
+  await Dialog.notifyReady();
+
   window.addEventListener('resize', _event => {
     configs.linkToIssueDialogWidth = window.outerWidth;
     configs.linkToIssueDialogHeight = window.outerHeight;
@@ -73,6 +75,4 @@ configs.$loaded.then(async () => {
     configs.linkToIssueDialogLeft = event.detail.left;
     configs.linkToIssueDialogTop = event.detail.top;
   });
-
-  Dialog.notifyReady();
 });

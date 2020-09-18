@@ -127,6 +127,8 @@ configs.$loaded.then(async () => {
   });
   Dialog.initCancelButton(mCancelButton);
 
+  await Dialog.notifyReady();
+
   window.addEventListener('resize', _event => {
     configs.updateIssueDialogWidth = window.outerWidth;
     configs.updateIssueDialogHeight = window.outerHeight;
@@ -135,8 +137,6 @@ configs.$loaded.then(async () => {
     configs.updateIssueDialogLeft = event.detail.left;
     configs.updateIssueDialogTop = event.detail.top;
   });
-
-  Dialog.notifyReady();
 });
 
 function toggleDescriptionField() {

@@ -109,6 +109,8 @@ configs.$loaded.then(async () => {
   });
   Dialog.initCancelButton(mCancelButton);
 
+  await Dialog.notifyReady();
+
   window.addEventListener('resize', _event => {
     configs.createIssueDialogWidth = window.outerWidth;
     configs.createIssueDialogHeight = window.outerHeight;
@@ -117,8 +119,6 @@ configs.$loaded.then(async () => {
     configs.createIssueDialogLeft = event.detail.left;
     configs.createIssueDialogTop = event.detail.top;
   });
-
-  Dialog.notifyReady();
 });
 
 async function createIssue() {
