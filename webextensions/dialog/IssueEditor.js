@@ -136,6 +136,37 @@ export class IssueEditor {
     this.mFilesField = new FilesField({
       container: document.querySelector('#files')
     });
+    const ignoreDropTargets = 'input[type="text"], input[type="number"], textarea';
+    document.addEventListener('dragenter', event => {
+      if (event.target.closest(ignoreDropTargets))
+        return;
+
+      event.stopPropagation();
+      event.preventDefault();
+    });
+    document.addEventListener('dragover', event => {
+      if (event.target.closest(ignoreDropTargets))
+        return;
+
+      event.stopPropagation();
+      event.preventDefault();
+
+      const dt = event.dataTransfer;
+      const hasFile = Array.from(dt.items, item => item.kind).some(kind == 'file');
+      dt.dropEffect = hasFile ? 'link' : 'none';
+    });
+    document.addEventListener('drop', event => {
+      if (event.target.closest(ignoreDropTargets))
+        return;
+
+      event.stopPropagation();
+      event.preventDefault();
+
+      const dt = event.dataTransfer;
+      const files = dt.files;
+      if (files && files.length > 0)
+        this.mFilesField.addFiles(files);
+    });
 
     if (postInitializations.length)
       this.initialized = Promise.all(postInitializations);
