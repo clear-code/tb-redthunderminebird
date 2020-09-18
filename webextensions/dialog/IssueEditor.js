@@ -282,8 +282,10 @@ export class IssueEditor {
       this.mParentIssueSubject.value = '';
     }
 
-    this.mStartDateField.value = issue.start_date || '';
-    this.mDueDateField.value = issue.due_date || '';
+    if (this.params.start_date)
+      this.params.start_date = issue.start_date;
+    if (this.params.due_date)
+      this.params.due_date = issue.due_date;
 
     /*await */this.mRelationsField.reinit({
       issueId:   issue.id,
@@ -477,16 +479,6 @@ export class IssueEditor {
     }
     if (customFields.length > 0)
       params.custom_fields = customFields;
-
-    if (this.mStartDateEnabled.checked)
-      params.start_date = this.mStartDateField.value;
-    else if (this.params.start_date)
-      params.start_date = this.params.start_date;
-
-    if (this.mDueDateEnabled.checked)
-      params.due_date = this.mDueDateField.value;
-    else if (this.params.due_date)
-      params.due_date = this.params.due_date;
 
     params.files = this.mFilesField.filesToBeUpload;
 
