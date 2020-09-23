@@ -16,9 +16,11 @@
           <div class="grid-row" data-field-row="issue">
             <label for="issue">__MSG_dialog_updateIssue_issue_label__</label>
             <span class="grid-column issue-chooser">
+              <span class="flex-box row">
               <input id="issue" class="issue-id" type="number" min="0" data-field="id" data-value-type="integer">
-              <input id="issueSubject" class="issue-subject" type="text" disabled="true">
+              <input id="issueSubject" class="issue-subject flex-box column" type="text" disabled="true">
               <button class="issue-choose">__MSG_dialog_updateIssue_issue_choose_label__</button>
+              </span>
             </span>
           </div>
           <div class="grid-row" data-field-row="description">
@@ -32,9 +34,11 @@
           <div class="grid-row" data-field-row="parentIssue">
             <label for="parentIssue">__MSG_dialog_updateIssue_parentIssue_label__</label>
             <span class="grid-column issue-chooser">
+              <span class="flex-box row">
               <input id="parentIssue" class="issue-id" type="number" min="0" data-field="parent_issue_id" data-value-type="integer">
-              <input id="parentIssueSubject" class="issue-subject" type="text" disabled="true">
+              <input id="parentIssueSubject" class="issue-subject flex-box column" type="text" disabled="true">
               <button class="issue-choose">__MSG_dialog_createIssue_parentIssue_choose_label__</button>
+              </span>
             </span>
           </div>
           <div class="grid-row" data-field-row="notes">
