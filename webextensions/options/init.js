@@ -231,21 +231,23 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 
   const projectsVisibilityModeSelector = document.querySelector('#projectsVisibilityMode');
-  const hiddenProjects = document.querySelector('#hiddenProjectsCheckboxesContainer');
-  const visibleProjects = document.querySelector('#visibleProjectsCheckboxesContainer');
+  const hiddenProjectsContaier = document.querySelector('#hiddenProjectsContainer');
+  const visibleProjectsContainer = document.querySelector('#visibleProjectsContainer');
 
   const onProjectVisibilityModeChanged = () => {
     const showByDefault = projectsVisibilityModeSelector.value != Constants.PROJECTS_VISIBILITY_HIDE_BY_DEFAULT;
-    hiddenProjects.classList.toggle('hidden', !showByDefault);
-    visibleProjects.classList.toggle('hidden', showByDefault);
+    hiddenProjectsContaier.classList.toggle('hidden', !showByDefault);
+    visibleProjectsContainer.classList.toggle('hidden', showByDefault);
   };
   onProjectVisibilityModeChanged();
   projectsVisibilityModeSelector.addEventListener('change', onProjectVisibilityModeChanged);
 
   const hiddenProjectsTextField = document.querySelector('#hiddenProjectsText');
-  hiddenProjects.addEventListener('change', _event => {
+  hiddenProjectsContaier.addEventListener('change', event => {
+    if (!event.target.matches('input[type="checkbox"]'))
+      return;
     configs.hiddenProjects = Array.from(
-      hiddenProjects.querySelectorAll('input[type="checkbox"]:checked'),
+      hiddenProjectsContaier.querySelectorAll('input[type="checkbox"]:checked'),
       checkbox => parseInt(checkbox.value)
     );
     hiddenProjectsTextField.value = configs.hiddenProjects.join(',');
@@ -257,9 +259,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   hiddenProjectsTextField.value = configs.hiddenProjects.join(',');
 
   const visibleProjectsTextField = document.querySelector('#visibleProjectsText');
-  visibleProjects.addEventListener('change', _event => {
+  visibleProjectsContainer.addEventListener('change', event => {
+    if (!event.target.matches('input[type="checkbox"]'))
+      return;
     configs.visibleProjects = Array.from(
-      visibleProjects.querySelectorAll('input[type="checkbox"]:checked'),
+      visibleProjectsContainer.querySelectorAll('input[type="checkbox"]:checked'),
       checkbox => parseInt(checkbox.value)
     );
     visibleProjectsTextField.value = configs.visibleProjects.join(',');
@@ -272,19 +276,21 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 
   const statusesVisibilityModeSelector = document.querySelector('#statusesVisibilityMode');
-  const visibleStatuses = document.querySelector('#visibleStatusesCheckboxesContainer');
+  const visibleStatusesContainer = document.querySelector('#visibleStatusesContainer');
 
   const onStatustVisibilityModeChanged = () => {
     const showByDefault = statusesVisibilityModeSelector.value != Constants.STATUSES_VISIBILITY_HIDE_BY_DEFAULT;
-    visibleStatuses.classList.toggle('hidden', showByDefault);
+    visibleStatusesContainer.classList.toggle('hidden', showByDefault);
   };
   onStatustVisibilityModeChanged();
   statusesVisibilityModeSelector.addEventListener('change', onStatustVisibilityModeChanged);
 
   const visibleStatusesTextField = document.querySelector('#visibleStatusesText');
-  visibleStatuses.addEventListener('change', _event => {
+  visibleStatusesContainer.addEventListener('change', event => {
+    if (!event.target.matches('input[type="checkbox"]'))
+      return;
     configs.visibleStatuses = Array.from(
-      visibleStatuses.querySelectorAll('input[type="checkbox"]:checked'),
+      visibleStatusesContainer.querySelectorAll('input[type="checkbox"]:checked'),
       checkbox => parseInt(checkbox.value)
     );
     visibleStatusesTextField.value = configs.visibleStatuses.join(',');
