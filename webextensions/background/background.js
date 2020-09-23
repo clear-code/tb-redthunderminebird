@@ -122,15 +122,15 @@ browser.menus.onClicked.addListener(async (info, tab) => {
     }; break;
 
     case 'linkToIssue':
-      linkToIssue(messages[0], tab);
+      runTask(async () => linkToIssue(messages[0], tab));
       break;
 
     case 'createIssue':
-      createIssue(messages[0], tab);
+      runTask(async () => createIssue(messages[0], tab));
       break;
 
     case 'updateIssue':
-      updateIssue(messages[0], tab);
+      runTask(async () => updateIssue(messages[0], tab));
       break;
 
     case 'openIssue': {
@@ -228,4 +228,25 @@ async function updateIssue(message, tab) {
   }
   catch(_error) {
   }
+}
+
+
+let mInProgressTask;
+
+async function ensureNoOtherTask() {
+  if (!mInProgressTask)
+    return;
+
+  throw new Error('there is an in-progress task');
+}
+
+async function runTask(asyncTask) {
+  await ensureNoOtherTask();
+  mInProgressTask = asyncTask();
+  try {
+    await mInProgressTask;
+  }
+  catch(_error) {
+  }
+  mInProgressTask = null;
 }
