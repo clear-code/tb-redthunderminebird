@@ -400,7 +400,7 @@ export async function getTrackers(projectId) {
   }
 }
 
-export async function getIssueStatuses() {
+export async function getIssueStatuses({ all } = {}) {
   log('issueStatuses');
   const response = await Cache.getAndFallback(
     'redmine:issueStatuses',
@@ -408,11 +408,11 @@ export async function getIssueStatuses() {
       return request({ path: 'issue_statuses.json' });
     }
   );
-  const visibleStatuses = new Set(configs.visibleStatuses);
+  const visibleStatuses = new Set(configs.visibleStatuses.map(status => String(status)));
+  const showByDefault = configs.statusVisibilityMode != Constants.STATUSES_VISIBILITY_HIDE_BY_DEFAULT;
   const statuses = response.issue_statuses.filter(status =>
-    visibleStatuses.size == 0 ||
-    visibleStatuses.has(String(status.id)) ||
-    visibleStatuses.has(status.name)
+    (all || showByDefault) ? true :
+      (visibleStatuses.has(String(status.id)) || visibleStatuses.has(status.name))
   );
   return statuses;
 }

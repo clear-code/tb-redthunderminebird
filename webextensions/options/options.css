@@ -45,7 +45,8 @@ ul li {
   list-style: none;
 }
 
-p.sub {
+p.sub,
+div.sub {
   margin-left: 2em;
 }
 
@@ -71,8 +72,7 @@ legend label.locked {
 }
 
 
-#hiddenProjectsCheckboxes,
-#visibleProjectsCheckboxes {
+.checkboxes-for-array-config {
   border: 1px solid;
   height: 10em;
   overflow: auto;
@@ -80,7 +80,6 @@ legend label.locked {
   resize: vertical;
 }
 
-#hiddenProjectsCheckboxes label,
-#visibleProjectsCheckboxes label {
+.checkboxes-for-array-config label {
   display: block;
 }

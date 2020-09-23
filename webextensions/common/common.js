@@ -18,6 +18,7 @@ export const configs = new Configs({
   projectVisibilityMode: Constants.PROJECTS_VISIBILITY_SHOW_BY_DEFAULT,
   visibleProjects: [],
   hiddenProjects: [],
+  statusVisibilityMode: Constants.STATUSES_VISIBILITY_SHOW_BY_DEFAULT,
   visibleStatuses: [],
   visibleFolderPattern: '',
   visibleFields: [],

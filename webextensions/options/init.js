@@ -94,6 +94,21 @@ async function initProjectVisibilityCheckboxes(projects) {
   );
 }
 
+async function initStatusVisibilityCheckboxes(statuses) {
+  if (!statuses)
+    statuses = await Redmine.getIssueStatuses({ all: true });
+  const visibleStatuses = new Set(configs.visibleStatuses.map(project => String(project)));
+  initCheckboxes(
+    document.querySelector('#visibleStatusesCheckboxes'),
+    statuses,
+    status => ({
+      value: status.id,
+      label: status.name,
+      checked: visibleStatuses.has(String(status.id)) || visibleStatuses.has(status.name)
+    })
+  );
+}
+
 async function initTrackers() {
   const trackers = await Redmine.getTrackers();
   initSelect(
@@ -179,8 +194,12 @@ function onRedmineChanged() {
     if (!document.querySelector('#redmineURL').value.trim() ||
         !document.querySelector('#redmineAPIKey').value.trim())
       return;
-    const projects = await Redmine.getProjects({ all: true });
+    const [projects, statuses] = await Promise.all([
+      Redmine.getProjects({ all: true }),
+      Redmine.getIssueStatuses({ all: true })
+    ])
     initProjectVisibilityCheckboxes(projects);
+    initStatusVisibilityCheckboxes(statuses);
     initTrackers();
     initFolderMappings(projects);
   }, 250);
@@ -201,8 +220,12 @@ window.addEventListener('DOMContentLoaded', async () => {
   );
   accountsSelect.value = configs.account || (accounts.length > 0 ? accounts[0].id : '');
 
-  const projects = await Redmine.getProjects({ all: true });
+  const [projects, statuses] = await Promise.all([
+    Redmine.getProjects({ all: true }),
+    Redmine.getIssueStatuses({ all: true })
+  ])
   initProjectVisibilityCheckboxes(projects);
+  initStatusVisibilityCheckboxes(statuses);
   initTrackers();
   initFolderMappings(projects);
 
@@ -246,6 +269,31 @@ window.addEventListener('DOMContentLoaded', async () => {
     initProjectVisibilityCheckboxes(projects);
   });
   visibleProjectsTextField.value = configs.visibleProjects.join(',');
+
+
+  const statusVisibilityModeSelector = document.querySelector('#statusVisibilityMode');
+  const visibleStatuses = document.querySelector('#visibleStatusesCheckboxesContainer');
+
+  const onStatustVisibilityModeChanged = () => {
+    const showByDefault = statusVisibilityModeSelector.value != Constants.STATUSES_VISIBILITY_HIDE_BY_DEFAULT;
+    visibleStatuses.classList.toggle('hidden', showByDefault);
+  };
+  onStatustVisibilityModeChanged();
+  statusVisibilityModeSelector.addEventListener('change', onStatustVisibilityModeChanged);
+
+  const visibleStatusesTextField = document.querySelector('#visibleStatusesText');
+  visibleStatuses.addEventListener('change', _event => {
+    configs.visibleStatuses = Array.from(
+      visibleStatuses.querySelectorAll('input[type="checkbox"]:checked'),
+      checkbox => parseInt(checkbox.value)
+    );
+    visibleStatusesTextField.value = configs.visibleStatuses.join(',');
+  });
+  visibleStatusesTextField.addEventListener('input', _event => {
+    configs.visibleStatuses = visibleStatusesTextField.value.split(',').map(value => parseInt(value)).filter(value => value && !isNaN(value));
+    initStatusVisibilityCheckboxes(statuses);
+  });
+  visibleStatusesTextField.value = configs.visibleStatuses.join(',');
 
 
   const mappingRows = document.querySelector('#mappedFoldersRows');
