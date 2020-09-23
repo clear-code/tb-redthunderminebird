@@ -317,7 +317,7 @@ export async function getProjects({ all } = {}) {
       //識別子でフィルタ
       const visibleProjects = new Set(configs.visibleProjects.map(project => String(project)));
       const hiddenProjects = new Set(configs.hiddenProjects.map(project => String(project)));
-      const showByDefault = configs.projectVisibilityMode != Constants.PROJECTS_VISIBILITY_HIDE_BY_DEFAULT;
+      const showByDefault = configs.projectsVisibilityMode != Constants.PROJECTS_VISIBILITY_HIDE_BY_DEFAULT;
 
       const projects = [];
       let offset = 0;
@@ -409,7 +409,7 @@ export async function getIssueStatuses({ all } = {}) {
     }
   );
   const visibleStatuses = new Set(configs.visibleStatuses.map(status => String(status)));
-  const showByDefault = configs.statusVisibilityMode != Constants.STATUSES_VISIBILITY_HIDE_BY_DEFAULT;
+  const showByDefault = configs.statusesVisibilityMode != Constants.STATUSES_VISIBILITY_HIDE_BY_DEFAULT;
   const statuses = response.issue_statuses.filter(status =>
     (all || showByDefault) ? true :
       (visibleStatuses.has(String(status.id)) || visibleStatuses.has(status.name))

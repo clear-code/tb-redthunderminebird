@@ -230,17 +230,17 @@ window.addEventListener('DOMContentLoaded', async () => {
   initFolderMappings(projects);
 
 
-  const projectVisibilityModeSelector = document.querySelector('#projectVisibilityMode');
+  const projectsVisibilityModeSelector = document.querySelector('#projectsVisibilityMode');
   const hiddenProjects = document.querySelector('#hiddenProjectsCheckboxesContainer');
   const visibleProjects = document.querySelector('#visibleProjectsCheckboxesContainer');
 
   const onProjectVisibilityModeChanged = () => {
-    const showByDefault = projectVisibilityModeSelector.value != Constants.PROJECTS_VISIBILITY_HIDE_BY_DEFAULT;
+    const showByDefault = projectsVisibilityModeSelector.value != Constants.PROJECTS_VISIBILITY_HIDE_BY_DEFAULT;
     hiddenProjects.classList.toggle('hidden', !showByDefault);
     visibleProjects.classList.toggle('hidden', showByDefault);
   };
   onProjectVisibilityModeChanged();
-  projectVisibilityModeSelector.addEventListener('change', onProjectVisibilityModeChanged);
+  projectsVisibilityModeSelector.addEventListener('change', onProjectVisibilityModeChanged);
 
   const hiddenProjectsTextField = document.querySelector('#hiddenProjectsText');
   hiddenProjects.addEventListener('change', _event => {
@@ -271,15 +271,15 @@ window.addEventListener('DOMContentLoaded', async () => {
   visibleProjectsTextField.value = configs.visibleProjects.join(',');
 
 
-  const statusVisibilityModeSelector = document.querySelector('#statusVisibilityMode');
+  const statusesVisibilityModeSelector = document.querySelector('#statusesVisibilityMode');
   const visibleStatuses = document.querySelector('#visibleStatusesCheckboxesContainer');
 
   const onStatustVisibilityModeChanged = () => {
-    const showByDefault = statusVisibilityModeSelector.value != Constants.STATUSES_VISIBILITY_HIDE_BY_DEFAULT;
+    const showByDefault = statusesVisibilityModeSelector.value != Constants.STATUSES_VISIBILITY_HIDE_BY_DEFAULT;
     visibleStatuses.classList.toggle('hidden', showByDefault);
   };
   onStatustVisibilityModeChanged();
-  statusVisibilityModeSelector.addEventListener('change', onStatustVisibilityModeChanged);
+  statusesVisibilityModeSelector.addEventListener('change', onStatustVisibilityModeChanged);
 
   const visibleStatusesTextField = document.querySelector('#visibleStatusesText');
   visibleStatuses.addEventListener('change', _event => {

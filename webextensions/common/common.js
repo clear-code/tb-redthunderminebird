@@ -15,10 +15,10 @@ export const configs = new Configs({
   redmineAPIKey: '',
   account: '',
 
-  projectVisibilityMode: Constants.PROJECTS_VISIBILITY_SHOW_BY_DEFAULT,
+  projectsVisibilityMode: Constants.PROJECTS_VISIBILITY_SHOW_BY_DEFAULT,
   visibleProjects: [],
   hiddenProjects: [],
-  statusVisibilityMode: Constants.STATUSES_VISIBILITY_SHOW_BY_DEFAULT,
+  statusesVisibilityMode: Constants.STATUSES_VISIBILITY_SHOW_BY_DEFAULT,
   visibleStatuses: [],
   visibleFolderPattern: '',
   visibleFields: [],
