@@ -161,22 +161,22 @@ async function initFolderMappings(projects) {
         return;
       const readablePath = parent ? `${parent}/${folder.name}` : folder.name;
       if (!folderFilter || folderFilter.test(folder.name)) {
-      const chooserId = `folder-mapping-${encodeURIComponent(folder.path)}`;
-      appendContents(rowsContainer, `
-        <tr data-folder-path=${JSON.stringify(sanitizeForHTMLText(folder.path))}>
-          <td><label for=${JSON.stringify(sanitizeForHTMLText(chooserId))}
-                    >${sanitizeForHTMLText(readablePath)}</label></td>
-          <td><select id=${JSON.stringify(sanitizeForHTMLText(chooserId))}
-                     >${projectOptionsSource}</select></td>
-        </tr>
-      `);
-      const projectChooser = rowsContainer.lastChild.querySelector('select');
-      if (configs.mappedFolders &&
-          folder.path in configs.mappedFolders &&
-          allProjects.has(configs.mappedFolders[folder.path]))
-        projectChooser.value = configs.mappedFolders[folder.path];
-      else
-        projectChooser.value = '';
+        const chooserId = `folder-mapping-${encodeURIComponent(folder.path)}`;
+        appendContents(rowsContainer, `
+          <tr data-folder-path=${JSON.stringify(sanitizeForHTMLText(folder.path))}>
+            <td><label for=${JSON.stringify(sanitizeForHTMLText(chooserId))}
+                      >${sanitizeForHTMLText(readablePath)}</label></td>
+            <td><select id=${JSON.stringify(sanitizeForHTMLText(chooserId))}
+                       >${projectOptionsSource}</select></td>
+          </tr>
+        `);
+        const projectChooser = rowsContainer.lastChild.querySelector('select');
+        if (configs.mappedFolders &&
+            folder.path in configs.mappedFolders &&
+            allProjects.has(configs.mappedFolders[folder.path]))
+          projectChooser.value = configs.mappedFolders[folder.path];
+        else
+          projectChooser.value = '';
       }
 
       for (const subFolder of folder.subFolders) {
