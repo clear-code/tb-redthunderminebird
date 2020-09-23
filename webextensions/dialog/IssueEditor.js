@@ -130,13 +130,16 @@ export class IssueEditor {
       });
     }
 
+    if (configs.fieldVisibility_relations) {
     this.mRelationsField = new RelationsField({
       container: document.querySelector('#relations'),
       projectId: () => this.mProjectField ? this.mProjectField.value : this.params.project_id
     });
     this.mRelationsField.onValid.addListener(() => this.onValid.dispatch());
     this.mRelationsField.onInvalid.addListener(() => this.onInvalid.dispatch());
+    }
 
+    if (configs.fieldVisibility_file) {
     this.mFilesField = new FilesField({
       container: document.querySelector('#files')
     });
@@ -171,6 +174,7 @@ export class IssueEditor {
       if (files && files.length > 0)
         this.mFilesField.addFiles(files);
     });
+    }
 
     if (postInitializations.length)
       this.initialized = Promise.all(postInitializations);
@@ -322,6 +326,7 @@ export class IssueEditor {
     if (this.params.due_date)
       this.params.due_date = issue.due_date;
 
+    if (this.mRelationsField)
     /*await */this.mRelationsField.reinit({
       issueId:   issue.id,
       relations: issue.relations
@@ -461,6 +466,7 @@ export class IssueEditor {
   async validateFields() {
     this.mParentIssueField.classList.toggle('invalid', !!(this.params.id && this.mParentIssueField.value && (this.mParentIssueField.value == this.params.id)));
 
+    if (this.mRelationsField) {
     this.mRelationsField.unavailableIds.clear();
     if (this.params.id)
       this.mRelationsField.unavailableIds.add(this.params.id);
@@ -468,6 +474,7 @@ export class IssueEditor {
       this.mRelationsField.unavailableIds.add(parseInt(this.mParentIssueField.value || 0));
 
     await this.mRelationsField.validateFields();
+    }
 
     if (document.querySelector('.invalid'))
       this.onInvalid.dispatch();
@@ -515,6 +522,7 @@ export class IssueEditor {
     if (customFields.length > 0)
       params.custom_fields = customFields;
 
+    if (this.mFilesField)
     params.files = this.mFilesField.filesToBeUpload;
 
     return params;
@@ -558,7 +566,7 @@ export class IssueEditor {
   }
 
   saveRelations() {
-    if (this.params.id)
+    if (this.params.id && this.mRelationsField)
       return this.mRelationsField.save({ issueId: this.params.id });
   }
 }
