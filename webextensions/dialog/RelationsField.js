@@ -11,7 +11,7 @@ import {
   sanitizeForHTMLText
 } from '/common/common.js';
 import * as Redmine from '/common/redmine.js';
-import { IssueChooser } from '/dialog/IssueChooser.js';
+import { IssueChooser, updateIdFieldSize } from '/dialog/IssueChooser.js';
 import * as Dialog from '/extlib/dialog.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 
@@ -63,6 +63,7 @@ export class RelationsField {
         });
         if (issue) {
           issueIdField.value = issue.id;
+          updateIdFieldSize(issueIdField);
           issueSubjectField.value = issue.subject;
           this.validateFields();
         }
@@ -108,8 +109,7 @@ export class RelationsField {
     if (!select)
       return;
     const relationDelayFields = select.closest('li').querySelector('.relation-delay-fields');
-    const shouldShowDelayFields = select.value == 'precedes' || select.value == 'follows';
-    relationDelayFields.style.display = shouldShowDelayFields ? '' : 'none';
+    relationDelayFields.classList.toggle('hidden', select.value != 'precedes' && select.value != 'follows');
   }
 
   addRow(relation = {}) {
@@ -130,17 +130,14 @@ export class RelationsField {
           <option value="copied_to">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_copiedTo'))}</option>
           <option value="copied_from">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_copiedFrom'))}</option>
         </select>
-        <input class="related-issue-id" type="number" min="0" data-value-type="integer"
+        <input class="related-issue-id issue-id" type="number" min="0" data-value-type="integer"
                value=${JSON.stringify(String(anotherIssueId || ''))}>
-        <span class="flex-box row">
-          <input class="related-issue-subject" type="text" disabled="true">
-          <label class="relation-delay-fields"
-                 style="display:none"
+        <input class="related-issue-subject flex-box column" type="text" disabled="true">
+          <label class="relation-delay-fields hidden"
                 >${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_delay_label_before'))}
                  <input class="relation-delay" type="number" data-value-type="integer" size="3"
                         value=${JSON.stringify(String(relation.delay || '0'))}>
                  ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_delay_label_after'))}</label>
-        </span>
         <button class="choose-related-issue">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_chooseIssue'))}</button>
         <button class="remove-relation">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_remove'))}</button>
       </li>
@@ -152,7 +149,10 @@ export class RelationsField {
     select.value = relation.relation_type || 'relates';
     this.showHideDelayFieldFor(select);
 
-    return this.fillSubjectFor(row.querySelector('.related-issue-id'));
+    const idField = row.querySelector('.related-issue-id');
+    updateIdFieldSize(idField);
+
+    return this.fillSubjectFor(idField);
   }
 
   clearRows() {

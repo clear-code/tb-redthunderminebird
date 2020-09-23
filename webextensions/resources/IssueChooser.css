@@ -4,6 +4,13 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
+
+input[type="number"].issue-id {
+  text-align: right;
+  width: calc(var(--base-width, 5ch) + 2em);
+}
+
+
 .choose-issue.issues {
   background: -moz-field;
   border: 1px solid;

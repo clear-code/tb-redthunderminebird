@@ -27,7 +27,7 @@ export class IssueChooser {
 
     appendContents(container, `
       <div><label>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_chooseIssue_issueId_label'))}
-                  <input class="choose-issue issue-id" type="number" min="0" style="width: 5em; text-align: right;"></label>
+                  <input class="choose-issue issue-id" type="number" min="0"></label>
            <button class="choose-issue fetch-more">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_chooseIssue_more_label'))}</button></div>
       <ul class="choose-issue issues flex-box column"></ul>
       <textarea class="choose-issue description" rows="10" readonly="true"></textarea>
@@ -141,6 +141,7 @@ export class IssueChooser {
                                >#${sanitizeForHTMLText(issue.id)} ${sanitizeForHTMLText(issue.subject)}</span></label></li>
       `);
       this.mIssuesContainer.lastChild.querySelector('input[type="radio"]').$issue = issue;
+      updateIdFieldSize(this.mIssuesContainer.lastChild.querySelector('input[type="number"].issue-id'));
     }
     this.mLastOffset += issues.length;
 
@@ -148,3 +149,14 @@ export class IssueChooser {
       this.onIssueChange();
   }
 }
+
+export function updateIdFieldSize(field) {
+  if (!field)
+    return;
+  field.style.setProperty('--base-width', `${Math.max(3, String(field.value).length)}ch`);
+}
+
+document.addEventListener('input', event => {
+  if (event.target.matches('input[type="number"].issue-id'))
+    updateIdFieldSize(event.target);
+});
