@@ -33,6 +33,10 @@ export class IssueEditor {
     this.mDueDateField      = document.querySelector('#dueDate');
     this.mFieldsContainer   = document.querySelector('#fields');
 
+    for (const row of document.querySelectorAll('[data-field-row]')) {
+      row.classList.toggle('hidden', !configs[`showFieldRow_${row.dataset.fieldRow}`]);
+    }
+
     this.onValid = new EventListenerManager();
     this.onInvalid = new EventListenerManager();
 
@@ -474,7 +478,7 @@ export class IssueEditor {
   getRequestParams() {
     const paramNames = new Set();
     for (const field of document.querySelectorAll('[data-field]')) {
-      if (field.disabled)
+      if (field.disabled || field.closest('.hidden'))
         continue;
       const name = field.dataset.field;
       paramNames.add(name.replace(/\[\]$/, ''));

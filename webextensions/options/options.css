@@ -83,3 +83,7 @@ legend label.locked {
 .checkboxes-for-array-config label {
   display: block;
 }
+
+#visibleFields label {
+  white-space: nowrap;
+}

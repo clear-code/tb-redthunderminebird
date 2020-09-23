@@ -13,7 +13,7 @@
     <form id="form" class="dialog-content" action="#" method="GET">
       <div class="flex-box column">
         <div class="grid" id="fields">
-          <div class="grid-row">
+          <div class="grid-row" data-field-row="issue">
             <label for="issue">__MSG_dialog_updateIssue_issue_label__</label>
             <span class="grid-column issue-chooser">
               <input id="issue" class="issue-id" type="number" min="0" data-field="id" data-value-type="integer">
@@ -21,7 +21,7 @@
               <button class="issue-choose">__MSG_dialog_updateIssue_issue_choose_label__</button>
             </span>
           </div>
-          <div class="grid-row">
+          <div class="grid-row" data-field-row="description">
             <label for="description"
                   >__MSG_dialog_updateIssue_description_label__
                   <a id="toggleDescription"
@@ -29,7 +29,7 @@
                     >__MSG_dialog_updateIssue_description_edit_label__</a></label>
             <span class="grid-column"><textarea id="description" data-field="description" rows="10"></textarea></span>
           </div>
-          <div class="grid-row">
+          <div class="grid-row" data-field-row="parentIssue">
             <label for="parentIssue">__MSG_dialog_updateIssue_parentIssue_label__</label>
             <span class="grid-column issue-chooser">
               <input id="parentIssue" class="issue-id" type="number" min="0" data-field="parent_issue_id" data-value-type="integer">
@@ -37,23 +37,23 @@
               <button class="issue-choose">__MSG_dialog_createIssue_parentIssue_choose_label__</button>
             </span>
           </div>
-          <div class="grid-row">
+          <div class="grid-row" data-field-row="notes">
             <label for="notes">__MSG_dialog_updateIssue_notes_label__</label>
             <span class="grid-column"><textarea id="notes" data-field="notes" rows="10"></textarea></span>
           </div>
-          <div class="grid-row">
+          <div class="grid-row" data-field-row="status">
             <label for="status">__MSG_dialog_updateIssue_status_label__</label>
             <span class="grid-column"><select id="status" data-field="status_id" data-value-type="integer"></select></span>
           </div>
-          <div class="grid-row">
+          <div class="grid-row" data-field-row="assigned">
             <label for="assigned">__MSG_dialog_updateIssue_assigned_label__</label>
             <span class="grid-column"><select id="assigned" data-field="assigned_to_id" data-value-type="integer"></select></span>
           </div>
-          <div class="grid-row">
+          <div class="grid-row" data-field-row="version">
             <label for="version">__MSG_dialog_updateIssue_version_label__</label>
             <span class="grid-column"><select id="version" data-field="fixed_version_id" data-value-type="integer"></select></span>
           </div>
-          <div class="grid-row">
+          <div class="grid-row" data-field-row="period">
             <label>__MSG_dialog_updateIssue_period_label__</label>
             <span class="grid-column">
               <label><input id="startDateEnabled" type="checkbox">
@@ -64,11 +64,11 @@
               <input id="dueDate" data-field="due_date" type="date">
             </span>
           </div>
-          <div class="grid-row">
+          <div class="grid-row" data-field-row="file">
             <label>__MSG_dialog_updateIssue_file_label__</label>
             <div class="grid-column" id="files"></div>
           </div>
-          <div class="grid-row">
+          <div class="grid-row" data-field-row="relations">
             <label>__MSG_dialog_updateIssue_relations_label__</label>
             <div class="grid-column" id="relations"></div>
           </div>
