@@ -73,6 +73,7 @@ export class RelationsField {
         if (row.dataset.id)
           this.mRelationsToBeRemoved.add(row.dataset.id);
         this.mContainer.removeChild(row);
+        this.onSizeChanged.dispatch();
       }
     });
 
