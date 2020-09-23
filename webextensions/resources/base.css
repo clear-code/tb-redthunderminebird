@@ -25,6 +25,10 @@ textarea {
   font: menu;
 }
 
+button {
+  white-space: nowrap;
+}
+
 
 /* copied from /extlib/dialog.css */
 .flex-box {
