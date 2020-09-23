@@ -101,8 +101,11 @@
   "config_account_label": { "message": "アカウント" },
 
   "config_visibility_caption": { "message": "表示設定" },
-  "config_visibleProjects_label": { "message": "表示プロジェクト（idまたは識別子, 未指定で全表示）" },
-  "config_hiddenProjects_label": { "message": "非表示プロジェクト（idまたは識別子）" },
+  "config_projectVisibilityMode_label": { "message": "プロジェクト：" },
+  "config_projectVisibilityMode_showByDefault": { "message": "すべて表示" },
+  "config_projectVisibilityMode_hideByDefault": { "message": "明示的に選択したプロジェクトのみ表示" },
+  "config_visibleProjects_label": { "message": "表示するプロジェクト：" },
+  "config_hiddenProjects_label": { "message": "隠すプロジェクト：" },
   "config_visibleStatuses_label": { "message": "使用を許可するステータス（idまたは名前, 未指定で全許可）" },
   "config_visibleFolderPattern_label": { "message": "表示フォルダー（正規表現）" },
   "config_visibleFields_label": { "message": "表示するフィールド" },

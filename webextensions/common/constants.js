@@ -10,3 +10,5 @@ export const DB_VERSION = 2;
 
 export const STORE_MESSAGE_TO_ISSUE = 'message-to-issues';
 
+export const PROJECTS_VISIBILITY_SHOW_BY_DEFAULT = 1;
+export const PROJECTS_VISIBILITY_HIDE_BY_DEFAULT = 2;

@@ -22,10 +22,23 @@
 
     <section>
     <h1>__MSG_config_visibility_caption__</h1>
-    <p><label>__MSG_config_visibleProjects_label__
-              <input id="visibleProjects" type="text"/></label></p>
-    <p><label>__MSG_config_hiddenProjects_label__
-              <input id="hiddenProjects" type="text"/></label></p>
+    <fieldset>
+      <legend><label>__MSG_config_projectVisibilityMode_label__
+                     <select id="projectVisibilityMode">
+                       <option value="1">__MSG_config_projectVisibilityMode_showByDefault__</option>
+                       <option value="2">__MSG_config_projectVisibilityMode_hideByDefault__</option>
+                     </select></label></legend>
+      <div id="hiddenProjectsCheckboxesContainer">
+        <p><label class="flex-box row">__MSG_config_hiddenProjects_label__
+                  <input id="hiddenProjectsText" type="text" class="flex-box column"></label></p>
+        <p id="hiddenProjectsCheckboxes"></p>
+      </div>
+      <div id="visibleProjectsCheckboxesContainer" class="hidden">
+        <p><label class="flex-box row">__MSG_config_visibleProjects_label__
+                  <input id="visibleProjectsText" type="text" class="flex-box column"></label></p>
+        <p id="visibleProjectsCheckboxes"></p>
+      </div>
+    </fieldset>
     <p><label>__MSG_config_visibleStatuses_label__
               <input id="visibleStatuses" type="text"/></label></p>
     <p><label>__MSG_config_visibleFolderPattern_label__

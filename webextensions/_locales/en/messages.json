@@ -100,8 +100,11 @@
   "config_account_label": { "message": "Account" },
 
   "config_visibility_caption": { "message": "Visibility" },
-  "config_visibleProjects_label": { "message": "Visible Projects (id or identifier, empty means \"show all\")" },
-  "config_hiddenProjects_label": { "message": "Hidden Projects (id or identifier)" },
+  "config_projectVisibilityMode_label": { "message": "Projects:" },
+  "config_projectVisibilityMode_showByDefault": { "message": "Show All by default" },
+  "config_projectVisibilityMode_hideByDefault": { "message": "Show only some projects and hide rest by default" },
+  "config_visibleProjects_label": { "message": "Visible Projects:" },
+  "config_hiddenProjects_label": { "message": "Hidden Projects:" },
   "config_visibleStatuses_label": { "message": "Available Statuses (id value or label, empty means \"allow all\")" },
   "config_visibleFolderPattern_label": { "message": "Visible Folder (regular expression)" },
   "config_visibleFields_label": { "message": "visibility of fields" },

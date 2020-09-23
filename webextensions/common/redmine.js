@@ -9,6 +9,7 @@ import {
   configs,
   log
 } from './common.js';
+import * as Constants from './constants.js';
 import * as Cache from './cache.js';
 
 function getURL(path = '', params = {}) {
@@ -308,14 +309,15 @@ export async function getProject(projectId) {
   return response.project;
 }
 
-export async function getProjects() {
+export async function getProjects({ all } = {}) {
   log('projects');
   return Cache.getAndFallback(
     'redmine:projects',
     async () => {
       //識別子でフィルタ
-      const visibleProjects = new Set(configs.visibleProjects);
-      const hiddenProjects = new Set(configs.hiddenProjects);
+      const visibleProjects = new Set(configs.visibleProjects.map(project => String(project)));
+      const hiddenProjects = new Set(configs.hiddenProjects.map(project => String(project)));
+      const showByDefault = configs.projectVisibilityMode != Constants.PROJECTS_VISIBILITY_HIDE_BY_DEFAULT;
 
       const projects = [];
       let offset = 0;
@@ -326,15 +328,18 @@ export async function getProjects() {
           path: 'projects.json',
           data: { offset, limit }
         });
+        if (!response.projects)
+          return projects;
         projects.push(...response.projects.filter(project => {
           const projectId = String(project.id);
-          if (visibleProjects.size > 0 &&
-              !visibleProjects.has(projectId) &&
-              visibleProjects.has(project.identifier))
+          const shouldShow = all ? true : showByDefault ?
+            (!hiddenProjects.has(projectId) && !hiddenProjects.has(project.identifier)) :
+            (visibleProjects.has(projectId) || visibleProjects.has(project.identifier));
+          if (!shouldShow)
             return false;
           // fullnameプロパティを定義
           project.fullname = `${project.parent !== undefined ? project.parent.name + '/' : ''}${project.name}`;
-          return !hiddenProjects.has(projectId) && !hiddenProjects.has(project.identifier);
+          return true;
         }));
         offset += limit;
       } while (response.offset + response.limit <= response.total_count);

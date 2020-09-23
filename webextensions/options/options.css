@@ -69,3 +69,18 @@ ul p.sub {
 legend label.locked {
   display: initial;
 }
+
+
+#hiddenProjectsCheckboxes,
+#visibleProjectsCheckboxes {
+  border: 1px solid;
+  height: 10em;
+  overflow: auto;
+  padding: 0.5em;
+  resize: vertical;
+}
+
+#hiddenProjectsCheckboxes label,
+#visibleProjectsCheckboxes label {
+  display: block;
+}

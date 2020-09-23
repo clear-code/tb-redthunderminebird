@@ -20,6 +20,25 @@ const options = new Options(configs);
 
 let mAccounts;
 
+function initCheckboxes(container, items, itemTranslator) {
+  const range = document.createRange();
+  range.selectNodeContents(container);
+  range.deleteContents();
+  range.detach();
+
+  for (const item of items) {
+    const translated = itemTranslator ? itemTranslator(item) : item;
+    if (!translated)
+      continue;
+    appendContents(container, `
+      <label><input type="checkbox"
+                    value=${JSON.stringify(sanitizeForHTMLText(translated.value))}
+                    ${translated.checked ? 'checked' : ''}>
+             ${sanitizeForHTMLText(translated.label)}</label>
+    `);
+  }
+}
+
 function initSelect(field, items, itemTranslator) {
   const oldValue = field.value;
 
@@ -50,6 +69,31 @@ function generateOptionSource(item) {
   `.trim();
 }
 
+async function initProjectVisibilityCheckboxes(projects) {
+  if (!projects)
+    projects = await Redmine.getProjects({ all: true });
+  const visibleProjects = new Set(configs.visibleProjects.map(project => String(project)));
+  const hiddenProjects = new Set(configs.hiddenProjects.map(project => String(project)));
+  initCheckboxes(
+    document.querySelector('#visibleProjectsCheckboxes'),
+    projects,
+    project => ({
+      value: project.id,
+      label: project.fullname,
+      checked: visibleProjects.has(String(project.id)) || visibleProjects.has(project.identifier)
+    })
+  );
+  initCheckboxes(
+    document.querySelector('#hiddenProjectsCheckboxes'),
+    projects,
+    project => ({
+      value: project.id,
+      label: project.fullname,
+      checked: hiddenProjects.has(String(project.id)) || hiddenProjects.has(project.identifier)
+    })
+  );
+}
+
 async function initTrackers() {
   const trackers = await Redmine.getTrackers();
   initSelect(
@@ -60,7 +104,7 @@ async function initTrackers() {
   );
 }
 
-async function initFolderMappings() {
+async function initFolderMappings(projects) {
   const rowsContainer = document.querySelector('#mappedFoldersRows');
   const range = document.createRange();
   range.selectNodeContents(rowsContainer);
@@ -69,7 +113,8 @@ async function initFolderMappings() {
 
   const accounts = mAccounts || await browser.accounts.list();
   if (accounts.length > 0) {
-    const projects = await Redmine.getProjects();
+    if (!projects)
+      projects = await Redmine.getProjects();
     const allProjects = new Set(projects.map(project => String(project.id)));
 
     const defaultChooser = document.querySelector('#defaultProject');
@@ -130,12 +175,15 @@ configs.$addObserver(onConfigChanged);
 function onRedmineChanged() {
   if (onRedmineChanged.timer)
     clearTimeout(onRedmineChanged.timer);
-  onRedmineChanged.timer = setTimeout(() => {
+  onRedmineChanged.timer = setTimeout(async () => {
     delete onRedmineChanged.timer;
-    if (document.querySelector('#redmineURL:blank, #redmineAPIKey:blank'))
+    if (!document.querySelector('#redmineURL').value.trim() ||
+        !document.querySelector('#redmineAPIKey').value.trim())
       return;
+    const projects = await Redmine.getProjects({ all: true });
+    initProjectVisibilityCheckboxes(projects);
     initTrackers();
-    initFolderMappings();
+    initFolderMappings(projects);
   }, 250);
 }
 
@@ -154,8 +202,52 @@ window.addEventListener('DOMContentLoaded', async () => {
   );
   accountsSelect.value = configs.account || (accounts.length > 0 ? accounts[0].id : '');
 
+  const projects = await Redmine.getProjects({ all: true });
+  initProjectVisibilityCheckboxes(projects);
   initTrackers();
-  initFolderMappings();
+  initFolderMappings(projects);
+
+
+  const projectVisibilityModeSelector = document.querySelector('#projectVisibilityMode');
+  const hiddenProjects = document.querySelector('#hiddenProjectsCheckboxesContainer');
+  const visibleProjects = document.querySelector('#visibleProjectsCheckboxesContainer');
+
+  const onProjectVisibilityModeChanged = () => {
+    const showByDefault = projectVisibilityModeSelector.value != Constants.PROJECTS_VISIBILITY_HIDE_BY_DEFAULT;
+    hiddenProjects.classList.toggle('hidden', !showByDefault);
+    visibleProjects.classList.toggle('hidden', showByDefault);
+  };
+  onProjectVisibilityModeChanged();
+  projectVisibilityModeSelector.addEventListener('change', onProjectVisibilityModeChanged);
+
+  const hiddenProjectsTextField = document.querySelector('#hiddenProjectsText');
+  hiddenProjects.addEventListener('change', _event => {
+    configs.hiddenProjects = Array.from(
+      hiddenProjects.querySelectorAll('input[type="checkbox"]:checked'),
+      checkbox => parseInt(checkbox.value)
+    );
+    hiddenProjectsTextField.value = configs.hiddenProjects.join(',');
+  });
+  hiddenProjectsTextField.addEventListener('input', _event => {
+    configs.hiddenProjects = hiddenProjectsTextField.value.split(',').map(value => parseInt(value)).filter(value => value && !isNaN(value));
+    initProjectVisibilityCheckboxes(projects);
+  });
+  hiddenProjectsTextField.value = configs.hiddenProjects.join(',');
+
+  const visibleProjectsTextField = document.querySelector('#visibleProjectsText');
+  visibleProjects.addEventListener('change', _event => {
+    configs.visibleProjects = Array.from(
+      visibleProjects.querySelectorAll('input[type="checkbox"]:checked'),
+      checkbox => parseInt(checkbox.value)
+    );
+    visibleProjectsTextField.value = configs.visibleProjects.join(',');
+  });
+  visibleProjectsTextField.addEventListener('input', _event => {
+    configs.visibleProjects = visibleProjectsTextField.value.split(',').map(value => parseInt(value)).filter(value => value && !isNaN(value));
+    initProjectVisibilityCheckboxes(projects);
+  });
+  visibleProjectsTextField.value = configs.visibleProjects.join(',');
+
 
   const mappingRows = document.querySelector('#mappedFoldersRows');
   mappingRows.addEventListener('change', _event => {

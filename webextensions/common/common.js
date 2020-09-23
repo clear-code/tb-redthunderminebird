@@ -6,6 +6,7 @@
 'use strict';
 
 import Configs from '/extlib/Configs.js';
+import * as Constants from './constants.js';
 
 const OVERRIDE_DEFAULT_CONFIGS = {}; /* Replace this for more customization on an enterprise use. */
 
@@ -14,6 +15,7 @@ export const configs = new Configs({
   redmineAPIKey: '',
   account: '',
 
+  projectVisibilityMode: Constants.PROJECTS_VISIBILITY_SHOW_BY_DEFAULT,
   visibleProjects: [],
   hiddenProjects: [],
   visibleStatuses: [],
