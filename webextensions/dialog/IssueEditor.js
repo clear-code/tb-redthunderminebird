@@ -34,7 +34,7 @@ export class IssueEditor {
     this.mFieldsContainer   = document.querySelector('#fields');
 
     for (const row of document.querySelectorAll('[data-field-row]')) {
-      row.classList.toggle('hidden', !configs[`showFieldRow_${row.dataset.fieldRow}`]);
+      row.classList.toggle('hidden', !configs[`fieldVisibility_${row.dataset.fieldRow}`]);
     }
 
     this.onValid = new EventListenerManager();
