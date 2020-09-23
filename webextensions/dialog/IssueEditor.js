@@ -214,6 +214,7 @@ export class IssueEditor {
       projects,
       project => ({ label: project.fullname, value: project.id })
     );
+    document.querySelector('[data-field-row="project"]').classList.toggle('hidden', projects.length == 0 || !configs.fieldVisibility_project);
   }
 
   async initTrackers(projectId) {
@@ -223,6 +224,7 @@ export class IssueEditor {
       trackers,
       tracker => ({ label: tracker.name, value: tracker.id })
     );
+    document.querySelector('[data-field-row="tracker"]').classList.toggle('hidden', trackers.length == 0 || !configs.fieldVisibility_tracker);
   }
 
   async initStatuses() {
@@ -232,6 +234,7 @@ export class IssueEditor {
       statuses,
       status => ({ label: status.name, value: status.id })
     );
+    document.querySelector('[data-field-row="status"]').classList.toggle('hidden', statuses.length == 0 || !configs.fieldVisibility_status);
   }
 
   async initVersions(projectId) {
@@ -241,6 +244,7 @@ export class IssueEditor {
       versions,
       version => ({ label: version.name, value: version.id })
     );
+    document.querySelector('[data-field-row="version"]').classList.toggle('hidden', versions.length == 0 || !configs.fieldVisibility_version);
   }
 
   async initAssignees(projectId, cachedMembers) {
@@ -254,6 +258,7 @@ export class IssueEditor {
         return { label: member.user.name, value: member.user.id };
       }
     );
+    document.querySelector('[data-field-row="assigned"]').classList.toggle('hidden', members.length == 0 || !configs.fieldVisibility_assigned);
   }
 
   async initWatchers(projectId, cachedMembers) {
@@ -277,6 +282,7 @@ export class IssueEditor {
                ${sanitizeForHTMLText(member.user.name)}</label>
       `);
     }
+    document.querySelector('[data-field-row="watcher"]').classList.toggle('hidden', members.length == 0 || !configs.fieldVisibility_watcher);
   }
 
   async reinitFieldsForProject() {
