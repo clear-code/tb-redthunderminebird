@@ -131,49 +131,49 @@ export class IssueEditor {
     }
 
     if (configs.fieldVisibility_relations) {
-    this.mRelationsField = new RelationsField({
-      container: document.querySelector('#relations'),
-      projectId: () => this.mProjectField ? this.mProjectField.value : this.params.project_id
-    });
-    this.mRelationsField.onValid.addListener(() => this.onValid.dispatch());
-    this.mRelationsField.onInvalid.addListener(() => this.onInvalid.dispatch());
+      this.mRelationsField = new RelationsField({
+        container: document.querySelector('#relations'),
+        projectId: () => this.mProjectField ? this.mProjectField.value : this.params.project_id
+      });
+      this.mRelationsField.onValid.addListener(() => this.onValid.dispatch());
+      this.mRelationsField.onInvalid.addListener(() => this.onInvalid.dispatch());
     }
 
     if (configs.fieldVisibility_file) {
-    this.mFilesField = new FilesField({
-      container: document.querySelector('#files')
-    });
-    const ignoreDropTargets = 'input[type="text"], input[type="number"], textarea';
-    document.addEventListener('dragenter', event => {
-      if (event.target.closest(ignoreDropTargets))
-        return;
+      this.mFilesField = new FilesField({
+        container: document.querySelector('#files')
+      });
+      const ignoreDropTargets = 'input[type="text"], input[type="number"], textarea';
+      document.addEventListener('dragenter', event => {
+        if (event.target.closest(ignoreDropTargets))
+          return;
 
-      event.stopPropagation();
-      event.preventDefault();
-    });
-    document.addEventListener('dragover', event => {
-      if (event.target.closest(ignoreDropTargets))
-        return;
+        event.stopPropagation();
+        event.preventDefault();
+      });
+      document.addEventListener('dragover', event => {
+        if (event.target.closest(ignoreDropTargets))
+          return;
 
-      event.stopPropagation();
-      event.preventDefault();
+        event.stopPropagation();
+        event.preventDefault();
 
-      const dt = event.dataTransfer;
-      const hasFile = Array.from(dt.items, item => item.kind).some(kind => kind == 'file');
-      dt.dropEffect = hasFile ? 'link' : 'none';
-    });
-    document.addEventListener('drop', event => {
-      if (event.target.closest(ignoreDropTargets))
-        return;
+        const dt = event.dataTransfer;
+        const hasFile = Array.from(dt.items, item => item.kind).some(kind => kind == 'file');
+        dt.dropEffect = hasFile ? 'link' : 'none';
+      });
+      document.addEventListener('drop', event => {
+        if (event.target.closest(ignoreDropTargets))
+          return;
 
-      event.stopPropagation();
-      event.preventDefault();
+        event.stopPropagation();
+        event.preventDefault();
 
-      const dt = event.dataTransfer;
-      const files = dt.files;
-      if (files && files.length > 0)
-        this.mFilesField.addFiles(files);
-    });
+        const dt = event.dataTransfer;
+        const files = dt.files;
+        if (files && files.length > 0)
+          this.mFilesField.addFiles(files);
+      });
     }
 
     if (postInitializations.length)
@@ -327,10 +327,10 @@ export class IssueEditor {
       this.params.due_date = issue.due_date;
 
     if (this.mRelationsField)
-    /*await */this.mRelationsField.reinit({
-      issueId:   issue.id,
-      relations: issue.relations
-    });
+      /*await */this.mRelationsField.reinit({
+        issueId:   issue.id,
+        relations: issue.relations
+      });
 
     this.rebuildCustomFields(issue.custom_fields);
 
@@ -467,13 +467,13 @@ export class IssueEditor {
     this.mParentIssueField.classList.toggle('invalid', !!(this.params.id && this.mParentIssueField.value && (this.mParentIssueField.value == this.params.id)));
 
     if (this.mRelationsField) {
-    this.mRelationsField.unavailableIds.clear();
-    if (this.params.id)
-      this.mRelationsField.unavailableIds.add(this.params.id);
-    if (this.mParentIssueField.value)
-      this.mRelationsField.unavailableIds.add(parseInt(this.mParentIssueField.value || 0));
+      this.mRelationsField.unavailableIds.clear();
+      if (this.params.id)
+        this.mRelationsField.unavailableIds.add(this.params.id);
+      if (this.mParentIssueField.value)
+        this.mRelationsField.unavailableIds.add(parseInt(this.mParentIssueField.value || 0));
 
-    await this.mRelationsField.validateFields();
+      await this.mRelationsField.validateFields();
     }
 
     if (document.querySelector('.invalid'))
@@ -523,7 +523,7 @@ export class IssueEditor {
       params.custom_fields = customFields;
 
     if (this.mFilesField)
-    params.files = this.mFilesField.filesToBeUpload;
+      params.files = this.mFilesField.filesToBeUpload;
 
     return params;
   }
