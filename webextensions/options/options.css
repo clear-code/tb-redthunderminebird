@@ -55,6 +55,12 @@ ul p.sub {
   margin-bottom: 0;
 }
 
+textarea {
+  height: 10em;
+  resize: vertical;
+  width: 100%;
+}
+
 
 .disabled {
   opacity: 0.5;
