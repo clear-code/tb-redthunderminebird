@@ -119,16 +119,28 @@ async function initTrackers() {
 }
 
 async function initFolderMappings(projects) {
+  const startTime = Date.now();
+  initFolderMappings.startedAt = startTime;
   const rowsContainer = document.querySelector('#mappedFoldersRows');
   const range = document.createRange();
   range.selectNodeContents(rowsContainer);
   range.deleteContents();
   range.detach();
 
+  const unmappableFolderPathMatcher = /^\/(Archives|Drafts|Sent|Templates|Trash)($|\/)/;
+  let folderFilter = null;;
+  try {
+    folderFilter = configs.visibleFolderPattern ? new RegExp(configs.visibleFolderPattern, 'i') : null;
+  }
+  catch(error) {
+  }
+
   const accounts = mAccounts || await browser.accounts.list();
   if (accounts.length > 0) {
     if (!projects)
-      projects = await Redmine.getProjects();
+      projects = await Redmine.getProjects({ all: true });
+    if (initFolderMappings.startedAt != startTime)
+      return;
     const allProjects = new Set(projects.map(project => String(project.id)));
 
     const defaultChooser = document.querySelector('#defaultProject');
@@ -145,7 +157,10 @@ async function initFolderMappings(projects) {
     ].join('');
 
     const addRow = (folder, parent) => {
+      if (unmappableFolderPathMatcher.test(folder.path))
+        return;
       const readablePath = parent ? `${parent}/${folder.name}` : folder.name;
+      if (!folderFilter || folderFilter.test(folder.name)) {
       const chooserId = `folder-mapping-${encodeURIComponent(folder.path)}`;
       appendContents(rowsContainer, `
         <tr data-folder-path=${JSON.stringify(sanitizeForHTMLText(folder.path))}>
@@ -162,6 +177,7 @@ async function initFolderMappings(projects) {
         projectChooser.value = configs.mappedFolders[folder.path];
       else
         projectChooser.value = '';
+      }
 
       for (const subFolder of folder.subFolders) {
         addRow(subFolder, readablePath);
@@ -181,6 +197,10 @@ function onConfigChanged(key) {
     case 'redmineURL':
     case 'redmineAPIKey':
       onRedmineChanged();
+      break;
+
+    case 'visibleFolderPattern':
+      initFolderMappings();
       break;
   }
 }
