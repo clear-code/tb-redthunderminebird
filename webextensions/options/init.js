@@ -128,11 +128,11 @@ async function initFolderMappings(projects) {
   range.detach();
 
   const unmappableFolderPathMatcher = /^\/(Archives|Drafts|Sent|Templates|Trash)($|\/)/;
-  let folderFilter = null;;
+  let folderFilter = null;
   try {
     folderFilter = configs.visibleFolderPattern ? new RegExp(configs.visibleFolderPattern, 'i') : null;
   }
-  catch(error) {
+  catch(_error) {
   }
 
   const accounts = mAccounts || await browser.accounts.list();
