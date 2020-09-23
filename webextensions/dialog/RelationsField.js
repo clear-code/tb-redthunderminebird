@@ -133,11 +133,11 @@ export class RelationsField {
         <input class="related-issue-id issue-id" type="number" min="0" data-value-type="integer"
                value=${JSON.stringify(String(anotherIssueId || ''))}>
         <input class="related-issue-subject flex-box column" type="text" disabled="true">
-          <label class="relation-delay-fields hidden"
-                >${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_delay_label_before'))}
-                 <input class="relation-delay" type="number" data-value-type="integer" size="3"
-                        value=${JSON.stringify(String(relation.delay || '0'))}>
-                 ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_delay_label_after'))}</label>
+        <label class="relation-delay-fields hidden"
+              >${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_delay_label_before'))}
+               <input class="relation-delay" type="number" data-value-type="integer" size="3"
+                      value=${JSON.stringify(String(relation.delay || '0'))}>
+               ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_delay_label_after'))}</label>
         <button class="choose-related-issue">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_chooseIssue'))}</button>
         <button class="remove-relation">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relation_remove'))}</button>
       </li>
