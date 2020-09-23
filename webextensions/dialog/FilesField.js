@@ -11,9 +11,12 @@ import {
   sanitizeForHTMLText
 } from '/common/common.js';
 import * as Dialog from '/extlib/dialog.js';
+import EventListenerManager from '/extlib/EventListenerManager.js';
 
 export class FilesField {
   constructor({ container } = {}) {
+    this.onSizeChanged = new EventListenerManager();
+
     appendContents(container, `
       <div class="files" class="flex-box column"></div>
       <input class="file-field"
@@ -53,6 +56,7 @@ export class FilesField {
                ${sanitizeForHTMLText(file.name)}</label>
       `);
       this.mContainer.lastChild.querySelector('input[type="checkbox"]').$file = file;
+      this.onSizeChanged.dispatch();
     }
   }
 
@@ -61,6 +65,7 @@ export class FilesField {
     range.selectNodeContents(this.mContainer);
     range.deleteContents();
     range.detach();
+    this.onSizeChanged.dispatch();
   }
 
   get filesToBeUpload() {

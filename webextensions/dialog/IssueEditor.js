@@ -142,12 +142,14 @@ export class IssueEditor {
       });
       this.mRelationsField.onValid.addListener(() => this.onValid.dispatch());
       this.mRelationsField.onInvalid.addListener(() => this.onInvalid.dispatch());
+      this.mRelationsField.onSizeChanged.addListener(() => this.sizeToContent());
     }
 
     if (configs.fieldVisibility_file) {
       this.mFilesField = new FilesField({
         container: document.querySelector('#files')
       });
+      this.mFilesField.onSizeChanged.addListener(() => this.sizeToContent());
       const ignoreDropTargets = 'input[type="text"], input[type="number"], textarea';
       document.addEventListener('dragenter', event => {
         if (event.target.closest(ignoreDropTargets))
@@ -179,6 +181,13 @@ export class IssueEditor {
         if (files && files.length > 0)
           this.mFilesField.addFiles(files);
       });
+    }
+
+    const resizeObserver = new ResizeObserver(_entries => {
+      this.sizeToContent();
+    });
+    for (const textarea of document.querySelectorAll('textarea')) {
+      resizeObserver.observe(textarea);
     }
 
     if (postInitializations.length)
@@ -342,7 +351,7 @@ export class IssueEditor {
       /*await */this.mRelationsField.reinit({
         issueId:   issue.id,
         relations: issue.relations
-      });
+      }).then(() => this.sizeToContent());
 
     this.rebuildCustomFields(issue.custom_fields);
 
@@ -580,5 +589,23 @@ export class IssueEditor {
   saveRelations() {
     if (this.params.id && this.mRelationsField)
       return this.mRelationsField.save({ issueId: this.params.id });
+  }
+
+  sizeToContent() {
+    if (this.$sizeToContentTimer)
+      clearTimeout(this.$sizeToContentTimer);
+    this.$sizeToContentTimer = setTimeout(async () => {
+      const box = document.querySelector('#form > *:first-child');
+      const range = document.createRange();
+      range.selectNodeContents(box);
+      const delta = range.getBoundingClientRect().height - box.getBoundingClientRect().height;
+      range.detach();
+
+      const windowId = await Dialog.getWindowId();
+      const win = await browser.windows.get(windowId);
+      browser.windows.update(win.id, { height: win.height + delta });
+
+      delete this.$sizeToContentTimer;
+    }, 100);
   }
 }

@@ -111,6 +111,8 @@ configs.$loaded.then(async () => {
 
   await Dialog.notifyReady();
 
+  mIssueEditor.sizeToContent();
+
   window.addEventListener('resize', _event => {
     configs.createIssueDialogWidth = window.outerWidth;
     configs.createIssueDialogHeight = window.outerHeight;

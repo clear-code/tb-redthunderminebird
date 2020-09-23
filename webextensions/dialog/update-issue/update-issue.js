@@ -129,6 +129,8 @@ configs.$loaded.then(async () => {
 
   await Dialog.notifyReady();
 
+  mIssueEditor.sizeToContent();
+
   window.addEventListener('resize', _event => {
     configs.updateIssueDialogWidth = window.outerWidth;
     configs.updateIssueDialogHeight = window.outerHeight;
@@ -142,6 +144,7 @@ configs.$loaded.then(async () => {
 function toggleDescriptionField() {
   mDescriptionField.disabled = !mDescriptionField.disabled;
   mDescriptionField.classList.toggle('shown', !mDescriptionField.disabled);
+  mIssueEditor.sizeToContent();
 }
 
 async function updateIssue() {

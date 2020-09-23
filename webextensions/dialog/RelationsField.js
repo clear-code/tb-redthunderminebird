@@ -22,6 +22,7 @@ export class RelationsField {
 
     this.onValid = new EventListenerManager();
     this.onInvalid = new EventListenerManager();
+    this.onSizeChanged = new EventListenerManager();
 
     if (typeof projectId == 'function')
       Object.defineProperty(this, 'mProjectId', {
@@ -151,6 +152,7 @@ export class RelationsField {
 
     const idField = row.querySelector('.related-issue-id');
     updateIdFieldSize(idField);
+    this.onSizeChanged.dispatch();
 
     return this.fillSubjectFor(idField);
   }
@@ -160,6 +162,7 @@ export class RelationsField {
     range.selectNodeContents(this.mContainer);
     range.deleteContents();
     range.detach();
+    this.onSizeChanged.dispatch();
   }
 
   async reinit({ issueId, relations } = {}) {
