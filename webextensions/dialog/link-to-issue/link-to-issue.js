@@ -13,10 +13,9 @@ import {
   log
 } from '/common/common.js';
 import { IssueChooser } from '/dialog/IssueChooser.js';
-import * as BlockMultipleDialogs from '/dialog/block-multiple-dialogs.js';
+import * as DialogCommon from '/dialog/common.js';
 
-Dialog.setLogger(log);
-BlockMultipleDialogs.registerAlertMessage(browser.i18n.getMessage('dialog_linkToIssue_multipleDialogsRequested_message'));
+DialogCommon.registerMultipleDialogsAlertMessage(browser.i18n.getMessage('dialog_linkToIssue_multipleDialogsRequested_message'));
 
 let mParams;
 

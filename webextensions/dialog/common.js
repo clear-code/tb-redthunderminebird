@@ -5,13 +5,18 @@
 */
 'use strict';
 
+import {
+  log
+} from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import * as Dialog from '/extlib/dialog.js';
 
-let mAlertMessage;
+Dialog.setLogger(log);
 
-export async function registerAlertMessage(message) {
-  mAlertMessage = message;
+let mMultipleDialogsAlertMessage;
+
+export async function registerMultipleDialogsAlertMessage(message) {
+  mMultipleDialogsAlertMessage = message;
 }
 
 browser.runtime.onMessage.addListener((message, sender) => {
@@ -26,7 +31,7 @@ browser.runtime.onMessage.addListener((message, sender) => {
         if (!windowId || !mAlertMessage)
           return;
         browser.windows.update(windowId, { focused: true });
-        alert(mAlertMessage);
+        alert(mMultipleDialogsAlertMessage);
       });
       break;
   }

@@ -17,10 +17,9 @@ import {
 import { Message } from '/common/Message.js';
 import * as Redmine from '/common/redmine.js';
 import { IssueEditor } from '/dialog/IssueEditor.js';
-import * as BlockMultipleDialogs from '/dialog/block-multiple-dialogs.js';
+import * as DialogCommon from '/dialog/common.js';
 
-Dialog.setLogger(log);
-BlockMultipleDialogs.registerAlertMessage(browser.i18n.getMessage('dialog_createIssue_multipleDialogsRequested_message'));
+DialogCommon.registerMultipleDialogsAlertMessage(browser.i18n.getMessage('dialog_createIssue_multipleDialogsRequested_message'));
 
 let mParams;
 let mMessage;
