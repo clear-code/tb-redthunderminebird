@@ -13,8 +13,10 @@ import {
   log
 } from '/common/common.js';
 import { IssueChooser } from '/dialog/IssueChooser.js';
+import * as BlockMultipleDialogs from '/dialog/block-multiple-dialogs.js';
 
 Dialog.setLogger(log);
+BlockMultipleDialogs.registerAlertMessage(browser.i18n.getMessage('dialog_linkToIssue_multipleDialogsRequested_message'));
 
 let mParams;
 

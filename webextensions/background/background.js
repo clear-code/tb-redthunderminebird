@@ -11,6 +11,7 @@ import {
   configs,
   log
 } from '/common/common.js';
+import * as Constants from '/common/constants.js';
 import { Message } from '/common/Message.js';
 import * as Redmine from '/common/redmine.js';
 
@@ -233,15 +234,14 @@ async function updateIssue(message, tab) {
 
 let mInProgressTask;
 
-async function ensureNoOtherTask() {
-  if (!mInProgressTask)
-    return;
-
-  throw new Error('there is an in-progress task');
-}
-
 async function runTask(asyncTask) {
-  await ensureNoOtherTask();
+  if (mInProgressTask) {
+    browser.runtime.sendMessage({
+      type: Constants.TYPE_NOTIFY_MULTIPLE_DIALOGS_REQUESTED
+    });
+    return;
+  }
+
   mInProgressTask = asyncTask();
   try {
     await mInProgressTask;

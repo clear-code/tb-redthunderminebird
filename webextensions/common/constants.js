@@ -10,6 +10,8 @@ export const DB_VERSION = 2;
 
 export const STORE_MESSAGE_TO_ISSUE = 'message-to-issues';
 
+export const TYPE_NOTIFY_MULTIPLE_DIALOGS_REQUESTED = 'redthunderminebirdplus:notify-multiple-dialogs-requested';
+
 export const PROJECTS_VISIBILITY_SHOW_BY_DEFAULT = 1;
 export const PROJECTS_VISIBILITY_HIDE_BY_DEFAULT = 2;
 
