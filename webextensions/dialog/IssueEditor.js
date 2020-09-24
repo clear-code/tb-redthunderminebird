@@ -22,6 +22,7 @@ import EventListenerManager from '/extlib/EventListenerManager.js';
 export class IssueEditor {
   constructor(params) {
     this.params = params;
+    this.completelyInitialized = false;
 
     this.mProjectField      = document.querySelector('#project'); // create
     this.mIssueField        = document.querySelector('#issue'); // update
@@ -71,6 +72,8 @@ export class IssueEditor {
             this.onChangeFieldValue(field);
           });
       }
+
+      this.completelyInitialized = true;
     });
 
     this.mStartDateEnabled.checked = false;
@@ -592,6 +595,9 @@ export class IssueEditor {
   }
 
   sizeToContent() {
+    if (!this.completelyInitialized)
+      return;
+
     if (this.$sizeToContentTimer)
       clearTimeout(this.$sizeToContentTimer);
     this.$sizeToContentTimer = setTimeout(async () => {
