@@ -71,7 +71,7 @@ function generateOptionSource(item) {
 
 async function initProjectVisibilityCheckboxes(projects) {
   if (!projects)
-    projects = await Redmine.getProjects({ all: true });
+    projects = await Redmine.getProjects({ all: true }).catch(_error => []);
   const visibleProjects = new Set(configs.visibleProjects.map(project => String(project)));
   const hiddenProjects = new Set(configs.hiddenProjects.map(project => String(project)));
   initCheckboxes(
@@ -96,7 +96,7 @@ async function initProjectVisibilityCheckboxes(projects) {
 
 async function initStatusVisibilityCheckboxes(statuses) {
   if (!statuses)
-    statuses = await Redmine.getIssueStatuses({ all: true });
+    statuses = await Redmine.getIssueStatuses({ all: true }).catch(_error => []);
   const visibleStatuses = new Set(configs.visibleStatuses.map(project => String(project)));
   initCheckboxes(
     document.querySelector('#visibleStatusesCheckboxes'),
@@ -110,7 +110,7 @@ async function initStatusVisibilityCheckboxes(statuses) {
 }
 
 async function initTrackers() {
-  const trackers = await Redmine.getTrackers();
+  const trackers = await Redmine.getTrackers().catch(_error => []);
   initSelect(
     document.querySelector('#defaultTracker'),
     [{ name: browser.i18n.getMessage('config_defaultTracker_blank_label'), value: '' }, ...trackers],
@@ -138,7 +138,7 @@ async function initFolderMappings(projects) {
   const accounts = mAccounts || await browser.accounts.list();
   if (accounts.length > 0) {
     if (!projects)
-      projects = await Redmine.getProjects({ all: true });
+      projects = await Redmine.getProjects({ all: true }).catch(_error => []);
     if (initFolderMappings.startedAt != startTime)
       return;
     const allProjects = new Set(projects.map(project => String(project.id)));
@@ -215,8 +215,8 @@ function onRedmineChanged() {
         !document.querySelector('#redmineAPIKey').value.trim())
       return;
     const [projects, statuses] = await Promise.all([
-      Redmine.getProjects({ all: true }),
-      Redmine.getIssueStatuses({ all: true })
+      Redmine.getProjects({ all: true }).catch(_error => []),
+      Redmine.getIssueStatuses({ all: true }).catch(_error => [])
     ])
     initProjectVisibilityCheckboxes(projects);
     initStatusVisibilityCheckboxes(statuses);
@@ -241,8 +241,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   accountsSelect.value = configs.account || (accounts.length > 0 ? accounts[0].id : '');
 
   const [projects, statuses] = await Promise.all([
-    Redmine.getProjects({ all: true }),
-    Redmine.getIssueStatuses({ all: true })
+    Redmine.getProjects({ all: true }).catch(_error => []),
+    Redmine.getIssueStatuses({ all: true }).catch(_error => [])
   ])
   initProjectVisibilityCheckboxes(projects);
   initStatusVisibilityCheckboxes(statuses);
