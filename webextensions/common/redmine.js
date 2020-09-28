@@ -13,6 +13,8 @@ import * as Constants from './constants.js';
 import * as Cache from './cache.js';
 
 function getURL(path = '', params = {}) {
+  if (!configs.redmineURL)
+    throw new Error('Missing Redmine URL: you need to configure it at first');
   const queryParams = new URLSearchParams();
   for (const name in params) {
     queryParams.set(name, params[name]);
