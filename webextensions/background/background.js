@@ -31,7 +31,7 @@ const MENU_ITEMS = {
   redmine: {
     ...MENU_COMMON_PARAMS,
     title: browser.i18n.getMessage('menu_redmine_label'),
-    async shouldEnable(_info, _tab) {
+    async shouldEnable(_info, _tab, _message) {
       return !!(configs.redmineURL && configs.redmineAPIKey);
     }
   },
@@ -54,7 +54,7 @@ const MENU_ITEMS = {
   openIssue: {
     ...SUBMENU_COMMON_PARAMS,
     title: browser.i18n.getMessage('menu_openIssue_label'),
-    async shouldEnable(info, _tab) {
+    async shouldEnable(info, _tab, _message) {
       return !!(await getContextIssueId(info));
     }
   }
