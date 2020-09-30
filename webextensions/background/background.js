@@ -23,8 +23,8 @@ const MENU_COMMON_PARAMS = {
 const SUBMENU_COMMON_PARAMS = {
   ...MENU_COMMON_PARAMS,
   parentId: 'redmine',
-  async shouldVisible(info, tab) {
-    return MENU_ITEMS.redmine.shouldEnable(info, tab); // eslint-disable-line no-use-before-define
+  async shouldVisible(info, tab, message) {
+    return !!(message && MENU_ITEMS.redmine.shouldEnable(info, tab)); // eslint-disable-line no-use-before-define
   }
 };
 const MENU_ITEMS = {
@@ -83,13 +83,15 @@ for (const [id, item] of Object.entries(MENU_ITEMS)) {
 }
 
 browser.menus.onShown.addListener(async (info, tab) => {
+  const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
+  const message = messages && messages.length ? messages[0] : null;
   let modificationCount = 0;
   const tasks = [];
   for (const [id, item] of Object.entries(MENU_ITEMS)) {
     tasks.push((async () => {
       const [enabled, visible] = await Promise.all([
-        typeof item.shouldEnable == 'function' ? item.shouldEnable(info, tab) : true,
-        typeof item.shouldVisible == 'function' ? item.shouldVisible(info, tab) : true
+        typeof item.shouldEnable == 'function' ? item.shouldEnable(info, tab, message) : true,
+        typeof item.shouldVisible == 'function' ? item.shouldVisible(info, tab, message) : true
       ]);
       browser.menus.update(id, {
         enabled,
