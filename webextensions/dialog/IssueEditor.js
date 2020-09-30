@@ -51,15 +51,21 @@ export class IssueEditor {
       this.initStatuses(),
       this.initVersions(this.params.project_id)
     ]).then(async ([members,]) => {
+      log('IssueEditor initialization, members = ', members);
       await Promise.all([
         this.initAssignees(this.params.project_id, members),
         this.mProjectField && this.initWatchers(this.params.project_id, members) // create
       ]);
+      log('IssueEditor assignees and watchers are initialized');
 
       if (!this.mIssueField) // create
         this.rebuildCustomFields();
 
+      log('IssueEditor custom fileds are rebuilt');
+
       this.applyFieldValues();
+
+      log('IssueEditor values are applied');
 
       for (const field of document.querySelectorAll('[data-field]')) {
         field.addEventListener('change', () => {
@@ -74,6 +80,7 @@ export class IssueEditor {
       }
 
       this.completelyInitialized = true;
+      log('IssueEditor initialization completed');
     });
 
     this.mStartDateEnabled.checked = false;

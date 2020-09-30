@@ -50,6 +50,7 @@ configs.$loaded.then(async () => {
   log('redmineParams ', redmineParams);
   delete redmineParams.id; // force to create new issue
 
+  log('init editor');
   mIssueEditor = new IssueEditor(redmineParams);
   mIssueEditor.onValid.addListener(() => {
     mAcceptButton.disabled = false;
@@ -59,6 +60,7 @@ configs.$loaded.then(async () => {
   });
   await mIssueEditor.initialized;
 
+  log('init buttons');
   Dialog.initButton(mAcceptButton, async _event => {
     mAcceptButton.disabled = mCancelButton.disabled = true;
     try {
@@ -110,10 +112,12 @@ configs.$loaded.then(async () => {
   });
   Dialog.initCancelButton(mCancelButton);
 
+  log('notify ready');
   await Dialog.notifyReady();
 
   mIssueEditor.sizeToContent();
 
+  log('start listening of window changes');
   window.addEventListener('resize', _event => {
     configs.createIssueDialogWidth = window.outerWidth;
     configs.createIssueDialogHeight = window.outerHeight;
