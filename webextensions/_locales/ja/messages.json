@@ -11,6 +11,9 @@
   "menu_updateIssue_label": { "message": "チケットを更新" },
   "menu_openIssue_label": { "message": "チケットを開く" },
 
+  "menu_mappedProject_label": { "message": "Redmineプロジェクトの割り当て" },
+  "menu_mappedProject_unmapped_label": { "message": "(初期値に従う)" },
+
 
   "dialog_chooseIssue_title_general": { "message": "チケット選択" },
   "dialog_chooseIssue_title_parent": { "message": "親チケットを選択" },

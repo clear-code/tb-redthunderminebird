@@ -11,6 +11,9 @@
   "menu_updateIssue_label": { "message": "Update linked issue" },
   "menu_openIssue_label": { "message": "Open linked issue" },
 
+  "menu_mappedProject_label": { "message": "Mapped Redmine Project" },
+  "menu_mappedProject_unmapped_label": { "message": "(Use the Default Project)" },
+
 
   "dialog_chooseIssue_title_general": { "message": "Choose an issue" },
   "dialog_chooseIssue_title_parent": { "message": "Choose the parent issue" },

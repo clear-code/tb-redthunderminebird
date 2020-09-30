@@ -17,6 +17,8 @@ import * as Redmine from '/common/redmine.js';
 
 Dialog.setLogger(log);
 
+const mProjectItemIds = new Set();
+
 const MENU_COMMON_PARAMS = {
   contexts: ['message_list']
 };
@@ -60,6 +62,16 @@ const MENU_ITEMS = {
     async shouldEnable(info, _tab, _message) {
       return !!(await getContextIssueId(info));
     }
+  },
+
+  mappedProject: {
+    ...MENU_COMMON_PARAMS,
+    contexts: ['folder_pane'],
+    title: browser.i18n.getMessage('menu_mappedProject_label'),
+    shouldVisible: null,
+    async shouldEnable(_info, _tab, _message) {
+      return !!(configs.redmineURL && configs.redmineAPIKey && mProjectItemIds.size > 0);
+    }
   }
 };
 
@@ -87,7 +99,8 @@ for (const [id, item] of Object.entries(MENU_ITEMS)) {
 
 browser.menus.onShown.addListener(async (info, tab) => {
   const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
-  const message = messages && messages.length ? messages[0] : null;
+  const message = messages && messages.length > 0 ? messages[0] : null;
+
   let modificationCount = 0;
   const tasks = [];
   for (const [id, item] of Object.entries(MENU_ITEMS)) {
@@ -106,20 +119,83 @@ browser.menus.onShown.addListener(async (info, tab) => {
       /* eslint-enable no-unused-expressions */
     })());
   }
+
+  if (info.contexts.includes('folder_pane') &&
+      info.selectedFolder) {
+    modificationCount++;
+    tasks.push(Redmine.getProjects().catch(_error => []).then(async projects => {
+      if (projects.length == 0)
+        return;
+
+      const creatings = [];
+      const projectId = (configs.mappedFolders || {})[info.selectedFolder.path];
+
+      mProjectItemIds.add('map-to-project:');
+      creatings.push(browser.menus.create({
+        id:       'map-to-project:',
+        parentId: 'mappedProject',
+        title:    browser.i18n.getMessage('menu_mappedProject_unmapped_label'),
+        contexts: ['folder_pane'],
+        type:     'radio',
+        checked:  !projectId
+      }));
+      mProjectItemIds.add('map-to-project-separator');
+      creatings.push(browser.menus.create({
+        id:       'map-to-project-separator',
+        parentId: 'mappedProject',
+        contexts: ['folder_pane'],
+        type:     'separator'
+      }));
+
+      for (const project of projects) {
+        const id = `map-to-project:${project.id}`;
+        mProjectItemIds.add(id);
+        creatings.push(browser.menus.create({
+          id,
+          parentId: 'mappedProject',
+          title:    project.fullname,
+          contexts: ['folder_pane'],
+          type:     'radio',
+          checked:  project.id == projectId
+        }));
+      }
+      await Promise.all(creatings);
+      browser.menus.update('mappedProject', {
+        enabled: true
+      });
+      MENU_ITEMS.mappedProject.lastEnabled = true;
+      browser.menus.refresh();
+    }));
+  }
+
   await Promise.all(tasks);
+
   if (modificationCount > 0)
     browser.menus.refresh();
 });
 
+browser.menus.onHidden.addListener(async (_info, _tab) => {
+  if (mProjectItemIds.size > 0) {
+    for (const id of mProjectItemIds) {
+      browser.menus.remove(id);
+    }
+    mProjectItemIds.clear();
+    browser.menus.update('mappedProject', {
+      enabled: false
+    });
+    MENU_ITEMS.mappedProject.lastEnabled = false;
+    browser.menus.refresh();
+  }
+});
+
 browser.menus.onClicked.addListener(async (info, tab) => {
   const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
-  if (!messages ||
-      messages.length == 0)
-    return;
-
+  const message = messages && messages.length ? messages[0] : null;
   switch (info.menuItemId) {
     case 'openWebUI': {
-      const url = await Redmine.getCreationURL(messages[0]);
+      if (!message)
+        return;
+      const url = await Redmine.getCreationURL(message);
       browser.tabs.create({
         windowId: tab.windowId,
         active:   true,
@@ -128,18 +204,26 @@ browser.menus.onClicked.addListener(async (info, tab) => {
     }; break;
 
     case 'linkToIssue':
-      runTask(async () => linkToIssue(messages[0], tab));
+      if (!message)
+        return;
+      runTask(async () => linkToIssue(message, tab));
       break;
 
     case 'createIssue':
-      runTask(async () => createIssue(messages[0], tab));
+      if (!message)
+        return;
+      runTask(async () => createIssue(message, tab));
       break;
 
     case 'updateIssue':
-      runTask(async () => updateIssue(messages[0], tab));
+      if (!message)
+        return;
+      runTask(async () => updateIssue(message, tab));
       break;
 
     case 'openIssue': {
+      if (!message)
+        return;
       const issueId = await getContextIssueId(info);
       if (!issueId)
         return;
@@ -150,6 +234,19 @@ browser.menus.onClicked.addListener(async (info, tab) => {
         url
       });
     }; break;
+
+    default:
+      if (/^map-to-project:(.*)$/.test(info.menuItemId) &&
+          info.selectedFolder) {
+        const projectId = RegExp.$1 || null;
+        const mappings = JSON.parse(JSON.stringify(configs.mappedFolders || {}));
+        if (projectId)
+          mappings[info.selectedFolder.path] = projectId;
+        else
+          delete mappings[info.selectedFolder.path];
+        configs.mappedFolders = mappings;
+      }
+      break;
   }
 });
 
