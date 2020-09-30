@@ -616,7 +616,7 @@ export class IssueEditor {
 
       const windowId = await Dialog.getWindowId();
       const win = await browser.windows.get(windowId);
-      browser.windows.update(win.id, { height: win.height + delta });
+      browser.windows.update(win.id, { height: Math.round(win.height + delta) });
 
       delete this.$sizeToContentTimer;
     }, 100);
