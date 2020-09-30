@@ -41,7 +41,10 @@ const MENU_ITEMS = {
   },
   linkToIssue: {
     ...SUBMENU_COMMON_PARAMS,
-    title: browser.i18n.getMessage('menu_linkToIssue_label')
+    title: browser.i18n.getMessage('menu_linkToIssue_label'),
+    async shouldEnable(_info, _tab, message) {
+      return !!(message && message.getProjectId());
+    }
   },
   createIssue: {
     ...SUBMENU_COMMON_PARAMS,
