@@ -232,7 +232,7 @@ export class IssueEditor {
   }
 
   async initProjects() {
-    const projects = await Redmine.getProjects();
+    const projects = await Redmine.getProjects().catch(error => []);
     this.initSelect(
       this.mProjectField,
       projects,
@@ -242,7 +242,7 @@ export class IssueEditor {
   }
 
   async initTrackers(projectId) {
-    const trackers = await Redmine.getTrackers(projectId);
+    const trackers = await Redmine.getTrackers(projectId).catch(error => []);
     this.initSelect(
       document.querySelector('#tracker'),
       trackers,
@@ -252,7 +252,7 @@ export class IssueEditor {
   }
 
   async initStatuses() {
-    const statuses = await Redmine.getIssueStatuses();
+    const statuses = await Redmine.getIssueStatuses().catch(error => []);
     this.initSelect(
       document.querySelector('#status'),
       statuses,
@@ -262,7 +262,7 @@ export class IssueEditor {
   }
 
   async initVersions(projectId) {
-    const versions = await Redmine.getVersions(projectId);
+    const versions = await Redmine.getVersions(projectId).catch(error => []);
     this.initSelect(
       document.querySelector('#version'),
       versions,
@@ -272,7 +272,7 @@ export class IssueEditor {
   }
 
   async initAssignees(projectId, cachedMembers) {
-    const members = cachedMembers || await Redmine.getMembers(projectId);
+    const members = cachedMembers || await Redmine.getMembers(projectId).catch(error => []);
     this.initSelect(
       document.querySelector('#assigned'),
       members,
@@ -286,7 +286,7 @@ export class IssueEditor {
   }
 
   async initWatchers(projectId, cachedMembers) {
-    const members = cachedMembers || await Redmine.getMembers(projectId);
+    const members = cachedMembers || await Redmine.getMembers(projectId).catch(error => []);
     const container = document.querySelector('#watcherUsers');
   
     const range = document.createRange();

@@ -173,7 +173,7 @@ export class RelationsField {
       return;
 
     if (!relations)
-      relations = await Redmine.getRelations(this.mIssueId);
+      relations = await Redmine.getRelations(this.mIssueId).catch(error => []);
 
     if (!relations)
       return;
