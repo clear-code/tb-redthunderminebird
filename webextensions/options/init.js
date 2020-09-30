@@ -200,6 +200,7 @@ function onConfigChanged(key) {
       break;
 
     case 'visibleFolderPattern':
+    case 'account':
       initFolderMappings();
       break;
   }
