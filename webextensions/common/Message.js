@@ -48,7 +48,7 @@ export class Message {
   }
 
   getProjectId() {
-    return parseInt(configs.mappedFolders[this.raw.folder.path] || configs.defaultProject || 0);
+    return parseInt((configs.mappedFolders || {})[this.raw.folder.path] || configs.defaultProject || 0);
   }
 
   getSanitizedSubject() {
