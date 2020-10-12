@@ -20,6 +20,7 @@ export function migrateConfigs() {
           url:            configs.redmineURL,
           key:            configs.redmineAPIKey,
           defaultProject: configs.defaultProject,
+          defaultTracker: configs.defaultTracker,
           customFields:   configs.customFields
         };
         configs.accounts = accounts;

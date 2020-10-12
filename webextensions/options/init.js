@@ -10,181 +10,27 @@ import {
   appendContents,
   sanitizeForHTMLText
 } from '/common/common.js';
-import * as Constants from '/common/constants.js';
 import Options from '/extlib/Options.js';
+import * as Dialog from '/extlib/dialog.js';
 import '/extlib/l10n.js';
-
-import { Redmine } from '/common/Redmine.js';
+import * as AccountConfig from './account-config.js';
 
 const options = new Options(configs);
 
-let mAccounts;
-
-function initCheckboxes(container, items, itemTranslator) {
+async function initAccounts() {
+  const container = document.querySelector('#editAccountButtons');
   const range = document.createRange();
   range.selectNodeContents(container);
   range.deleteContents();
   range.detach();
 
-  for (const item of items) {
-    const translated = itemTranslator ? itemTranslator(item) : item;
-    if (!translated)
-      continue;
+  const accounts = await browser.accounts.list();
+  const regularAccounts = accounts.filter(account => account.type != 'none');
+  const localFolderAccounts = accounts.filter(account => account.type == 'none');
+  for (const account of [...regularAccounts, ...localFolderAccounts]) {
     appendContents(container, `
-      <label><input type="checkbox"
-                    value=${JSON.stringify(sanitizeForHTMLText(translated.value))}
-                    ${translated.checked ? 'checked' : ''}>
-             ${sanitizeForHTMLText(translated.label)}</label>
+      <li class="flex-box row"><button class="flex-box column" value=${JSON.stringify(sanitizeForHTMLText(account.id))}>${sanitizeForHTMLText(account.name)}</button></li>
     `);
-  }
-}
-
-function initSelect(field, items, itemTranslator) {
-  const oldValue = field.value;
-
-  const range = document.createRange();
-  range.selectNodeContents(field);
-  range.deleteContents();
-  range.detach();
-
-  let hasOldValueOption = false;
-  for (const item of items) {
-    const translated = itemTranslator ? itemTranslator(item) : item;
-    if (!translated)
-      continue;
-    appendContents(field, generateOptionSource(translated));
-    if (oldValue && translated.value == oldValue)
-      hasOldValueOption = true;
-  }
-
-  if (oldValue && hasOldValueOption)
-    field.value = oldValue;
-  else
-    field.value = '';
-}
-function generateOptionSource(item) {
-  return `
-    <option value=${JSON.stringify(sanitizeForHTMLText(item.value))}
-           >${sanitizeForHTMLText(item.label)}</option>
-  `.trim();
-}
-
-async function initProjectVisibilityCheckboxes(projects) {
-  if (!projects)
-    projects = await Redmine.getProjects({ all: true }).catch(_error => []);
-  const visibleProjects = new Set(configs.visibleProjects.map(project => String(project)));
-  const hiddenProjects = new Set(configs.hiddenProjects.map(project => String(project)));
-  initCheckboxes(
-    document.querySelector('#visibleProjectsCheckboxes'),
-    projects,
-    project => ({
-      value: project.id,
-      label: project.fullname,
-      checked: visibleProjects.has(String(project.id)) || visibleProjects.has(project.identifier)
-    })
-  );
-  initCheckboxes(
-    document.querySelector('#hiddenProjectsCheckboxes'),
-    projects,
-    project => ({
-      value: project.id,
-      label: project.fullname,
-      checked: hiddenProjects.has(String(project.id)) || hiddenProjects.has(project.identifier)
-    })
-  );
-}
-
-async function initStatusVisibilityCheckboxes(statuses) {
-  if (!statuses)
-    statuses = await Redmine.getIssueStatuses({ all: true }).catch(_error => []);
-  const visibleStatuses = new Set(configs.visibleStatuses.map(project => String(project)));
-  initCheckboxes(
-    document.querySelector('#visibleStatusesCheckboxes'),
-    statuses,
-    status => ({
-      value: status.id,
-      label: status.name,
-      checked: visibleStatuses.has(String(status.id)) || visibleStatuses.has(status.name)
-    })
-  );
-}
-
-async function initTrackers() {
-  const trackers = await Redmine.getTrackers().catch(_error => []);
-  initSelect(
-    document.querySelector('#defaultTracker'),
-    [{ name: browser.i18n.getMessage('config_defaultTracker_blank_label'), value: '' }, ...trackers],
-    tracker => ({ label: tracker.name, value: tracker.id })
-  );
-}
-
-async function initFolderMappings(projects) {
-  const startTime = Date.now();
-  initFolderMappings.startedAt = startTime;
-  const rowsContainer = document.querySelector('#mappedFoldersRows');
-  const range = document.createRange();
-  range.selectNodeContents(rowsContainer);
-  range.deleteContents();
-  range.detach();
-
-  const unmappableFolderPathMatcher = /^\/(Archives|Drafts|Sent|Templates|Trash)($|\/)/;
-  let folderFilter = null;
-  try {
-    folderFilter = configs.visibleFolderPattern ? new RegExp(configs.visibleFolderPattern, 'i') : null;
-  }
-  catch(_error) {
-  }
-
-  const accounts = mAccounts || await browser.accounts.list();
-  if (accounts.length > 0) {
-    if (!projects)
-      projects = await Redmine.getProjects({ all: true }).catch(_error => []);
-    if (initFolderMappings.startedAt != startTime)
-      return;
-    const allProjects = new Set(projects.map(project => String(project.id)));
-
-    const defaultChooser = document.querySelector('#defaultProject');
-    initSelect(
-      defaultChooser,
-      projects,
-      project => ({ label: project.fullname, value: project.id })
-    );
-    defaultChooser.value = configs.defaultProject;
-
-    const projectOptionsSource = [
-      generateOptionSource({ label: browser.i18n.getMessage('config_mappedFolders_fallbackToDefault_label'), value: '' }),
-      projects.map(project => generateOptionSource({ label: project.fullname, value: project.id }))
-    ].join('');
-
-    const addRow = (folder, parent) => {
-      if (unmappableFolderPathMatcher.test(folder.path))
-        return;
-      const readablePath = parent ? `${parent}/${folder.name}` : folder.name;
-      if (!folderFilter || folderFilter.test(folder.name)) {
-        const chooserId = `folder-mapping-${encodeURIComponent(folder.path)}`;
-        appendContents(rowsContainer, `
-          <tr data-folder-path=${JSON.stringify(sanitizeForHTMLText(folder.path))}>
-            <td><label for=${JSON.stringify(sanitizeForHTMLText(chooserId))}
-                      >${sanitizeForHTMLText(readablePath)}</label></td>
-            <td><select id=${JSON.stringify(sanitizeForHTMLText(chooserId))}
-                       >${projectOptionsSource}</select></td>
-          </tr>
-        `);
-        const projectChooser = rowsContainer.lastChild.querySelector('select');
-        if (configs.mappedFolders &&
-            folder.path in configs.mappedFolders &&
-            allProjects.has(configs.mappedFolders[folder.path]))
-          projectChooser.value = configs.mappedFolders[folder.path];
-        else
-          projectChooser.value = '';
-      }
-
-      for (const subFolder of folder.subFolders) {
-        addRow(subFolder, readablePath);
-      }
-    };
-    const account = accounts.find(account => account.id == configs.account) || accounts[0];
-    account.folders.forEach(folder => addRow(folder));
   }
 }
 
@@ -193,143 +39,19 @@ function onConfigChanged(key) {
     case 'debug':
       document.documentElement.classList.toggle('debugging', configs.debug);
       break;
-
-    case 'redmineURL':
-    case 'redmineAPIKey':
-      onRedmineChanged();
-      break;
-
-    case 'visibleFolderPattern':
-    case 'account':
-      initFolderMappings();
-      break;
   }
 }
 configs.$addObserver(onConfigChanged);
 
-function onRedmineChanged() {
-  if (onRedmineChanged.timer)
-    clearTimeout(onRedmineChanged.timer);
-  onRedmineChanged.timer = setTimeout(async () => {
-    delete onRedmineChanged.timer;
-    if (!document.querySelector('#redmineURL').value.trim() ||
-        !document.querySelector('#redmineAPIKey').value.trim())
-      return;
-    const [projects, statuses] = await Promise.all([
-      Redmine.getProjects({ all: true }).catch(_error => []),
-      Redmine.getIssueStatuses({ all: true }).catch(_error => [])
-    ])
-    initProjectVisibilityCheckboxes(projects);
-    initStatusVisibilityCheckboxes(statuses);
-    initTrackers();
-    initFolderMappings(projects);
-  }, 250);
-}
-
 window.addEventListener('DOMContentLoaded', async () => {
-  const [accounts, ] = await Promise.all([
-    browser.accounts.list(),
-    configs.$loaded
-  ]);
-  mAccounts = accounts;
+  await configs.$loaded;
 
-  const accountsSelect = document.querySelector('#account');
-  initSelect(
-    accountsSelect,
-    accounts,
-    account => ({ label: account.name, value: account.id })
-  );
-  accountsSelect.value = configs.account || (accounts.length > 0 ? accounts[0].id : '');
-
-  const [projects, statuses] = await Promise.all([
-    Redmine.getProjects({ all: true }).catch(_error => []),
-    Redmine.getIssueStatuses({ all: true }).catch(_error => [])
-  ])
-  initProjectVisibilityCheckboxes(projects);
-  initStatusVisibilityCheckboxes(statuses);
-  initTrackers();
-  initFolderMappings(projects);
-
-
-  const projectsVisibilityModeSelector = document.querySelector('#projectsVisibilityMode');
-  const hiddenProjectsContaier = document.querySelector('#hiddenProjectsContainer');
-  const visibleProjectsContainer = document.querySelector('#visibleProjectsContainer');
-
-  const onProjectVisibilityModeChanged = () => {
-    const showByDefault = projectsVisibilityModeSelector.value != Constants.PROJECTS_VISIBILITY_HIDE_BY_DEFAULT;
-    hiddenProjectsContaier.classList.toggle('hidden', !showByDefault);
-    visibleProjectsContainer.classList.toggle('hidden', showByDefault);
-  };
-  onProjectVisibilityModeChanged();
-  projectsVisibilityModeSelector.addEventListener('change', onProjectVisibilityModeChanged);
-
-  const hiddenProjectsTextField = document.querySelector('#hiddenProjectsText');
-  hiddenProjectsContaier.addEventListener('change', event => {
-    if (!event.target.matches('input[type="checkbox"]'))
-      return;
-    configs.hiddenProjects = Array.from(
-      hiddenProjectsContaier.querySelectorAll('input[type="checkbox"]:checked'),
-      checkbox => parseInt(checkbox.value)
-    );
-    hiddenProjectsTextField.value = configs.hiddenProjects.join(',');
-  });
-  hiddenProjectsTextField.addEventListener('input', _event => {
-    configs.hiddenProjects = hiddenProjectsTextField.value.split(',').map(value => parseInt(value)).filter(value => value && !isNaN(value));
-    initProjectVisibilityCheckboxes(projects);
-  });
-  hiddenProjectsTextField.value = configs.hiddenProjects.join(',');
-
-  const visibleProjectsTextField = document.querySelector('#visibleProjectsText');
-  visibleProjectsContainer.addEventListener('change', event => {
-    if (!event.target.matches('input[type="checkbox"]'))
-      return;
-    configs.visibleProjects = Array.from(
-      visibleProjectsContainer.querySelectorAll('input[type="checkbox"]:checked'),
-      checkbox => parseInt(checkbox.value)
-    );
-    visibleProjectsTextField.value = configs.visibleProjects.join(',');
-  });
-  visibleProjectsTextField.addEventListener('input', _event => {
-    configs.visibleProjects = visibleProjectsTextField.value.split(',').map(value => parseInt(value)).filter(value => value && !isNaN(value));
-    initProjectVisibilityCheckboxes(projects);
-  });
-  visibleProjectsTextField.value = configs.visibleProjects.join(',');
-
-
-  const statusesVisibilityModeSelector = document.querySelector('#statusesVisibilityMode');
-  const visibleStatusesContainer = document.querySelector('#visibleStatusesContainer');
-
-  const onStatustVisibilityModeChanged = () => {
-    const showByDefault = statusesVisibilityModeSelector.value != Constants.STATUSES_VISIBILITY_HIDE_BY_DEFAULT;
-    visibleStatusesContainer.classList.toggle('hidden', showByDefault);
-  };
-  onStatustVisibilityModeChanged();
-  statusesVisibilityModeSelector.addEventListener('change', onStatustVisibilityModeChanged);
-
-  const visibleStatusesTextField = document.querySelector('#visibleStatusesText');
-  visibleStatusesContainer.addEventListener('change', event => {
-    if (!event.target.matches('input[type="checkbox"]'))
-      return;
-    configs.visibleStatuses = Array.from(
-      visibleStatusesContainer.querySelectorAll('input[type="checkbox"]:checked'),
-      checkbox => parseInt(checkbox.value)
-    );
-    visibleStatusesTextField.value = configs.visibleStatuses.join(',');
-  });
-  visibleStatusesTextField.addEventListener('input', _event => {
-    configs.visibleStatuses = visibleStatusesTextField.value.split(',').map(value => parseInt(value)).filter(value => value && !isNaN(value));
-    initStatusVisibilityCheckboxes(statuses);
-  });
-  visibleStatusesTextField.value = configs.visibleStatuses.join(',');
-
-
-  const mappingRows = document.querySelector('#mappedFoldersRows');
-  mappingRows.addEventListener('change', _event => {
-    const mapping = {};
-    for (const row of mappingRows.querySelectorAll('tr')) {
-      mapping[row.dataset.folderPath] = row.querySelector('select').value;
-    }
-    configs.mappedFolders = mapping;
+  initAccounts();
+  const editAccountButtons = document.querySelector('#editAccountButtons');
+  Dialog.initButton(editAccountButtons, event => {
+    const button = event.target.closest('button');
+    const accountId = button.getAttribute('value');
+    AccountConfig.show(accountId);
   });
 
   options.buildUIForAllConfigs(document.querySelector('#debug-configs'));
@@ -341,10 +63,6 @@ window.addEventListener('DOMContentLoaded', async () => {
       continue;
     const lockedFields = container.querySelectorAll('.locked input, .locked textarea, .locked select, input.locked, textarea.locked, select.locked');
     container.classList.toggle('locked', allFields.length == lockedFields.length);
-  }
-
-  for (const field of document.querySelectorAll('#redmineURL, #redmineAPIKey')) {
-    field.addEventListener('change', () => onRedmineChanged());
   }
 
   document.documentElement.classList.add('initialized');

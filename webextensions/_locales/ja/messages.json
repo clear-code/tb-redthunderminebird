@@ -100,6 +100,12 @@
 
 
   "config_title": { "message": "RedThunderMineBird Plusの設定" },
+  "config_accountConfig_title": { "message": "$NAME$と関連付けるRedmineの設定",
+    "placeholders": {
+      "name": { "content": "$1", "example": "Local Folders" }
+    }},
+
+  "config_accounts_caption": { "message": "Redmineの設定" },
 
   "config_base_caption": { "message": "基本設定" },
   "config_redmineURL_label": { "message": "Redmine URL" },
@@ -108,11 +114,13 @@
 
   "config_visibility_caption": { "message": "表示設定" },
   "config_projectsVisibilityMode_label": { "message": "プロジェクト：" },
+  "config_projectsVisibilityMode_followToDefault": { "message": "全体の設定に従う" },
   "config_projectsVisibilityMode_showByDefault": { "message": "すべて表示" },
   "config_projectsVisibilityMode_hideByDefault": { "message": "明示的に選択したプロジェクトのみ表示" },
   "config_visibleProjects_label": { "message": "表示するプロジェクト：" },
   "config_hiddenProjects_label": { "message": "隠すプロジェクト：" },
   "config_statusesVisibilityMode_label": { "message": "ステータス：" },
+  "config_statusesVisibilityMode_followToDefault": { "message": "全体の設定に従う" },
   "config_statusesVisibilityMode_showByDefault": { "message": "すべての使用を許可" },
   "config_statusesVisibilityMode_hideByDefault": { "message": "明示的に選択したステータスのみ使用を許可" },
   "config_visibleStatuses_label": { "message": "許可するステータス：" },

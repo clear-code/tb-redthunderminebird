@@ -99,6 +99,12 @@
 
 
   "config_title": { "message": "RedThunderMineBird Plus Configuration" },
+  "config_accountConfig_title": { "message": "Redmine Settings for $NAME$",
+    "placeholders": {
+      "name": { "content": "$1", "example": "Local Folders" }
+    }},
+
+  "config_accounts_caption": { "message": "Redmine Settings" },
 
   "config_base_caption": { "message": "Basic Settings" },
   "config_redmineURL_label": { "message": "Redmine URL" },
@@ -107,11 +113,13 @@
 
   "config_visibility_caption": { "message": "Visibility" },
   "config_projectsVisibilityMode_label": { "message": "Projects:" },
+  "config_projectsVisibilityMode_followToDefault": { "message": "Follwo to the global setting" },
   "config_projectsVisibilityMode_showByDefault": { "message": "Show All by default" },
   "config_projectsVisibilityMode_hideByDefault": { "message": "Show only some projects and hide all the rest by default" },
   "config_visibleProjects_label": { "message": "Visible Projects:" },
   "config_hiddenProjects_label": { "message": "Hidden Projects:" },
   "config_statusesVisibilityMode_label": { "message": "Status:" },
+  "config_statusesVisibilityMode_followToDefault": { "message": "Follwo to the global setting" },
   "config_statusesVisibilityMode_showByDefault": { "message": "Allow to use All" },
   "config_statusesVisibilityMode_hideByDefault": { "message": "Allow to use only some statuses and disallow all the rest by default" },
   "config_visibleStatuses_label": { "message": "Available Statuses:" },

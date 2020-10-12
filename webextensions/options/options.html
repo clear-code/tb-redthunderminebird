@@ -11,13 +11,8 @@
   </head>
   <body>
     <section>
-    <h1>__MSG_config_base_caption__</h1>
-    <p><label class="flex-box row">__MSG_config_redmineURL_label__
-              <input id="redmineURL" type="text" class="flex-box column"></label></p>
-    <p><label class="flex-box row">__MSG_config_redmineAPIKey_label__
-              <input id="redmineAPIKey" type="text" class="flex-box column"></label></p>
-    <p><label class="flex-box row">__MSG_config_account_label__
-              <select id="account"></select></label></p>
+    <h1>__MSG_config_accounts_caption__</h1>
+    <ul id="editAccountButtons" class="flex-box column"></ul>
     </section>
 
     <section>
@@ -27,26 +22,11 @@
                 <option value="1">__MSG_config_projectsVisibilityMode_showByDefault__</option>
                 <option value="2">__MSG_config_projectsVisibilityMode_hideByDefault__</option>
               </select></label></p>
-    <div id="hiddenProjectsContainer" class="sub">
-      <p><label class="flex-box row">__MSG_config_hiddenProjects_label__
-                <input id="hiddenProjectsText" type="text" class="flex-box column"></label></p>
-      <p id="hiddenProjectsCheckboxes" class="checkboxes-for-array-config"></p>
-    </div>
-    <div id="visibleProjectsContainer" class="sub hidden">
-      <p><label class="flex-box row">__MSG_config_visibleProjects_label__
-                <input id="visibleProjectsText" type="text" class="flex-box column"></label></p>
-      <p id="visibleProjectsCheckboxes" class="checkboxes-for-array-config"></p>
-    </div>
     <p><label>__MSG_config_statusesVisibilityMode_label__
               <select id="statusesVisibilityMode">
                 <option value="1">__MSG_config_statusesVisibilityMode_showByDefault__</option>
                 <option value="2">__MSG_config_statusesVisibilityMode_hideByDefault__</option>
               </select></label></p>
-    <div id="visibleStatusesContainer" class="sub hidden">
-      <p><label class="flex-box row">__MSG_config_visibleStatuses_label__
-                <input id="visibleStatusesText" type="text" class="flex-box column"></label></p>
-      <p id="visibleStatusesCheckboxes" class="checkboxes-for-array-config"></p>
-    </div>
     <p><label>__MSG_config_visibleFields_label__</label></p>
     <div id="visibleFields" class="sub">
       <p>
@@ -86,14 +66,10 @@
     </div>
     <p><label class="flex-box row">__MSG_config_visibleFolderPattern_label__
               <input id="visibleFolderPattern" type="text" class="flex-box column"></label></p>
-    <p><label class="flex-box row">__MSG_config_customFields_label__
-              <input id="customFields" type="text" class="flex-box column"></label></p>
     </section>
 
     <section>
     <h1>__MSG_config_defaultValue_caption__</h1>
-    <p><label>__MSG_config_defaultTracker_label__
-              <select id="defaultTracker"></select></label></p>
     <p><label>__MSG_config_defaultDueDate_label__
               <input id="defaultDueDate" type="number"></label></p>
     <p><label class="flex-box row">__MSG_config_defaultTitleCleanupPattern_label__
@@ -115,21 +91,6 @@
       <textarea id="notesTemplate"></textarea>
     </fieldset>
     <p>__MSG_config_placeholders_description__</p>
-    </section>
-
-    <section>
-    <h1>__MSG_config_mappedFolders_caption__</h1>
-    <p><label>__MSG_config_mappedFolders_default_label__
-              <select id="defaultProject"><option value="">__MSG_config_mappedFolders_unmapped_label__</option></select></label></p>
-    <table>
-      <thead>
-        <tr>
-          <th>__MSG_config_mappedFolders_folders_column__</th>
-          <th>__MSG_config_mappedFolders_projects_column__</th>
-        </tr>
-      </thead>
-      <tbody id="mappedFoldersRows"></tbody>
-    </table>
     </section>
 
     <section>

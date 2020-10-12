@@ -11,10 +11,8 @@ import * as Constants from './constants.js';
 const OVERRIDE_DEFAULT_CONFIGS = {}; /* Replace this for more customization on an enterprise use. */
 
 export const configs = new Configs({
-  account: '',
-
   // per-account configs
-  accounts: null, // url, key, defaultProject, projectsVisibilityMode, statusesVisibilityMode, defaultTracker, defaultDueDate, defaultTitleCleanupPattern, defaultDescriptionHeaders, defaultNotesHeaders, descriptionTemplate, notesTemplate
+  accounts: null, // url, key, defaultProject, visibleFolderPattern, projectsVisibilityMode, statusesVisibilityMode, defaultTracker, defaultDueDate, defaultTitleCleanupPattern, defaultDescriptionHeaders, defaultNotesHeaders, descriptionTemplate, notesTemplate, customFields
   accountMappedFolders: null,
   accountVisibleProjects: null,
   accountHiddenProjects: null,
@@ -40,7 +38,6 @@ export const configs = new Configs({
   fieldVisibility_other: true,
   fieldVisibility_issue: true,
   fieldVisibility_notes: true,
-  defaultTracker: null,
   defaultDueDate: 7,
   defaultTitleCleanupPattern: '((fwd:)|(re:))\s?',
   //defaultUploadAttachments: true,
@@ -71,9 +68,11 @@ export const configs = new Configs({
   dryRun: false,
 
   // obsolete, migrated to per-account configs
+  account: '',
   redmineURL: '',
   redmineAPIKey: '',
   defaultProject: '',
+  defaultTracker: null,
   mappedFolders: null,
   visibleProjects: [],
   hiddenProjects: [],
@@ -112,4 +111,8 @@ export function appendContents(parent, source) {
 
 export function sanitizeForHTMLText(text) {
   return String(text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+export function clone(object) {
+  return JSON.parse(JSON.stringify(object));
 }

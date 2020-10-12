@@ -4,7 +4,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-@import url("/resources/base.css");
+@import url("/resources/dialog.css");
 
 :root > * {
   transition: opacity 0.25s ease-out;
@@ -78,6 +78,21 @@ legend label.locked {
 }
 
 
+#editAccountButtons li {
+  margin: 0 0 0.25em;
+}
+
+.in-page-dialog.dialog {
+  display: flex;
+}
+
+.in-page-dialog.dialog-contents {
+  display: flex;
+  overflow: auto;
+  padding-right: 0.5em;
+}
+
+
 .checkboxes-for-array-config {
   border: 1px solid;
   height: 10em;
@@ -90,6 +105,7 @@ legend label.locked {
   display: block;
 }
 
-#visibleFields label {
+#visibleFields label,
+.visibleFields label {
   white-space: nowrap;
 }

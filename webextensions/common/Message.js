@@ -183,7 +183,7 @@ export class Message {
       { body,
         headers: this.getHeadersSummary(rawHeaders, notesHeaders) }
     );
-    const defaultTracker = 'defaultTracker' in accountInfo ? accountInfo.defaultTracker : configs.defaultTracker;
+    const defaultTracker = accountInfo.defaultTracker;
     const params = {
       id:          issueId,
       subject:     this.getSanitizedSubject(),
