@@ -15,7 +15,7 @@ import {
   sanitizeForHTMLText
 } from '/common/common.js';
 import { Message } from '/common/Message.js';
-import * as Redmine from '/common/redmine.js';
+import { Redmine } from '/common/Redmine.js';
 import { IssueEditor } from '/dialog/IssueEditor.js';
 import * as DialogCommon from '/dialog/common.js';
 
@@ -23,6 +23,7 @@ DialogCommon.registerMultipleDialogsAlertMessage(browser.i18n.getMessage('dialog
 
 let mParams;
 let mMessage;
+let mRedmine;
 let mIssueEditor;
 
 const mDescriptionToggler = document.querySelector('#toggleDescription');
@@ -47,6 +48,7 @@ configs.$loaded.then(async () => {
   onConfigChange('debug');
 
   mMessage = new Message(mParams.message);
+  mRedmine = new Redmine({ accountId: mMessage.accountId });
   const redmineParams = await mMessage.toRedmineParams();
   log('mMessage: ', mMessage);
   log('redmineParams ', redmineParams);
@@ -82,12 +84,12 @@ configs.$loaded.then(async () => {
     try {
       const issue = await updateIssue();
       if (issue) {
-        const url = Redmine.getIssueURL(issue.id, true);
+        const url = mRedmine.getIssueURL(issue.id, { withAPIKey: true });
         const completedMessage = new Dialog.InPageDialog();
         appendContents(completedMessage.contents, `
           <p>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_updateIssue_complete_message'))}</p>
           <p><a href=${JSON.stringify(sanitizeForHTMLText(url))}
-               >${sanitizeForHTMLText(Redmine.getIssueURL(issue.id))}</a></p>
+               >${sanitizeForHTMLText(mRedmine.getIssueURL(issue.id))}</a></p>
         `);
         appendContents(completedMessage.buttons, `
           <button>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_updateIssue_complete_button_label'))}</button>
@@ -155,17 +157,17 @@ async function updateIssue() {
   }
 
   const updateParams = mIssueEditor.getRequestParams();
-  const oldIssue = await Redmine.getIssue(updateParams.id);
+  const oldIssue = await mRedmine.getIssue(updateParams.id);
   if (!oldIssue || !oldIssue.id) {
     alert(browser.i18n.getMessage('dialog_updateIssue_error_missingIssue', [updateParams.id]));
     return;
   }
 
   try {
-    const result = await Redmine.updateIssue(updateParams);
+    const result = await mRedmine.updateIssue(updateParams);
     log('updated issue: ', result);
     await mIssueEditor.saveRelations();
-    return Redmine.getIssue(updateParams.id);
+    return mRedmine.getIssue(updateParams.id);
   }
   catch(error) {
     log('update failed: ', error);

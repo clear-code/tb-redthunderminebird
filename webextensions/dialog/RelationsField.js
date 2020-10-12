@@ -10,15 +10,18 @@ import {
   appendContents,
   sanitizeForHTMLText
 } from '/common/common.js';
-import * as Redmine from '/common/redmine.js';
+import { Redmine } from '/common/Redmine.js';
 import { IssueChooser, updateIdFieldSize } from '/dialog/IssueChooser.js';
 import * as Dialog from '/extlib/dialog.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 
 export class RelationsField {
-  constructor({ container, issueId, projectId } = {}) {
+  constructor({ container, accountId, issueId, projectId } = {}) {
+    this.mAccountId = accountId;
     this.mIssueId = issueId;
     this.unavailableIds = new Set();
+
+    this.mRedmine = new Redmine({ accountId: this.mAccountId });
 
     this.onValid = new EventListenerManager();
     this.onInvalid = new EventListenerManager();
@@ -35,6 +38,7 @@ export class RelationsField {
 
     this.mRelationsToBeRemoved = new Set();
     this.mIssueChooser = new IssueChooser({
+      accountId: this.mAccountId,
       defaultId: 0,
       projectId: this.mProjectId
     });
@@ -59,6 +63,7 @@ export class RelationsField {
         const issueIdField = row.querySelector('.related-issue-id');
         const issueSubjectField = row.querySelector('.related-issue-subject');
         const issue = await this.mIssueChooser.show({
+          accountId: this.mAccountId,
           defaultId: parseInt(issueIdField.value || 0),
           projectId: this.mProjectId
         });
@@ -101,7 +106,7 @@ export class RelationsField {
     if (!idField)
       return;
 
-    const issue = idField.value ? await Redmine.getIssue(idField.value) : null;
+    const issue = idField.value ? await this.mRedmine.getIssue(idField.value) : null;
     const subjectField = idField.closest('li').querySelector('input.related-issue-subject');
     subjectField.value = issue && issue.subject || '';
     this.validateFields();
@@ -173,7 +178,7 @@ export class RelationsField {
       return;
 
     if (!relations)
-      relations = await Redmine.getRelations(this.mIssueId).catch(error => []);
+      relations = await this.mRedmine.getRelations(this.mIssueId).catch(error => []);
 
     if (!relations)
       return;
@@ -188,7 +193,7 @@ export class RelationsField {
     const requests = [];
 
     for (const id of this.mRelationsToBeRemoved) {
-      requests.push(Redmine.deleteRelation(id));
+      requests.push(this.mRedmine.deleteRelation(id));
     }
     this.mRelationsToBeRemoved.clear();
 
@@ -212,13 +217,13 @@ export class RelationsField {
         continue;
 
       if (relation.issue_to_id) {
-        requests.push(Redmine.saveRelation(relation).then(() => {
+        requests.push(this.mRedmine.saveRelation(relation).then(() => {
           row.$originalRelation = relation;
         }));
       }
       else {
         if (relation.id)
-          requests.push(Redmine.deleteRelation(row.dataset.id));
+          requests.push(this.mRedmine.deleteRelation(row.dataset.id));
         row.$originalRelation = {};
       }
     }

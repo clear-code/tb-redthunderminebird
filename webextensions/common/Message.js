@@ -17,6 +17,14 @@ export class Message {
     this.$full = null;
   }
 
+  get accountId() {
+    return this.raw.folder.accountId;
+  }
+
+  get accountInfo() {
+    return configs.accounts[this.accountId] || {};
+  }
+
   async getFull() {
     if (this.$full)
       return this.$full;
@@ -48,11 +56,12 @@ export class Message {
   }
 
   getProjectId() {
-    return parseInt((configs.mappedFolders || {})[this.raw.folder.path] || configs.defaultProject || 0);
+    return parseInt((this.accountMappedFolders[this.accountId] || {})[this.raw.folder.path] || this.accountInfo.defaultProject || 0);
   }
 
   getSanitizedSubject() {
-    const pattern = this.defaultTitleCleanupPattern;
+    const accountInfo = this.accountInfo;
+    const pattern = 'defaultTitleCleanupPattern' in accountInfo ? accountInfo.defaultTitleCleanupPattern : configs.defaultTitleCleanupPattern;
     if (pattern)
       return this.raw.subject.replace(new RegExp(pattern, 'gi'), '').trim();
     else
@@ -159,26 +168,33 @@ export class Message {
       this.getBody(),
       this.getFull().then(full => full.headers)
     ]);
+    const accountInfo = this.accountInfo;
+    const descriptionTemplate = 'descriptionTemplate' in accountInfo ? accountInfo.descriptionTemplate : configs.descriptionTemplate;
+    const descriptionHeaders = 'defaultDescriptionHeaders' in accountInfo ? accountInfo.defaultDescriptionHeaders : configs.defaultDescriptionHeaders;
     const description = this.fillTemplate(
-      configs.descriptionTemplate,
+      descriptionTemplate,
       { body,
-        headers: this.getHeadersSummary(rawHeaders, configs.defaultDescriptionHeaders) }
+        headers: this.getHeadersSummary(rawHeaders, descriptionHeaders) }
     );
+    const notesTemplate = 'notesTemplate' in accountInfo ? accountInfo.notesTemplate : configs.notesTemplate;
+    const notesHeaders = 'defaultNotesHeaders' in accountInfo ? accountInfo.defaultNotesHeaders : configs.defaultNotesHeaders;
     const notes = this.fillTemplate(
-      configs.notesTemplate,
+      notesTemplate,
       { body,
-        headers: this.getHeadersSummary(rawHeaders, configs.defaultNotesHeaders) }
+        headers: this.getHeadersSummary(rawHeaders, notesHeaders) }
     );
+    const defaultTracker = 'defaultTracker' in accountInfo ? accountInfo.defaultTracker : configs.defaultTracker;
     const params = {
       id:          issueId,
       subject:     this.getSanitizedSubject(),
       project_id:  this.getProjectId(),
-      tracker_id:  configs.defaultTracker,
+      tracker_id:  defaultTracker,
       description,
       notes
     };
 
-    const dueDays = parseInt(configs.defaultDueDate);
+    const defaultDueDate = 'defaultDueDate' in accountInfo ? accountInfo.defaultDueDate : configs.defaultDueDate;
+    const dueDays = parseInt(defaultDueDate);
     if (!isNaN(dueDays) && dueDays > 0)
       params.due_date = Format.formatDate(new Date(), dueDays);
 

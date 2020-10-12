@@ -13,9 +13,14 @@ import {
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import { Message } from '/common/Message.js';
-import * as Redmine from '/common/redmine.js';
+import { Redmine } from '/common/Redmine.js';
+import * as Migration from './migration.js';
 
 Dialog.setLogger(log);
+
+configs.$loaded.then(() => {
+  Migration.migrateConfigs();
+});
 
 const mProjectItemIds = new Set();
 
@@ -33,8 +38,10 @@ const MENU_ITEMS = {
   redmine: {
     ...MENU_COMMON_PARAMS,
     title: browser.i18n.getMessage('menu_redmine_label'),
-    async shouldEnable(_info, _tab, _message) {
-      return !!(configs.redmineURL && configs.redmineAPIKey);
+    async shouldEnable(info, _tab, _message) {
+      const accountId = info.selectedFolder && info.selectedFolder.accountId;
+      const accountInfo = configs.accounts[accountId];
+      return !!(accountInfo && accountInfo.url && accountInfo.key);
     }
   },
   openWebUI: {
@@ -44,8 +51,9 @@ const MENU_ITEMS = {
   linkToIssue: {
     ...SUBMENU_COMMON_PARAMS,
     title: browser.i18n.getMessage('menu_linkToIssue_label'),
-    async shouldEnable(_info, _tab, message) {
-      return !!(message && message.getProjectId());
+    async shouldEnable(info, _tab, message) {
+      const accountId = info.selectedFolder && info.selectedFolder.accountId;
+      return !!(message && message.getProjectId({ accountId }));
     }
   },
   createIssue: {
@@ -69,8 +77,10 @@ const MENU_ITEMS = {
     contexts: ['folder_pane'],
     title: browser.i18n.getMessage('menu_mappedProject_label'),
     shouldVisible: null,
-    async shouldEnable(_info, _tab, _message) {
-      return !!(configs.redmineURL && configs.redmineAPIKey && mProjectItemIds.size > 0);
+    async shouldEnable(info, _tab, _message) {
+      const accountId = info.selectedFolder && info.selectedFolder.accountId;
+      const accountInfo = configs.accounts[accountId];
+      return !!(accountInfo && accountInfo.url && accountInfo.key && mProjectItemIds.size > 0);
     }
   }
 };
@@ -98,6 +108,8 @@ for (const [id, item] of Object.entries(MENU_ITEMS)) {
 }
 
 browser.menus.onShown.addListener(async (info, tab) => {
+  const accountId = info.selectedFolder && info.selectedFolder.accountId;
+  const redmine = new Redmine({ accountId });
   const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
   const message = messages && messages.length > 0 ? messages[0] : null;
 
@@ -123,12 +135,13 @@ browser.menus.onShown.addListener(async (info, tab) => {
   if (info.contexts.includes('folder_pane') &&
       info.selectedFolder) {
     modificationCount++;
-    tasks.push(Redmine.getProjects().catch(_error => []).then(async projects => {
+    tasks.push(redmine.getProjects().catch(_error => []).then(async projects => {
       if (projects.length == 0)
         return;
 
       const creatings = [];
-      const projectId = (configs.mappedFolders || {})[info.selectedFolder.path];
+      const mappedFolders = configs.accountMappedFolders[accountId] || {};
+      const projectId = mappedFolders[info.selectedFolder.path];
 
       mProjectItemIds.add('map-to-project:');
       creatings.push(browser.menus.create({
@@ -189,13 +202,15 @@ browser.menus.onHidden.addListener(async (_info, _tab) => {
 });
 
 browser.menus.onClicked.addListener(async (info, tab) => {
+  const accountId = info.selectedFolder && info.selectedFolder.accountId;
+  const redmine = new Redmine({ accountId });
   const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
   const message = messages && messages.length ? messages[0] : null;
   switch (info.menuItemId) {
     case 'openWebUI': {
       if (!message)
         return;
-      const url = await Redmine.getCreationURL(message);
+      const url = await redmine.getCreationURL(message);
       browser.tabs.create({
         windowId: tab.windowId,
         active:   true,
@@ -206,19 +221,19 @@ browser.menus.onClicked.addListener(async (info, tab) => {
     case 'linkToIssue':
       if (!message)
         return;
-      runTask(async () => linkToIssue(message, tab));
+      runTask(async () => linkToIssue(message, { tab, accountId }));
       break;
 
     case 'createIssue':
       if (!message)
         return;
-      runTask(async () => createIssue(message, tab));
+      runTask(async () => createIssue(message, { tab, accountId }));
       break;
 
     case 'updateIssue':
       if (!message)
         return;
-      runTask(async () => updateIssue(message, tab));
+      runTask(async () => updateIssue(message, { tab, accountId }));
       break;
 
     case 'openIssue': {
@@ -227,7 +242,7 @@ browser.menus.onClicked.addListener(async (info, tab) => {
       const issueId = await getContextIssueId(info);
       if (!issueId)
         return;
-      const url = await Redmine.getIssueURL(issueId, true);
+      const url = await redmine.getIssueURL(issueId, { withAPIKey: true });
       browser.tabs.create({
         windowId: tab.windowId,
         active:   true,
@@ -239,19 +254,21 @@ browser.menus.onClicked.addListener(async (info, tab) => {
       if (/^map-to-project:(.*)$/.test(info.menuItemId) &&
           info.selectedFolder) {
         const projectId = RegExp.$1 || null;
-        const mappings = JSON.parse(JSON.stringify(configs.mappedFolders || {}));
+        const accountMappedFolders = JSON.parse(JSON.stringify(configs.accountMappedFolders));
+        const mappedFolders = accountMappedFolders[accountId] || {};
         if (projectId)
-          mappings[info.selectedFolder.path] = projectId;
+          mappedFolders[info.selectedFolder.path] = projectId;
         else
-          delete mappings[info.selectedFolder.path];
-        configs.mappedFolders = mappings;
+          delete mappedFolders[info.selectedFolder.path];
+        accountMappedFolders[accountId] = mappedFolders;
+        configs.accountMappedFolders = accountMappedFolders;
       }
       break;
   }
 });
 
 
-async function linkToIssue(message, tab) {
+async function linkToIssue(message, { tab, accountId } = {}) {
   try {
     const dialogParams = {
       url:    '/dialog/link-to-issue/link-to-issue.html',
@@ -267,7 +284,8 @@ async function linkToIssue(message, tab) {
     try {
       const result = await Dialog.open(
         dialogParams,
-        { defaultId: await message.getIssueId(),
+        { accountId,
+          defaultId: await message.getIssueId(),
           projectId: message.getProjectId() }
       );
       const issue = result && result.detail;
@@ -283,7 +301,7 @@ async function linkToIssue(message, tab) {
   }
 }
 
-async function createIssue(message, tab) {
+async function createIssue(message, { tab, accountId } = {}) {
   const dialogParams = {
     url:    '/dialog/create-issue/create-issue.html',
     modal:  !configs.debug,
@@ -298,14 +316,15 @@ async function createIssue(message, tab) {
   try {
     await Dialog.open(
       dialogParams,
-      { message: message.raw }
+      { accountId,
+        message: message.raw }
     );
   }
   catch(_error) {
   }
 }
 
-async function updateIssue(message, tab) {
+async function updateIssue(message, { tab, accountId } = {}) {
   if (!(await message.getIssueId())) {
     await linkToIssue(message, tab);
     if (!(await message.getIssueId()))
@@ -326,7 +345,8 @@ async function updateIssue(message, tab) {
   try {
     await Dialog.open(
       dialogParams,
-      { message: message.raw }
+      { accountId,
+        message: message.raw }
     );
   }
   catch(_error) {

@@ -40,6 +40,7 @@ configs.$loaded.then(async () => {
 
   const issueChooser = new IssueChooser({
     container: document.querySelector('#choose-issue-container'),
+    accountId: mParams.accountId,
     defaultId: mParams.defaultId,
     projectId: mParams.projectId
   });

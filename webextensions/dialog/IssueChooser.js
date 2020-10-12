@@ -9,18 +9,21 @@ import {
   appendContents,
   sanitizeForHTMLText
 } from '/common/common.js';
-import * as Redmine from '/common/redmine.js';
+import { Redmine } from '/common/Redmine.js';
 import * as Dialog from '/extlib/dialog.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 
 export class IssueChooser {
-  constructor({ container, defaultId, projectId } = {}) {
+  constructor({ container, accountId, defaultId, projectId } = {}) {
     this.onChanged = new EventListenerManager();
     this.onChose = new EventListenerManager();
 
+    this.mAccountId = accountId;
     this.mDefaultId = defaultId;
     this.mProjectId = projectId;
     this.mLastOffset = 0;
+
+    this.mRedmine = new Redmine({ accountId: this.mAccountId });
 
     if (!container)
       container = this.createDialog();
@@ -124,7 +127,7 @@ export class IssueChooser {
 
   async fetchMore() {
     const lastIssue = this.issue;
-    const issues = await Redmine.getIssues(this.mProjectId, {
+    const issues = await this.mRedmine.getIssues(this.mProjectId, {
       offset: this.mLastOffset,
       limit:  10
     });

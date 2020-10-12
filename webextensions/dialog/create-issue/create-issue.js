@@ -15,7 +15,7 @@ import {
   sanitizeForHTMLText
 } from '/common/common.js';
 import { Message } from '/common/Message.js';
-import * as Redmine from '/common/redmine.js';
+import { Redmine } from '/common/Redmine.js';
 import { IssueEditor } from '/dialog/IssueEditor.js';
 import * as DialogCommon from '/dialog/common.js';
 
@@ -23,6 +23,7 @@ DialogCommon.registerMultipleDialogsAlertMessage(browser.i18n.getMessage('dialog
 
 let mParams;
 let mMessage;
+let mRedmine;
 let mIssueEditor;
 
 const mAcceptButton      = document.querySelector('#accept');
@@ -45,6 +46,7 @@ configs.$loaded.then(async () => {
   onConfigChange('debug');
 
   mMessage = new Message(mParams.message);
+  mRedmine = new Redmine({ accountId: mMessage.accountId });
   const redmineParams = await mMessage.toRedmineParams();
   log('mMessage: ', mMessage);
   log('redmineParams ', redmineParams);
@@ -66,12 +68,12 @@ configs.$loaded.then(async () => {
     try {
       const issue = await createIssue();
       if (issue) {
-        const url = Redmine.getIssueURL(issue.id, true);
+        const url = mRedmine.getIssueURL(issue.id, { withAPIKey: true });
         const completedMessage = new Dialog.InPageDialog();
         appendContents(completedMessage.contents, `
           <p>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_complete_message'))}</p>
           <p><a href=${JSON.stringify(sanitizeForHTMLText(url))}
-               >${sanitizeForHTMLText(Redmine.getIssueURL(issue.id))}</a></p>
+               >${sanitizeForHTMLText(mRedmine.getIssueURL(issue.id))}</a></p>
         `);
         appendContents(completedMessage.buttons, `
           <button>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_complete_button_label'))}</button>
@@ -136,7 +138,7 @@ async function createIssue() {
 
   const createParams = mIssueEditor.getRequestParams();
 
-  const result = await Redmine.createIssue(createParams);
+  const result = await mRedmine.createIssue(createParams);
   const issue = result && result.issue;
   log('created issue: ', issue);
 

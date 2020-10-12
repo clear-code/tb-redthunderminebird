@@ -12,17 +12,28 @@ import {
 import * as Constants from './constants.js';
 import * as Cache from './cache.js';
 
-function getURL(path = '', params = {}) {
-  if (!configs.redmineURL)
-    throw new Error('Missing Redmine URL: you need to configure it at first');
+export class Redmine {
+  constructor({ accountId }) {
+    this.accountId = accountId;
+  }
+
+  get accountInfo() {
+    return configs.accounts[this.accountId] || {};
+  }
+
+
+_getURL(path = '', params = {}) {
+  const accountInfo = this.accountInfo;
+  if (!accountInfo || !accountInfo.url)
+    throw new Error(`Missing Redmine URL: you need to configure it at first for the account ${this.accountId}`);
   const queryParams = new URLSearchParams();
   for (const name in params) {
     queryParams.set(name, params[name]);
   }
-  return `${configs.redmineURL.replace(/\/$/, '')}/${path.replace(/^\//, '')}${Object.keys(params).length > 0 ? '?' : ''}${queryParams.toString()}`;
+  return `${accountInfo.url.replace(/\/$/, '')}/${path.replace(/^\//, '')}${Object.keys(params).length > 0 ? '?' : ''}${queryParams.toString()}`;
 }
 
-async function request({ method, path, params, data, type, response } = {}) {
+async _request({ method, path, params, data, type, response } = {}) {
   if (!method)
     method = 'GET';
   log('request:', method, path);
@@ -30,10 +41,11 @@ async function request({ method, path, params, data, type, response } = {}) {
   if (!type)
     type = 'application/json';
 
-  const url = getURL(path, {
+  const accountInfo = this.accountInfo;
+  const url = this._getURL(path, {
     ...(params || {}),
     ...(method == 'GET' && data !== undefined ? data : {}),
-    key: configs.redmineAPIKey
+    key: accountInfo && accountInfo.key
   });
 
   let body = '';
@@ -87,48 +99,50 @@ async function request({ method, path, params, data, type, response } = {}) {
   });
 }
 
-export function getIssueURL(id, withAPIKey) {
-  return getURL(
+getIssueURL(id, { withAPIKey } = {}) {
+  const accountInfo = this.accountInfo;
+  return this._getURL(
     `/issues/${id}`,
-    withAPIKey ? { key: configs.redmineAPIKey } : {}
+    withAPIKey ? { key: accountInfo && accountInfo.key || '' } : {}
   );
 }
 
-export function getProjectURL(id, withAPIKey) {
-  return getURL(
+getProjectURL(id, { withAPIKey } = {}) {
+  const accountInfo = this.accountInfo;
+  return this._getURL(
     `/projects/${id}`,
-    withAPIKey ? { key: configs.redmineAPIKey } : {}
+    withAPIKey ? { key: accountInfo && accountInfo.key || '' } : {}
   );
 }
 
-export async function getCreationURL(message) {
+async getCreationURL(message) {
   const allParams = await message.toRedmineParams();
   const params = {
     'issue[subject]':     allParams.subject,
     'issue[description]': allParams.description
   };
   if (allParams.project_id)
-    return getURL(`/projects/${allParams.project_id}/issues/new`, params);
+    return this._getURL(`/projects/${allParams.project_id}/issues/new`, params);
   else
-    return getURL(`/issues/new`, params);
+    return this._getURL(`/issues/new`, params);
 }
 
-export async function ping() {
+async ping() {
   // REST APIの対応可否やバージョンチェックをした方がいい
-  return request({
+  return this._request({
     path: '/users/current.json'
   })
     .then(() => true)
     .catch(error => {
-      log('Redmine.ping: ' + String(error));
+      log(`Redmine.ping for ${this.accountId}: ` + String(error));
       return false;
     });
 }
 
-async function upload(file) {
+async _upload(file) {
   const data = file.data || await file.promisedData;
-  log('upload:', file.name, data.byteLength);
-  const result = await request({
+  log('upload:', file.name, data.byteLength, this.accountId);
+  const result = await this._request({
     method: 'POST',
     path:   'uploads.json',
     type:   'application/octet-stream',
@@ -143,14 +157,14 @@ async function upload(file) {
   };
 }
 
-export async function createIssue(issue) {
-  log('create:', issue);
+async createIssue(issue) {
+  log('create:', issue, this.accountId);
   try {
     const files = issue.files;
     delete issue.files;
     if (files)
-      issue.uploads = await Promise.all(files.map(file => upload(file)));
-    return request({
+      issue.uploads = await Promise.all(files.map(file => this._upload(file)));
+    return this._request({
       method: 'POST',
       path:   'issues.json',
       data:   { issue },
@@ -158,19 +172,19 @@ export async function createIssue(issue) {
     });
   }
   catch(error) {
-    log('Redmine.create: ' + String(error));
+    log(`Redmine.create for ${this.accountId}: ` + String(error));
     return {};
   }
 }
 
-export async function updateIssue(issue) {
-  log('update:', issue);
+async updateIssue(issue) {
+  log('update:', issue, this.accountId);
   try {
     const files = issue.files;
     delete issue.files;
     if (files)
-      issue.uploads = await Promise.all(files.map(file => upload(file)));
-    const result = await request({
+      issue.uploads = await Promise.all(files.map(file => this._upload(file)));
+    const result = await this._request({
       method: 'PUT',
       path:   `issues/${issue.id}.json`,
       data:   { issue },
@@ -180,18 +194,18 @@ export async function updateIssue(issue) {
     return result;
   }
   catch(error) {
-    log('Redmine.update: ' + String(error));
+    log(`Redmine.update for ${this.accountId}: ` + String(error));
     throw error;
   }
 }
 
-export async function getIssue(id, params = {}) {
-  log('issue:', id, params);
+async getIssue(id, params = {}) {
+  log('issue:', id, this.accountId, params);
   try {
     const response = await Cache.getAndFallback(
-      `redmine:issue:${id}`,
+      `redmine[${this.accountId}]:issue:${id}`,
       () => {
-        return request({
+        return this._request({
           path: `issues/${id}.json`,
           params
         });
@@ -200,18 +214,18 @@ export async function getIssue(id, params = {}) {
     return response && response.issue || {};
   }
   catch(error) {
-    log('Redmine.issue: ' + String(error));
+    log(`Redmine.issue for ${this.accountId}: ` + String(error));
     return {};
   }
 }
 
-export async function getIssues(projectId, { offset, limit } = {}) {
-  log('issues:', projectId, offset, limit);
+async getIssues(projectId, { offset, limit } = {}) {
+  log('issues:', projectId, this.accountId, offset, limit);
   try {
     const response = await Cache.getAndFallback(
-      `redmine:issues:${projectId}:${offset}-${limit}`,
+      `redmine[${this.accountId}]:issues:${projectId}:${offset}-${limit}`,
       () => {
-        return request({
+        return this._request({
           path: `projects/${projectId}/issues.json`,
           data: { offset, limit }
         });
@@ -220,19 +234,19 @@ export async function getIssues(projectId, { offset, limit } = {}) {
     return response.issues;
   }
   catch(error) {
-    log('Redmine.issues: ' + String(error));
+    log(`Redmine.issues for ${this.accountId}: ` + String(error));
     return [];
   }
 }
 
 
-export async function getRelations(issueId /*, { offset, limit } */) {
-  log('relations:', issueId /*, offset, limit */);
+async getRelations(issueId /* { offset, limit } = {} */) {
+  log('relations:', issueId, this.accountId /*, offset, limit */);
   try {
     const response = await Cache.getAndFallback(
-      `redmine:relations:${issueId /* }:${offset}-${limit} */}`,
+      `redmine[${this.accountId}]:relations:${issueId /* }:${offset}-${limit} */}`,
       () => {
-        return request({
+        return this._request({
           path: `issues/${issueId}/relations.json` /*,
           data: { offset, limit } */
         });
@@ -241,13 +255,13 @@ export async function getRelations(issueId /*, { offset, limit } */) {
     return response.relations;
   }
   catch(error) {
-    log('Redmine.relations: ' + String(error));
+    log(`Redmine.relations for ${this.accountId}: ` + String(error));
     return [];
   }
 }
 
-export async function saveRelation(relation) {
-  log('save relation:', relation);
+async saveRelation(relation) {
+  log('save relation:', relation, this.accountId);
   try {
     const data = {
       relation: {
@@ -257,8 +271,8 @@ export async function saveRelation(relation) {
       }
     };
     if (relation.id)
-      await deleteRelation(relation.id);
-    return request({
+      await this.deleteRelation(relation.id);
+    return this._request({
       method: 'POST',
       path:   `issues/${relation.issue_id}/relations.json`,
       data,
@@ -266,43 +280,43 @@ export async function saveRelation(relation) {
     });
   }
   catch(error) {
-    log('Redmine.saveRelation: ' + String(error));
+    log(`Redmine.saveRelation for ${this.accountId}: ` + String(error));
     return {};
   }
 }
 
-export async function deleteRelation(relationId) {
-  log('delete relation:', relationId);
+async deleteRelation(relationId) {
+  log('delete relation:', relationId, this.accountId);
   try {
-    return request({
+    return this._request({
       method: 'DELETE',
       path:   `relations/${relationId}.json`,
       response: {}
     });
   }
   catch(error) {
-    log('Redmine.deleteRelation: ' + String(error));
+    log(`Redmine.deleteRelation for ${this.accountId}: ` + String(error));
     return {};
   }
 }
 
-export async function getMyself() {
-  log('myself');
+async getMyself() {
+  log('myself ', this.accountId);
   const response = await Cache.getAndFallback(
-    'redmine:myself',
+    `redmine[${this.accountId}]:myself`,
     () => {
-      return request({ path: 'users/current.json' });
+      return this._request({ path: 'users/current.json' });
     }
   );
   return response.user;
 }
 
-export async function getProject(projectId) {
-  log('project:', projectId);
+async getProject(projectId) {
+  log('project:', projectId, this.accountId);
   const response = await Cache.getAndFallback(
-    `redmine:project:${projectId}`,
+    `redmine[${this.accountId}]:project:${projectId}`,
     () => {
-      return request({
+      return this._request({
         path: `projects/${projectId}.json`,
         data: { include: 'trackers' }
       });
@@ -311,22 +325,24 @@ export async function getProject(projectId) {
   return response.project;
 }
 
-export async function getProjects({ all } = {}) {
-  log('projects');
+async getProjects({ all } = {}) {
+  log('projects ', this.accountId);
   return Cache.getAndFallback(
-    'redmine:projects',
+    `redmine[${this.accountId}]:projects`,
     async () => {
       //識別子でフィルタ
-      const visibleProjects = new Set(configs.visibleProjects.map(project => String(project)));
-      const hiddenProjects = new Set(configs.hiddenProjects.map(project => String(project)));
-      const showByDefault = configs.projectsVisibilityMode != Constants.PROJECTS_VISIBILITY_HIDE_BY_DEFAULT;
+      const visibleProjects = new Set((configs.accountVisibleProjects[this.accountId] || []).map(project => String(project)));
+      const hiddenProjects = new Set((configs.accountHiddenProjects[this.accountId] || []).map(project => String(project)));
+      const accountInfo = this.accountInfo;
+      const visibilityMode = accountInfo.projectsVisibilityMode == Constants.PROJECTS_VISIBILITY_FOLLOW_TO_DEFAULT ? configs.projectsVisibilityMode : accountInfo.projectsVisibilityMode;
+      const showByDefault = visibilityMode != Constants.PROJECTS_VISIBILITY_HIDE_BY_DEFAULT;
 
       const projects = [];
       let offset = 0;
       let response;
       do {
         const limit = response && response.limit || 25;
-        response = await request({
+        response = await this._request({
           path: 'projects.json',
           data: { offset, limit }
         });
@@ -352,66 +368,76 @@ export async function getProjects({ all } = {}) {
   );
 }
 
-export async function getMembers(projectId) {
-  log('members:', projectId);
+async getMembers(projectId) {
+  log('members:', projectId, this.accountId);
   //取得(権限の関係で例外が飛びやすい)
   try {
     const response = await Cache.getAndFallback(
-      `redmine:members:${projectId}`,
+      `redmine[${this.accountId}]:members:${projectId}`,
       () => {
-        return request({ path: `projects/${projectId}/memberships.json` });
+        return this._request({
+          path: `projects/${projectId}/memberships.json`
+        });
       }
     );
     return response.memberships;
   }
   catch(error) {
-    log('Redmine.members: ' + String(error));
+    log(`Redmine.members for ${this.accountId}: ` + String(error));
     //気休めに自分自身を返す
-    const myself = await getMyself();
+    const myself = await this.getMyself();
     myself.name = myself.lastname;
     return [{ user: myself }];
   }
 }
 
-export async function getVersions(projectId) {
-  log('versions:', projectId);
+async getVersions(projectId) {
+  log('versions:', projectId, this.accountId);
   return Cache.getAndFallback(
-    `redmine:version:${projectId}`,
+    `redmine[${this.accountId}]:version:${projectId}`,
     async () => {
-      const response = await request({ path: `projects/${projectId}/versions.json` });
+      const response = await this._request({
+        path: `projects/${projectId}/versions.json`
+      });
       const versions = response.versions;
       return versions.filter(version => version.status === 'open');
     }
   );
 }
 
-export async function getTrackers(projectId) {
+async getTrackers(projectId) {
   if (projectId) {
-    log(`trackers (project=${projectId})`);
-    return (await getProject(projectId)).trackers || [];
+    log(`trackers (project=${projectId})`, this.accountId);
+    return (await this.getProject(projectId)).trackers || [];
   }
   else {
     log('trackers ');
     const response = await Cache.getAndFallback(
-      `redmine:trackers`,
+      `redmine[${this.accountId}]:trackers`,
       () => {
-        return request({ path: 'trackers.json' });
+        return this._request({
+          path: 'trackers.json'
+        });
       }
     );
     return response.trackers;
   }
 }
 
-export async function getIssueStatuses({ all } = {}) {
-  log('issueStatuses');
+async getIssueStatuses({ all } = {}) {
+  log('issueStatuses ', this.accountId);
   const response = await Cache.getAndFallback(
-    'redmine:issueStatuses',
+    `redmine[${this.accountId}]:issueStatuses`,
     () => {
-      return request({ path: 'issue_statuses.json' });
+      return this._request({
+        path: 'issue_statuses.json'
+      });
     }
   );
-  const visibleStatuses = new Set(configs.visibleStatuses.map(status => String(status)));
-  const showByDefault = configs.statusesVisibilityMode != Constants.STATUSES_VISIBILITY_HIDE_BY_DEFAULT;
+  const visibleStatuses = new Set((configs.accountVisibleStatuses[this.accountId] || []).map(status => String(status)));
+  const accountInfo = this.accountInfo;
+  const visibilityMode = accountInfo.statusesVisibilityMode == Constants.STATUSES_VISIBILITY_FOLLOW_TO_DEFAULT ? configs.statusesVisibilityMode : accountInfo.statusesVisibilityMode;
+  const showByDefault = visibilityMode != Constants.STATUSES_VISIBILITY_HIDE_BY_DEFAULT;
   const statuses = response.issue_statuses.filter(status =>
     (all || showByDefault) ? true :
       (visibleStatuses.has(String(status.id)) || visibleStatuses.has(status.name))
@@ -419,27 +445,31 @@ export async function getIssueStatuses({ all } = {}) {
   return statuses;
 }
 
-export async function getCustomFields() {
-  log('customFields');
+async getCustomFields() {
+  log('customFields ', this.accountId);
 
   /*
   const response = await Cache.getAndFallback(
     'redmine:customFields',
     () => {
-      return request({ path: 'custom_fields.json' });
+      return this._request({ path: 'custom_fields.json' });
     }
   );
   return response.issue_statuses.filter(field => {
     return field.customized_type == 'issue' && field.visible;
   });
 */
-  const fields = JSON.parse(configs.customFields || '[]');
+  const fields = JSON.parse(this.accountInfo.customFields || '[]');
   if (!Array.isArray(fields) && fields.custom_fields)
     return fields.custom_fields;
   return fields;
 }
 
-export function recache() {
-  log('recache');
-  Cache.removeAll(/^redmine:/);
+recache() {
+  log('recache ', this.accountId);
+  if (this.accountId)
+    Cache.removeAll(new RegExp(`^redmine\\[${this.accountId}\\]:`));
+  else
+    Cache.removeAll(/^redmine(\[[^\]+])?:/);
 }
+};

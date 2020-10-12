@@ -14,7 +14,7 @@ import * as Constants from '/common/constants.js';
 import Options from '/extlib/Options.js';
 import '/extlib/l10n.js';
 
-import * as Redmine from '/common/redmine.js';
+import { Redmine } from '/common/Redmine.js';
 
 const options = new Options(configs);
 

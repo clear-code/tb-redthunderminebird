@@ -11,15 +11,19 @@ import * as Constants from './constants.js';
 const OVERRIDE_DEFAULT_CONFIGS = {}; /* Replace this for more customization on an enterprise use. */
 
 export const configs = new Configs({
-  redmineURL: '',
-  redmineAPIKey: '',
   account: '',
 
+  // per-account configs
+  accounts: null, // url, key, defaultProject, projectsVisibilityMode, statusesVisibilityMode, defaultTracker, defaultDueDate, defaultTitleCleanupPattern, defaultDescriptionHeaders, defaultNotesHeaders, descriptionTemplate, notesTemplate
+  accountMappedFolders: null,
+  accountVisibleProjects: null,
+  accountHiddenProjects: null,
+  accountVisibleStatuses: null,
+  accountVisibleFields: null,
+
+  // default for per-account configs
   projectsVisibilityMode: Constants.PROJECTS_VISIBILITY_SHOW_BY_DEFAULT,
-  visibleProjects: [],
-  hiddenProjects: [],
   statusesVisibilityMode: Constants.STATUSES_VISIBILITY_SHOW_BY_DEFAULT,
-  visibleStatuses: [],
   visibleFolderPattern: '',
   fieldVisibility_project: true,
   fieldVisibility_tracker: true,
@@ -36,18 +40,12 @@ export const configs = new Configs({
   fieldVisibility_other: true,
   fieldVisibility_issue: true,
   fieldVisibility_notes: true,
-  customFields: '',
-
   defaultTracker: null,
   defaultDueDate: 7,
   defaultTitleCleanupPattern: '((fwd:)|(re:))\s?',
   //defaultUploadAttachments: true,
   defaultDescriptionHeaders: ['Subject', 'From', 'Resent-From', 'Date', 'To', 'Cc', 'Newsgroups'],
   defaultNotesHeaders: ['Subject', 'From', 'Resent-From', 'Date', 'To', 'Cc', 'Newsgroups'],
-
-  defaultProject: '',
-  mappedFolders: null,
-
   descriptionTemplate: '<pre>\n%headers%\n\n%body%\n</pre>',
   notesTemplate: '<pre>\n%headers%\n\n%body%\n</pre>',
 
@@ -71,6 +69,16 @@ export const configs = new Configs({
   configsVersion: 0,
   debug: false,
   dryRun: false,
+
+  // obsolete, migrated to per-account configs
+  redmineURL: '',
+  redmineAPIKey: '',
+  defaultProject: '',
+  mappedFolders: null,
+  visibleProjects: [],
+  hiddenProjects: [],
+  visibleStatuses: [],
+  customFields: '',
 
   ...OVERRIDE_DEFAULT_CONFIGS
 }, {

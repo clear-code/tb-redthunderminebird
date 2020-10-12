@@ -12,8 +12,10 @@ export const STORE_MESSAGE_TO_ISSUE = 'message-to-issues';
 
 export const TYPE_NOTIFY_MULTIPLE_DIALOGS_REQUESTED = 'redthunderminebirdplus:notify-multiple-dialogs-requested';
 
+export const PROJECTS_VISIBILITY_FOLLOW_TO_DEFAULT = 0;
 export const PROJECTS_VISIBILITY_SHOW_BY_DEFAULT = 1;
 export const PROJECTS_VISIBILITY_HIDE_BY_DEFAULT = 2;
 
+export const STATUSES_VISIBILITY_FOLLOW_TO_DEFAULT = 0;
 export const STATUSES_VISIBILITY_SHOW_BY_DEFAULT = 1;
 export const STATUSES_VISIBILITY_HIDE_BY_DEFAULT = 2;

@@ -13,16 +13,19 @@ import {
   appendContents,
   sanitizeForHTMLText
 } from '/common/common.js';
-import * as Redmine from '/common/redmine.js';
+import { Redmine } from '/common/Redmine.js';
 import { IssueChooser, updateIdFieldSize } from '/dialog/IssueChooser.js';
 import { FilesField } from '/dialog/FilesField.js';
 import { RelationsField } from '/dialog/RelationsField.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 
 export class IssueEditor {
-  constructor(params) {
+  constructor({ accountId, ...params } = {}) {
+    this.mAccountId = accountId;
     this.params = params;
     this.completelyInitialized = false;
+
+    this.mRedmine = new Redmine({ accountId: this.mAccountId });
 
     this.mProjectField      = document.querySelector('#project'); // create
     this.mIssueField        = document.querySelector('#issue'); // update
@@ -38,14 +41,14 @@ export class IssueEditor {
     updateIdFieldSize(this.mParentIssueField);
 
     for (const row of document.querySelectorAll('[data-field-row]')) {
-      row.classList.toggle('hidden', !configs[`fieldVisibility_${row.dataset.fieldRow}`]);
+      row.classList.toggle('hidden', !this.isFieldVisible(row.dataset.fieldRow));
     }
 
     this.onValid = new EventListenerManager();
     this.onInvalid = new EventListenerManager();
 
     this.initialized = Promise.all([
-      Redmine.getMembers(this.params.project_id),
+      this.mRedmine.getMembers(this.params.project_id),
       this.mProjectField && this.initProjects(), // create
       this.mProjectField && this.initTrackers(this.params.project_id), // create
       this.initStatuses(),
@@ -96,6 +99,7 @@ export class IssueEditor {
     this.mDueDateField.disabled = true;
 
     this.mIssueChooser = new IssueChooser({
+      accountId: this.mAccountId,
       defaultId: 0,
       projectId: this.params.project_id
     });
@@ -106,7 +110,7 @@ export class IssueEditor {
       const subjectField = chooser.querySelector('.issue-subject');
 
       const onIssueChanged = async () => {
-        const issue = idField.value ? await Redmine.getIssue(idField.value) : null;
+        const issue = idField.value ? await this.mRedmine.getIssue(idField.value) : null;
         subjectField.value = issue && issue.subject || '';
         updateIdFieldSize(idField);
 
@@ -133,6 +137,7 @@ export class IssueEditor {
 
       Dialog.initButton(chooser.querySelector('.issue-choose'), async _event => {
         const issue = await this.mIssueChooser.show({
+          accountId: this.mAccountId,
           defaultId: parseInt(idField.value || 0),
           projectId: this.mProjectField ? this.mProjectField.value : this.params.project_id
         });
@@ -145,8 +150,9 @@ export class IssueEditor {
       });
     }
 
-    if (configs.fieldVisibility_relations) {
+    if (this.isFieldVisible('relations')) {
       this.mRelationsField = new RelationsField({
+        accountId: this.mAccountId,
         container: document.querySelector('#relations'),
         projectId: () => this.mProjectField ? this.mProjectField.value : this.params.project_id
       });
@@ -155,7 +161,7 @@ export class IssueEditor {
       this.mRelationsField.onSizeChanged.addListener(() => this.sizeToContent());
     }
 
-    if (configs.fieldVisibility_file) {
+    if (this.isFieldVisible('file')) {
       this.mFilesField = new FilesField({
         container: document.querySelector('#files')
       });
@@ -204,6 +210,11 @@ export class IssueEditor {
       this.initialized = Promise.all(postInitializations);
   }
 
+  isFieldVisible(name) {
+    const fieldVisibility = configs.accountVisibleFields[this.mAccountId] || {};
+    return name in fieldVisibility ? fieldVisibility[name] : configs[`fieldVisibility_${name}`]
+  }
+
   initSelect(field, items, itemTranslator) {
     const oldValue = field.value;
 
@@ -232,47 +243,47 @@ export class IssueEditor {
   }
 
   async initProjects() {
-    const projects = await Redmine.getProjects().catch(error => []);
+    const projects = await this.mRedmine.getProjects().catch(error => []);
     this.initSelect(
       this.mProjectField,
       projects,
       project => ({ label: project.fullname, value: project.id })
     );
-    document.querySelector('[data-field-row="project"]').classList.toggle('hidden', projects.length == 0 || !configs.fieldVisibility_project);
+    document.querySelector('[data-field-row="project"]').classList.toggle('hidden', projects.length == 0 || !this.isFieldVisible('project'));
   }
 
   async initTrackers(projectId) {
-    const trackers = await Redmine.getTrackers(projectId).catch(error => []);
+    const trackers = await this.mRedmine.getTrackers(projectId).catch(error => []);
     this.initSelect(
       document.querySelector('#tracker'),
       trackers,
       tracker => ({ label: tracker.name, value: tracker.id })
     );
-    document.querySelector('[data-field-row="tracker"]').classList.toggle('hidden', trackers.length == 0 || !configs.fieldVisibility_tracker);
+    document.querySelector('[data-field-row="tracker"]').classList.toggle('hidden', trackers.length == 0 || !this.isFieldVisible('tracker'));
   }
 
   async initStatuses() {
-    const statuses = await Redmine.getIssueStatuses().catch(error => []);
+    const statuses = await this.mRedmine.getIssueStatuses().catch(error => []);
     this.initSelect(
       document.querySelector('#status'),
       statuses,
       status => ({ label: status.name, value: status.id })
     );
-    document.querySelector('[data-field-row="status"]').classList.toggle('hidden', statuses.length == 0 || !configs.fieldVisibility_status);
+    document.querySelector('[data-field-row="status"]').classList.toggle('hidden', statuses.length == 0 || !this.isFieldVisible('status'));
   }
 
   async initVersions(projectId) {
-    const versions = await Redmine.getVersions(projectId).catch(error => []);
+    const versions = await this.mRedmine.getVersions(projectId).catch(error => []);
     this.initSelect(
       document.querySelector('#version'),
       versions,
       version => ({ label: version.name, value: version.id })
     );
-    document.querySelector('[data-field-row="version"]').classList.toggle('hidden', versions.length == 0 || !configs.fieldVisibility_version);
+    document.querySelector('[data-field-row="version"]').classList.toggle('hidden', versions.length == 0 || !this.isFieldVisible('version'));
   }
 
   async initAssignees(projectId, cachedMembers) {
-    const members = cachedMembers || await Redmine.getMembers(projectId).catch(error => []);
+    const members = cachedMembers || await this.mRedmine.getMembers(projectId).catch(error => []);
     this.initSelect(
       document.querySelector('#assigned'),
       members,
@@ -282,11 +293,11 @@ export class IssueEditor {
         return { label: member.user.name, value: member.user.id };
       }
     );
-    document.querySelector('[data-field-row="assigned"]').classList.toggle('hidden', members.length == 0 || !configs.fieldVisibility_assigned);
+    document.querySelector('[data-field-row="assigned"]').classList.toggle('hidden', members.length == 0 || !this.isFieldVisible('assigned'));
   }
 
   async initWatchers(projectId, cachedMembers) {
-    const members = cachedMembers || await Redmine.getMembers(projectId).catch(error => []);
+    const members = cachedMembers || await this.mRedmine.getMembers(projectId).catch(error => []);
     const container = document.querySelector('#watcherUsers');
   
     const range = document.createRange();
@@ -306,13 +317,13 @@ export class IssueEditor {
                ${sanitizeForHTMLText(member.user.name)}</label>
       `);
     }
-    document.querySelector('[data-field-row="watcher"]').classList.toggle('hidden', members.length == 0 || !configs.fieldVisibility_watcher);
+    document.querySelector('[data-field-row="watcher"]').classList.toggle('hidden', members.length == 0 || !this.isFieldVisible('watcher'));
   }
 
   async reinitFieldsForProject() {
     const projectId = this.mProjectField ? this.mProjectField.value : this.params.project_id;
     const [members, ] = await Promise.all([
-      Redmine.getMembers(projectId),
+      this.mRedmine.getMembers(projectId),
       this.mProjectField && this.initTrackers(projectId), // create
       this.initVersions(projectId)
     ]);
@@ -343,7 +354,7 @@ export class IssueEditor {
         this.mParentIssueSubject.value = issue.parent.subject;
       }
       else {
-        const parent = await Redmine.getIssue(issue.parent.id);
+        const parent = await this.mRedmine.getIssue(issue.parent.id);
         this.mParentIssueSubject.value = parent.subject;
       }
     }
@@ -359,6 +370,7 @@ export class IssueEditor {
 
     if (this.mRelationsField)
       /*await */this.mRelationsField.reinit({
+        accountId: this.mAccountId,
         issueId:   issue.id,
         relations: issue.relations
       }).then(() => this.sizeToContent());
@@ -371,7 +383,8 @@ export class IssueEditor {
   rebuildCustomFields(fields) {
     if (!fields) {
       try {
-        fields = JSON.parse(configs.customFields || '[]');
+        const accountInfo = configs.accounts[this.mAccountId] || {};
+        fields = JSON.parse(accountInfo.customFields || '[]');
         if (!Array.isArray(fields) && fields && fields.custom_fields)
           fields = fields.custom_fields;
       }
