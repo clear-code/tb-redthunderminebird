@@ -105,7 +105,7 @@
       "name": { "content": "$1", "example": "Local Folders" }
     }},
 
-  "config_accounts_caption": { "message": "Redmineの設定" },
+  "config_accounts_caption": { "message": "アカウントと関連付けるRedmineの設定" },
 
   "config_base_caption": { "message": "基本設定" },
   "config_redmineURL_label": { "message": "Redmine URL" },
