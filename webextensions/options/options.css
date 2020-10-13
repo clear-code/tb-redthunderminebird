@@ -87,6 +87,12 @@ legend label.locked {
   margin: 0 0 0.25em;
 }
 
+#editAccountButtons button {
+  font-size: large;
+  height: 1.8em;
+  line-height: 1.8;
+}
+
 .in-page-dialog.dialog {
   display: flex;
 }
