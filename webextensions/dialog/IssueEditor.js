@@ -211,8 +211,10 @@ export class IssueEditor {
   }
 
   isFieldVisible(name) {
+    const accountInfo = configs.accounts[this.mAccountId] || {};
+    const useAccountValue = 'useGlobalVisibleFields' in accountInfo && !accountInfo.useGlobalVisibleFields;
     const fieldVisibility = configs.accountVisibleFields[this.mAccountId] || {};
-    return name in fieldVisibility ? fieldVisibility[name] : configs[`fieldVisibility_${name}`]
+    return useAccountValue ? !!fieldVisibility[name] : configs[`fieldVisibility_${name}`];
   }
 
   initSelect(field, items, itemTranslator) {

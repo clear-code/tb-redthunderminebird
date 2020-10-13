@@ -123,9 +123,11 @@
   "config_visibleStatuses_label": { "message": "Available Statuses:" },
   "config_visibleFolderPattern_label": { "message": "Visible Folder (regular expression)" },
   "config_visibleFields_label": { "message": "visibility of fields" },
+  "config_useGlobalVisibleFields_label": { "message": "Follow to the global setting" },
   "config_customFields_label": { "message": "Custom fields (JSON)" },
 
-  "config_defaultValue_caption": { "message": "Default Values" },
+  "config_useGlobalDefaultFieldValues_label": { "message": "Follow other options to the global setting" },
+  "config_defaultValue_caption": { "message": "Default Values for issue creation and updating dialogs" },
   "config_defaultTracker_label": { "message": "Tracker" },
   "config_defaultTracker_blank_label": { "message": "(blank)" },
   "config_defaultDueDate_label": { "message": "Due Date (days)" },
@@ -139,9 +141,8 @@
   "config_mappedFolders_unmapped_label": { "message": "(Unmapped)" },
   "config_mappedFolders_fallbackToDefault_label": { "message": "(Use the Default Project)" },
 
-  "config_template_caption": { "message": "Templates" },
-  "config_descriptionTemplate_label": { "message": "Description" },
-  "config_notesTemplate_label": { "message": "Notes" },
+  "config_descriptionTemplate_label": { "message": "Template for Description" },
+  "config_notesTemplate_label": { "message": "Template for Notes" },
   "config_placeholders_description": { "message": "Available placeholders:\n%headers% : headers of the original message\n%body% : body of the original message\n%body_for_markdown% : body of the original message, converted to keep linebreaks in the Markdown format" },
 
   "config_debug_caption": { "message": "Development" },

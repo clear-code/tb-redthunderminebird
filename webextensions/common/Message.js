@@ -56,12 +56,13 @@ export class Message {
   }
 
   getProjectId() {
-    return parseInt((this.accountMappedFolders[this.accountId] || {})[this.raw.folder.path] || this.accountInfo.defaultProject || 0);
+    return parseInt((configs.accountMappedFolders[this.accountId] || {})[this.raw.folder.path] || this.accountInfo.defaultProject || 0);
   }
 
   getSanitizedSubject() {
     const accountInfo = this.accountInfo;
-    const pattern = 'defaultTitleCleanupPattern' in accountInfo ? accountInfo.defaultTitleCleanupPattern : configs.defaultTitleCleanupPattern;
+    const useAccountValue = 'useGlobalDefaultFieldValues' in accountInfo && !accountInfo.useGlobalDefaultFieldValues;
+    const pattern = useAccountValue && 'defaultTitleCleanupPattern' in accountInfo ? accountInfo.defaultTitleCleanupPattern : configs.defaultTitleCleanupPattern;
     if (pattern)
       return this.raw.subject.replace(new RegExp(pattern, 'gi'), '').trim();
     else
@@ -169,15 +170,16 @@ export class Message {
       this.getFull().then(full => full.headers)
     ]);
     const accountInfo = this.accountInfo;
-    const descriptionTemplate = 'descriptionTemplate' in accountInfo ? accountInfo.descriptionTemplate : configs.descriptionTemplate;
-    const descriptionHeaders = 'defaultDescriptionHeaders' in accountInfo ? accountInfo.defaultDescriptionHeaders : configs.defaultDescriptionHeaders;
+    const useAccountValue = ('useGlobalDefaultFieldValues' in accountInfo && !accountInfo.useGlobalDefaultFieldValues);
+    const descriptionTemplate = useAccountValue && 'descriptionTemplate' in accountInfo ? accountInfo.descriptionTemplate : configs.descriptionTemplate;
+    const descriptionHeaders = useAccountValue && 'defaultDescriptionHeaders' in accountInfo ? accountInfo.defaultDescriptionHeaders : configs.defaultDescriptionHeaders;
     const description = this.fillTemplate(
       descriptionTemplate,
       { body,
         headers: this.getHeadersSummary(rawHeaders, descriptionHeaders) }
     );
-    const notesTemplate = 'notesTemplate' in accountInfo ? accountInfo.notesTemplate : configs.notesTemplate;
-    const notesHeaders = 'defaultNotesHeaders' in accountInfo ? accountInfo.defaultNotesHeaders : configs.defaultNotesHeaders;
+    const notesTemplate = useAccountValue && 'notesTemplate' in accountInfo ? accountInfo.notesTemplate : configs.notesTemplate;
+    const notesHeaders = useAccountValue && 'defaultNotesHeaders' in accountInfo ? accountInfo.defaultNotesHeaders : configs.defaultNotesHeaders;
     const notes = this.fillTemplate(
       notesTemplate,
       { body,
@@ -193,7 +195,7 @@ export class Message {
       notes
     };
 
-    const defaultDueDate = 'defaultDueDate' in accountInfo ? accountInfo.defaultDueDate : configs.defaultDueDate;
+    const defaultDueDate = useAccountValue && 'defaultDueDate' in accountInfo ? accountInfo.defaultDueDate : configs.defaultDueDate;
     const dueDays = parseInt(defaultDueDate);
     if (!isNaN(dueDays) && dueDays > 0)
       params.due_date = Format.formatDate(new Date(), dueDays);

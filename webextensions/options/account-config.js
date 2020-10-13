@@ -80,8 +80,10 @@ appendContents(mDialog.contents, `
               <input type="text" class="flex-box column visibleStatusesText"></label></p>
     <p class="checkboxes-for-array-config visibleStatusesCheckboxes"></p>
   </div>
-  <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_visibleFields_label'))}</label></p>
-  <div class="sub visibleFields">
+  <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_visibleFields_label'))}</label>
+     <label><input type="checkbox" class="useGlobalVisibleFields">
+             ${sanitizeForHTMLText(browser.i18n.getMessage('config_useGlobalVisibleFields_label'))}</label></p>
+  <div class="sub visibleFields hidden">
     <p>
       <label><input type="checkbox" class="visible-field" data-field-name="project">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_project_label'))}</label>
@@ -123,6 +125,9 @@ appendContents(mDialog.contents, `
   <h2>${sanitizeForHTMLText(browser.i18n.getMessage('config_defaultValue_caption'))}</h2>
   <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_defaultTracker_label'))}
             <select class="defaultTracker"></select></label></p>
+  <p><label><input type="checkbox" class="useGlobalDefaultFieldValues">
+             ${sanitizeForHTMLText(browser.i18n.getMessage('config_useGlobalDefaultFieldValues_label'))}</label></p>
+  <div class="defaultValues">
   <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_defaultDueDate_label'))}
             <input class="defaultDueDate" type="number"></label></p>
   <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_defaultTitleCleanupPattern_label'))}
@@ -131,6 +136,16 @@ appendContents(mDialog.contents, `
   <p><label><input class="defaultUploadAttachments" type="checkbox"/>
             ${sanitizeForHTMLText(browser.i18n.getMessage('config_defaultUploadAttachments_label'))}</label></p>
   -->
+  <fieldset>
+    <legend>${sanitizeForHTMLText(browser.i18n.getMessage('config_descriptionTemplate_label'))}</legend>
+    <textarea class="descriptionTemplate"></textarea>
+  </fieldset>
+  <fieldset>
+    <legend>${sanitizeForHTMLText(browser.i18n.getMessage('config_notesTemplate_label'))}</legend>
+    <textarea class="notesTemplate"></textarea>
+  </fieldset>
+  <p class="placeholders-description">${sanitizeForHTMLText(browser.i18n.getMessage('config_placeholders_description'))}</p>
+  </div>
   </section>
 
   <section>
@@ -148,19 +163,6 @@ appendContents(mDialog.contents, `
     </thead>
     <tbody class="mappedFoldersRows"></tbody>
   </table>
-  </section>
-
-  <section>
-  <h2>${sanitizeForHTMLText(browser.i18n.getMessage('config_template_caption'))}</h2>
-  <fieldset>
-    <legend>${sanitizeForHTMLText(browser.i18n.getMessage('config_descriptionTemplate_label'))}</legend>
-    <textarea class="descriptionTemplate"></textarea>
-  </fieldset>
-  <fieldset>
-    <legend>${sanitizeForHTMLText(browser.i18n.getMessage('config_notesTemplate_label'))}</legend>
-    <textarea class="notesTemplate"></textarea>
-  </fieldset>
-  <p class="placeholders-description">${sanitizeForHTMLText(browser.i18n.getMessage('config_placeholders_description'))}</p>
   </section>
 `);
 
@@ -262,6 +264,22 @@ mVisibleStatusesTextField.addEventListener('input', _event => {
 });
 
 
+// fields visibility
+const mUseGlobalVisibleFieldsCheck = mDialog.contents.querySelector('.useGlobalVisibleFields');
+const mVisibleFields = mDialog.contents.querySelector('.visibleFields');
+mUseGlobalVisibleFieldsCheck.addEventListener('change', _event => {
+  mVisibleFields.classList.toggle('hidden', mUseGlobalVisibleFieldsCheck.checked);
+});
+
+
+// default values
+const mUseGlobalDefaultFieldValuesCheck = mDialog.contents.querySelector('.useGlobalDefaultFieldValues');
+const mDefaultValues = mDialog.contents.querySelector('.defaultValues');
+mUseGlobalDefaultFieldValuesCheck.addEventListener('change', _event => {
+  mDefaultValues.classList.toggle('hidden', mUseGlobalDefaultFieldValuesCheck.checked);
+});
+
+
 // folder mapping
 
 const mMappingRows = mDialog.contents.querySelector('.mappedFoldersRows');
@@ -303,6 +321,7 @@ export async function show(accountId) {
   // base configs
   mDialog.contents.querySelector('.redmineURL').value = mAccountInfo.url || '';
   mDialog.contents.querySelector('.redmineAPIKey').value = mAccountInfo.key || '';
+  mDialog.contents.querySelector('.customFields').value = mAccountInfo.customFields || '';
 
   // projects visibility
   mVisibleProjects = (configs.accountVisibleProjects[mAccountId] || []).map(project => String(project));
@@ -317,20 +336,23 @@ export async function show(accountId) {
   mStatusesVisibilityModeSelector.value = mAccountInfo.statusesVisibilityMode || configs.statusesVisibilityMode;
 
   // fields visibility
+  mUseGlobalVisibleFieldsCheck.checked = 'useGlobalVisibleFields' in mAccountInfo ? mAccountInfo.useGlobalVisibleFields : true;
+  mVisibleFields.classList.toggle('hidden', mUseGlobalVisibleFieldsCheck.checked);
   const visibleFields = configs.accountVisibleFields[accountId] || {};
-  for (const checkbox of mDialog.contents.querySelectorAll('input[type="checkbox"].visible-field')) {
+  for (const checkbox of mVisibleFields.querySelectorAll('input[type="checkbox"].visible-field')) {
     const name = checkbox.dataset.fieldName;
     checkbox.checked = !!(name in visibleFields ? visibleFields[name] : configs[`fieldVisibility_${name}`]);
   }
 
-  mDialog.contents.querySelector('.defaultDueDate').value = 'defaultDueDate' in mAccountInfo ? mAccountInfo.defaultDueDate : configs.defaultDueDate;
-
   mVisibleFolderPatternField.value = 'visibleFolderPattern' in mAccountInfo ? mAccountInfo.visibleFolderPattern : configs.visibleFolderPattern;
-  mDialog.contents.querySelector('.defaultTitleCleanupPattern').value = 'defaultTitleCleanupPattern' in mAccountInfo ? mAccountInfo.defaultTitleCleanupPattern : configs.defaultTitleCleanupPattern;
-  mDialog.contents.querySelector('.customFields').value = mAccountInfo.customFields || '';
-
   mMappedFolders = clone(configs.accountMappedFolders[accountId] || {});
 
+  // default values
+  mUseGlobalDefaultFieldValuesCheck.checked = 'useGlobalDefaultFieldValues' in mAccountInfo ? mAccountInfo.useGlobalDefaultFieldValues : true;
+  mDefaultValues.classList.toggle('hidden', mUseGlobalDefaultFieldValuesCheck.checked);
+
+  mDialog.contents.querySelector('.defaultDueDate').value = 'defaultDueDate' in mAccountInfo ? mAccountInfo.defaultDueDate : configs.defaultDueDate;
+  mDialog.contents.querySelector('.defaultTitleCleanupPattern').value = 'defaultTitleCleanupPattern' in mAccountInfo ? mAccountInfo.defaultTitleCleanupPattern : configs.defaultTitleCleanupPattern;
   mDialog.contents.querySelector('.descriptionTemplate').value = 'descriptionTemplate' in mAccountInfo ? mAccountInfo.descriptionTemplate : configs.descriptionTemplate;
   mDialog.contents.querySelector('.notesTemplate').value = 'notesTemplate' in mAccountInfo ? mAccountInfo.notesTemplate : configs.notesTemplate;
 
@@ -362,6 +384,8 @@ function save() {
   mAccountInfo.customFields = mDialog.contents.querySelector('.customFields').value;
   mAccountInfo.descriptionTemplate = mDialog.contents.querySelector('.descriptionTemplate').value;
   mAccountInfo.notesTemplate = mDialog.contents.querySelector('.notesTemplate').value;
+  mAccountInfo.useGlobalVisibleFields = mUseGlobalVisibleFieldsCheck.checked;
+  mAccountInfo.useGlobalDefaultFieldValues = mUseGlobalDefaultFieldValuesCheck.checked;
   saveAccountConfig('accounts', mAccountInfo);
 
   saveAccountConfig('accountVisibleProjects', mVisibleProjects);
