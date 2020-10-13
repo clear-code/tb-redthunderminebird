@@ -114,3 +114,7 @@ legend label.locked {
 .visibleFields label {
   white-space: nowrap;
 }
+
+.placeholders-description {
+  white-space: pre-wrap;
+}

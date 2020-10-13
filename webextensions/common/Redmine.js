@@ -334,7 +334,7 @@ export class Redmine {
         const visibleProjects = new Set((configs.accountVisibleProjects[this.accountId] || []).map(project => String(project)));
         const hiddenProjects = new Set((configs.accountHiddenProjects[this.accountId] || []).map(project => String(project)));
         const accountInfo = this.accountInfo;
-        const visibilityMode = accountInfo.projectsVisibilityMode == Constants.PROJECTS_VISIBILITY_FOLLOW_TO_DEFAULT ? configs.projectsVisibilityMode : accountInfo.projectsVisibilityMode;
+        const visibilityMode = accountInfo.projectsVisibilityMode || configs.projectsVisibilityMode;
         const showByDefault = visibilityMode != Constants.PROJECTS_VISIBILITY_HIDE_BY_DEFAULT;
 
         const projects = [];
@@ -436,7 +436,7 @@ export class Redmine {
     );
     const visibleStatuses = new Set((configs.accountVisibleStatuses[this.accountId] || []).map(status => String(status)));
     const accountInfo = this.accountInfo;
-    const visibilityMode = accountInfo.statusesVisibilityMode == Constants.STATUSES_VISIBILITY_FOLLOW_TO_DEFAULT ? configs.statusesVisibilityMode : accountInfo.statusesVisibilityMode;
+    const visibilityMode = accountInfo.statusesVisibilityMode || configs.statusesVisibilityMode;
     const showByDefault = visibilityMode != Constants.STATUSES_VISIBILITY_HIDE_BY_DEFAULT;
     const statuses = response.issue_statuses.filter(status =>
       (all || showByDefault) ? true :

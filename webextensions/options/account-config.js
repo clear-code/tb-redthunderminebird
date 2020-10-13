@@ -49,13 +49,14 @@ appendContents(mDialog.contents, `
             <input type="text" class="flex-box column redmineURL"></label></p>
   <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_redmineAPIKey_label'))}
             <input type="text" class="flex-box column redmineAPIKey"></label></p>
+  <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_customFields_label'))}
+            <input type="text" class="flex-box column customFields"></label></p>
   </section>
 
   <section>
   <h2>${sanitizeForHTMLText(browser.i18n.getMessage('config_visibility_caption'))}</h2>
   <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_projectsVisibilityMode_label'))}
             <select class="projectsVisibilityMode">
-              <option value="0">${sanitizeForHTMLText(browser.i18n.getMessage('config_projectsVisibilityMode_followToDefault'))}</option>
               <option value="1">${sanitizeForHTMLText(browser.i18n.getMessage('config_projectsVisibilityMode_showByDefault'))}</option>
               <option value="2">${sanitizeForHTMLText(browser.i18n.getMessage('config_projectsVisibilityMode_hideByDefault'))}</option>
             </select></label></p>
@@ -71,7 +72,6 @@ appendContents(mDialog.contents, `
   </div>
   <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_statusesVisibilityMode_label'))}
             <select class="statusesVisibilityMode">
-              <option value="0">${sanitizeForHTMLText(browser.i18n.getMessage('config_statusesVisibilityMode_followToDefault'))}</option>
               <option value="1">${sanitizeForHTMLText(browser.i18n.getMessage('config_statusesVisibilityMode_showByDefault'))}</option>
               <option value="2">${sanitizeForHTMLText(browser.i18n.getMessage('config_statusesVisibilityMode_hideByDefault'))}</option>
             </select></label></p>
@@ -117,10 +117,6 @@ appendContents(mDialog.contents, `
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_updateIssue_notes_label'))}</label>
     </p>
   </div>
-  <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_visibleFolderPattern_label'))}
-            <input type="text" class="flex-box column visibleFolderPattern"></label></p>
-  <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_customFields_label'))}
-            <input type="text" class="flex-box column customFields"></label></p>
   </section>
 
   <section>
@@ -141,6 +137,8 @@ appendContents(mDialog.contents, `
   <h2>${sanitizeForHTMLText(browser.i18n.getMessage('config_mappedFolders_caption'))}</h2>
   <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_mappedFolders_default_label'))}
             <select class="defaultProject"><option value="">${sanitizeForHTMLText(browser.i18n.getMessage('config_mappedFolders_unmapped_label'))}</option></select></label></p>
+  <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_visibleFolderPattern_label'))}
+            <input type="text" class="flex-box column visibleFolderPattern"></label></p>
   <table>
     <thead>
       <tr>
@@ -162,7 +160,7 @@ appendContents(mDialog.contents, `
     <legend>${sanitizeForHTMLText(browser.i18n.getMessage('config_notesTemplate_label'))}</legend>
     <textarea class="notesTemplate"></textarea>
   </fieldset>
-  <p>${sanitizeForHTMLText(browser.i18n.getMessage('config_placeholders_description'))}</p>
+  <p class="placeholders-description">${sanitizeForHTMLText(browser.i18n.getMessage('config_placeholders_description'))}</p>
   </section>
 `);
 
@@ -274,6 +272,16 @@ mMappingRows.addEventListener('change', _event => {
   }
   mMappedFolders = mapping;
 });
+const mVisibleFolderPatternField = mDialog.contents.querySelector('.visibleFolderPattern');
+mVisibleFolderPatternField.addEventListener('input', () => {
+  if (mVisibleFolderPatternField.timer)
+    clearTimeout(mVisibleFolderPatternField.timer);
+  mVisibleFolderPatternField.timer = setTimeout(async () => {
+    delete mVisibleFolderPatternField.timer;
+    initFolderMappings();
+  }, 250);
+});
+
 
 
 export async function show(accountId) {
@@ -301,12 +309,12 @@ export async function show(accountId) {
   mVisibleProjectsTextField.value = mVisibleProjects.join(',');
   mHiddenProjects = (configs.accountHiddenProjects[mAccountId] || []).map(project => String(project));
   mHiddenProjectsTextField.value = mHiddenProjects.join(',');
-  mProjectsVisibilityModeSelector.value = 'projectsVisibilityMode' in mAccountInfo ? (mAccountInfo.projectsVisibilityMode || 0) : configs.projectsVisibilityMode;
+  mProjectsVisibilityModeSelector.value = mAccountInfo.projectsVisibilityMode || configs.projectsVisibilityMode;
 
   // status visibility
   mVisibleStatuses = (configs.accountVisibleStatuses[mAccountId] || []).map(status => String(status));
   mVisibleStatusesTextField.value = mVisibleStatuses.join(',');
-  mStatusesVisibilityModeSelector.value = 'statusVisibilityMode' in mAccountInfo ? (mAccountInfo.statusVisibilityMode || 0) : configs.statusVisibilityMode;
+  mStatusesVisibilityModeSelector.value = mAccountInfo.statusesVisibilityMode || configs.statusesVisibilityMode;
 
   // fields visibility
   const visibleFields = configs.accountVisibleFields[accountId] || {};
@@ -317,7 +325,7 @@ export async function show(accountId) {
 
   mDialog.contents.querySelector('.defaultDueDate').value = 'defaultDueDate' in mAccountInfo ? mAccountInfo.defaultDueDate : configs.defaultDueDate;
 
-  mDialog.contents.querySelector('.visibleFolderPattern').value = 'visibleFolderPattern' in mAccountInfo ? mAccountInfo.visibleFolderPattern : configs.visibleFolderPattern;
+  mVisibleFolderPatternField.value = 'visibleFolderPattern' in mAccountInfo ? mAccountInfo.visibleFolderPattern : configs.visibleFolderPattern;
   mDialog.contents.querySelector('.defaultTitleCleanupPattern').value = 'defaultTitleCleanupPattern' in mAccountInfo ? mAccountInfo.defaultTitleCleanupPattern : configs.defaultTitleCleanupPattern;
   mDialog.contents.querySelector('.customFields').value = mAccountInfo.customFields || '';
 
@@ -345,11 +353,11 @@ function save() {
   mAccountInfo.url = mDialog.contents.querySelector('.redmineURL').value;
   mAccountInfo.key = mDialog.contents.querySelector('.redmineAPIKey').value;
   mAccountInfo.projectsVisibilityMode = parseInt(mProjectsVisibilityModeSelector.value);
-  mAccountInfo.statusVisibilityMode = parseInt(mStatusesVisibilityModeSelector.value);
+  mAccountInfo.statusesVisibilityMode = parseInt(mStatusesVisibilityModeSelector.value);
   mAccountInfo.defaultProject = parseInt(mDialog.contents.querySelector('.defaultProject').value || 0);
   mAccountInfo.defaultTracker = parseInt(mDialog.contents.querySelector('.defaultTracker').value || 0);
   mAccountInfo.defaultDueDate = parseInt(mDialog.contents.querySelector('.defaultDueDate').value || configs.defaultDueDate);
-  mAccountInfo.visibleFolderPattern = mDialog.contents.querySelector('.visibleFolderPattern').value;
+  mAccountInfo.visibleFolderPattern = mVisibleFolderPatternField.value;
   mAccountInfo.defaultTitleCleanupPattern = mDialog.contents.querySelector('.defaultTitleCleanupPattern').value;
   mAccountInfo.customFields = mDialog.contents.querySelector('.customFields').value;
   mAccountInfo.descriptionTemplate = mDialog.contents.querySelector('.descriptionTemplate').value;
@@ -486,7 +494,7 @@ async function initFolderMappings(projects) {
   const unmappableFolderPathMatcher = /^\/(Archives|Drafts|Sent|Templates|Trash)($|\/)/;
   let folderFilter = null;
   try {
-    const visibleFolderPattern = 'visibleFolderPattern' in mAccountInfo ? mAccountInfo.visibleFolderPattern : configs.visibleFolderPattern;
+    const visibleFolderPattern = mVisibleFolderPatternField.value || configs.visibleFolderPattern;
     folderFilter = visibleFolderPattern ? new RegExp(visibleFolderPattern, 'i') : null;
   }
   catch(_error) {
