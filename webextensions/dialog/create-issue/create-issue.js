@@ -53,7 +53,7 @@ configs.$loaded.then(async () => {
   delete redmineParams.id; // force to create new issue
 
   log('init editor');
-  mIssueEditor = new IssueEditor(redmineParams);
+  mIssueEditor = new IssueEditor({ accountId: mMessage.accountId, ...redmineParams });
   mIssueEditor.onValid.addListener(() => {
     mAcceptButton.disabled = false;
   });

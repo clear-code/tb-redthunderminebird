@@ -107,10 +107,10 @@ for (const [id, item] of Object.entries(MENU_ITEMS)) {
 }
 
 browser.menus.onShown.addListener(async (info, tab) => {
-  const accountId = info.selectedFolder && info.selectedFolder.accountId;
-  const redmine = new Redmine({ accountId });
   const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
   const message = messages && messages.length > 0 ? messages[0] : null;
+  const accountId = (info.selectedFolder && info.selectedFolder.accountId) || (message && message.accountId);
+  const redmine = new Redmine({ accountId });
 
   let modificationCount = 0;
   const tasks = [];
@@ -201,10 +201,10 @@ browser.menus.onHidden.addListener(async (_info, _tab) => {
 });
 
 browser.menus.onClicked.addListener(async (info, tab) => {
-  const accountId = info.selectedFolder && info.selectedFolder.accountId;
-  const redmine = new Redmine({ accountId });
   const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
   const message = messages && messages.length ? messages[0] : null;
+  const accountId = (info.selectedFolder && info.selectedFolder.accountId) || (message && message.accountId);
+  const redmine = new Redmine({ accountId });
   switch (info.menuItemId) {
     case 'openWebUI': {
       if (!message)
@@ -325,7 +325,7 @@ async function createIssue(message, { tab, accountId } = {}) {
 
 async function updateIssue(message, { tab, accountId } = {}) {
   if (!(await message.getIssueId())) {
-    await linkToIssue(message, tab);
+    await linkToIssue(message, { tab, accountId });
     if (!(await message.getIssueId()))
       return;
   }
