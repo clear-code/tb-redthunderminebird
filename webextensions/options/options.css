@@ -6,6 +6,11 @@
 
 @import url("/resources/dialog.css");
 
+:root,
+body {
+  overflow: auto; /* cancel overflow:hdiden in dialog.css */
+}
+
 :root > * {
   transition: opacity 0.25s ease-out;
 }
