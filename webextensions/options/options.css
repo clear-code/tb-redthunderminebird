@@ -93,16 +93,6 @@ legend label.locked {
   line-height: 1.8;
 }
 
-.in-page-dialog.dialog {
-  display: flex;
-}
-
-.in-page-dialog.dialog-contents {
-  display: flex;
-  overflow: auto;
-  padding-right: 0.5em;
-}
-
 
 .checkboxes-for-array-config {
   border: 1px solid;

@@ -15,3 +15,13 @@
 label + label {
   margin-left: 0.5em;
 }
+
+.in-page-dialog.dialog {
+  display: flex;
+}
+
+.in-page-dialog.dialog-contents {
+  display: flex;
+  overflow: auto;
+  padding-right: 0.5em;
+}
