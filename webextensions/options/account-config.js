@@ -540,7 +540,7 @@ async function initFolderMappings(projects) {
 
   const projectOptionsSource = [
     generateOptionSource({ label: browser.i18n.getMessage('config_mappedFolders_fallbackToDefault_label'), value: '' }),
-    projects.map(project => generateOptionSource({ label: project.fullname, value: project.id }))
+    ...projects.map(project => generateOptionSource({ label: project.fullname, value: project.id }))
   ].join('');
 
   const addRow = (folder, parent) => {
