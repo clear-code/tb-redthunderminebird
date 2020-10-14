@@ -111,6 +111,7 @@ legend label.locked {
 
 .checkboxes-for-array-config label {
   display: block;
+  margin: 0;
 }
 
 #visibleFields label,
