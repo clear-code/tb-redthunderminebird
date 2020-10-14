@@ -167,6 +167,27 @@ appendContents(mDialog.contents, `
 `);
 
 
+const mProjectsVisibilityModeSelector = mDialog.contents.querySelector('.projectsVisibilityMode');
+const mStatusesVisibilityModeSelector = mDialog.contents.querySelector('.statusesVisibilityMode');
+
+async function getProjects() {
+  return mRedmine.getProjects({
+    all: true,
+    visibilityMode: parseInt(mProjectsVisibilityModeSelector.value || 0),
+    visibleProjects: mVisibleProjects,
+    hiddenProjects: mHiddenProjects
+  }).catch(_error => []);
+}
+
+async function getStatuses() {
+  return mRedmine.getIssueStatuses({
+    all: true,
+    visibilityMode: parseInt(mStatusesVisibilityModeSelector.value || 0),
+    visibleStatuses: mVisibleStatuses
+  }).catch(_error => []);
+}
+
+
 // base settings
 
 function onRedmineChanged() {
@@ -177,10 +198,7 @@ function onRedmineChanged() {
     if (!mDialog.contents.querySelector('.redmineURL').value.trim() ||
         !mDialog.contents.querySelector('.redmineAPIKey').value.trim())
       return;
-    const [projects, statuses] = await Promise.all([
-      mRedmine.getProjects({ all: true }).catch(_error => []),
-      mRedmine.getIssueStatuses({ all: true }).catch(_error => [])
-    ])
+    const [projects, statuses] = await Promise.all([getProjects(), getStatuses()])
     mProjects = projects;
     mStatuses = statuses;
     initProjectVisibilityCheckboxes(mProjects);
@@ -197,7 +215,6 @@ for (const field of mDialog.contents.querySelectorAll('.redmineURL, .redmineAPIK
 
 // project visibility
 
-const mProjectsVisibilityModeSelector = mDialog.contents.querySelector('.projectsVisibilityMode');
 const mHiddenProjectsContaier = mDialog.contents.querySelector('.hiddenProjectsContainer');
 const mVisibleProjectsContainer = mDialog.contents.querySelector('.mVisibleProjectsContainer');
 function onProjectVisibilityModeChanged() {
@@ -216,6 +233,7 @@ mHiddenProjectsContaier.addEventListener('change', event => {
     checkbox => parseInt(checkbox.value)
   );
   mHiddenProjectsTextField.value = mHiddenProjects.join(',');
+  initFolderMappings();
 });
 mHiddenProjectsTextField.addEventListener('input', _event => {
   mHiddenProjects = mHiddenProjectsTextField.value.split(',').map(value => parseInt(value)).filter(value => value && !isNaN(value));
@@ -231,6 +249,7 @@ mVisibleProjectsContainer.addEventListener('change', event => {
     checkbox => parseInt(checkbox.value)
   );
   mVisibleProjectsTextField.value = mVisibleProjects.join(',');
+  initFolderMappings();
 });
 mVisibleProjectsTextField.addEventListener('input', _event => {
   mVisibleProjects = mVisibleProjectsTextField.value.split(',').map(value => parseInt(value)).filter(value => value && !isNaN(value));
@@ -240,7 +259,6 @@ mVisibleProjectsTextField.addEventListener('input', _event => {
 
 // status visibility
 
-const mStatusesVisibilityModeSelector = mDialog.contents.querySelector('.statusesVisibilityMode');
 const mVisibleStatusesContainer = mDialog.contents.querySelector('.mVisibleStatusesContainer');
 function onStatustVisibilityModeChanged() {
   const showByDefault = mStatusesVisibilityModeSelector.value != Constants.STATUSES_VISIBILITY_HIDE_BY_DEFAULT;
@@ -307,9 +325,16 @@ export async function show(accountId) {
   mRedmine = new Redmine({ accountId: mAccountId });
   mAccountInfo = clone(mRedmine.accountInfo);
 
+  mVisibleProjects = (configs.accountVisibleProjects[mAccountId] || []).map(project => String(project));
+  mHiddenProjects = (configs.accountHiddenProjects[mAccountId] || []).map(project => String(project));
+  mProjectsVisibilityModeSelector.value = mAccountInfo.projectsVisibilityMode || configs.projectsVisibilityMode;
+
+  mVisibleStatuses = (configs.accountVisibleStatuses[mAccountId] || []).map(status => String(status));
+  mStatusesVisibilityModeSelector.value = mAccountInfo.statusesVisibilityMode || configs.statusesVisibilityMode;
+
   const [projects, statuses, accounts] = await Promise.all([
-    mRedmine.getProjects({ all: true }).catch(_error => []),
-    mRedmine.getIssueStatuses({ all: true }).catch(_error => []),
+    getProjects(),
+    getStatuses(),
     browser.accounts.list()
   ]);
   mProjects = projects;
@@ -324,16 +349,11 @@ export async function show(accountId) {
   mDialog.contents.querySelector('.customFields').value = mAccountInfo.customFields || '';
 
   // projects visibility
-  mVisibleProjects = (configs.accountVisibleProjects[mAccountId] || []).map(project => String(project));
   mVisibleProjectsTextField.value = mVisibleProjects.join(',');
-  mHiddenProjects = (configs.accountHiddenProjects[mAccountId] || []).map(project => String(project));
   mHiddenProjectsTextField.value = mHiddenProjects.join(',');
-  mProjectsVisibilityModeSelector.value = mAccountInfo.projectsVisibilityMode || configs.projectsVisibilityMode;
 
   // status visibility
-  mVisibleStatuses = (configs.accountVisibleStatuses[mAccountId] || []).map(status => String(status));
   mVisibleStatusesTextField.value = mVisibleStatuses.join(',');
-  mStatusesVisibilityModeSelector.value = mAccountInfo.statusesVisibilityMode || configs.statusesVisibilityMode;
 
   // fields visibility
   mUseGlobalVisibleFieldsCheck.checked = 'useGlobalVisibleFields' in mAccountInfo ? mAccountInfo.useGlobalVisibleFields : true;
@@ -459,7 +479,7 @@ function generateOptionSource(item) {
 
 async function initProjectVisibilityCheckboxes(projects) {
   if (!projects)
-    projects = await mRedmine.getProjects({ all: true }).catch(_error => []);
+    projects = await getProjects();
   const visibleProjects = new Set(mVisibleProjects);
   const hiddenProjects = new Set(mHiddenProjects);
   initCheckboxes(
@@ -525,7 +545,7 @@ async function initFolderMappings(projects) {
   }
 
   if (!projects)
-    projects = await mRedmine.getProjects({ all: true }).catch(_error => []);
+    projects = await getProjects();
   if (initFolderMappings.startedAt != startTime)
     return;
   const allProjects = new Set(projects.map(project => String(project.id)));
@@ -534,13 +554,13 @@ async function initFolderMappings(projects) {
   initSelect(
     defaultChooser,
     projects,
-    project => ({ label: project.fullname, value: project.id })
+    project => project.visible ? ({ label: project.fullname, value: project.id }) : null
   );
   defaultChooser.value = 'defaultProject' in mAccountInfo ? mAccountInfo.defaultProject : configs.defaultProject;
 
   const projectOptionsSource = [
     generateOptionSource({ label: browser.i18n.getMessage('config_mappedFolders_fallbackToDefault_label'), value: '' }),
-    ...projects.map(project => generateOptionSource({ label: project.fullname, value: project.id }))
+    ...projects.map(project => project.visible ? generateOptionSource({ label: project.fullname, value: project.id }) : null)
   ].join('');
 
   const addRow = (folder, parent) => {

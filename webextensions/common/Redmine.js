@@ -325,7 +325,7 @@ export class Redmine {
     return response.project;
   }
 
-  async getProjects({ all } = {}) {
+  async getProjects({ all, visibilityMode, visibleProjects, hiddenProjects } = {}) {
     log('projects ', this.accountId);
     const projects = await Cache.getAndFallback(
       `redmine[${this.accountId}]:projects`,
@@ -351,10 +351,11 @@ export class Redmine {
       }
     );
 
-    const visibleProjects = new Set((configs.accountVisibleProjects[this.accountId] || []).map(project => String(project)));
-    const hiddenProjects = new Set((configs.accountHiddenProjects[this.accountId] || []).map(project => String(project)));
+    visibleProjects = new Set((visibleProjects || configs.accountVisibleProjects[this.accountId] || []).map(project => String(project)));
+    hiddenProjects = new Set((hiddenProjects || configs.accountHiddenProjects[this.accountId] || []).map(project => String(project)));
     const accountInfo = this.accountInfo;
-    const visibilityMode = accountInfo.projectsVisibilityMode || configs.projectsVisibilityMode;
+    if (!visibilityMode)
+      visibilityMode = accountInfo.projectsVisibilityMode || configs.projectsVisibilityMode;
     const showByDefault = visibilityMode != Constants.PROJECTS_VISIBILITY_HIDE_BY_DEFAULT;
     return projects.filter(project => {
       const projectId = String(project.id);
@@ -363,7 +364,6 @@ export class Redmine {
         (visibleProjects.has(projectId) || visibleProjects.has(project.identifier));
       if (!all && !shouldShow)
         return false;
-      project.fullname = `${project.parent !== undefined ? project.parent.name + '/' : ''}${project.name}`;
       project.visible = shouldShow;
       return true;
     });
@@ -425,7 +425,7 @@ export class Redmine {
     }
   }
 
-  async getIssueStatuses({ all } = {}) {
+  async getIssueStatuses({ all, visibilityMode, visibleStatuses } = {}) {
     log('issueStatuses ', this.accountId);
     const response = await Cache.getAndFallback(
       `redmine[${this.accountId}]:issueStatuses`,
@@ -435,9 +435,10 @@ export class Redmine {
         });
       }
     );
-    const visibleStatuses = new Set((configs.accountVisibleStatuses[this.accountId] || []).map(status => String(status)));
+    visibleStatuses = new Set((visibleStatuses || configs.accountVisibleStatuses[this.accountId] || []).map(status => String(status)));
     const accountInfo = this.accountInfo;
-    const visibilityMode = accountInfo.statusesVisibilityMode || configs.statusesVisibilityMode;
+    if (!visibilityMode)
+      visibilityMode = accountInfo.statusesVisibilityMode || configs.statusesVisibilityMode;
     const showByDefault = visibilityMode != Constants.STATUSES_VISIBILITY_HIDE_BY_DEFAULT;
     const statuses = response.issue_statuses.filter(status =>
       (all || showByDefault) ? true :
