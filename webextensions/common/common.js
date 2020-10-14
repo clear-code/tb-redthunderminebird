@@ -63,6 +63,9 @@ export const configs = new Configs({
   updateIssueDialogTop: null,
 
 
+  context_mappedProject: false,
+
+
   configsVersion: 0,
   debug: false,
   dryRun: false,

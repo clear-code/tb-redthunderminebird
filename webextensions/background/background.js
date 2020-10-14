@@ -80,6 +80,33 @@ const MENU_ITEMS = {
       const accountId = info.selectedFolder && info.selectedFolder.accountId;
       const accountInfo = configs.accounts[accountId];
       return !!(accountInfo && accountInfo.url && accountInfo.key && mProjectItemIds.size > 0);
+    },
+    async shouldVisible(_info, _tab, _message) {
+      return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable(info, tab);
+    }
+  },
+
+  mappedProjectSubSeparator: {
+    ...SUBMENU_COMMON_PARAMS,
+    contexts: ['message_list'],
+    type: 'separator',
+    async shouldVisible(_info, _tab, _message) {
+      return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable(info, tab);
+    }
+  },
+
+  mappedProjectSub: {
+    ...SUBMENU_COMMON_PARAMS,
+    contexts: ['message_list'],
+    title: browser.i18n.getMessage('menu_mappedProject_label'),
+    shouldVisible: null,
+    async shouldEnable(info, _tab, _message) {
+      const accountId = info.selectedFolder && info.selectedFolder.accountId;
+      const accountInfo = configs.accounts[accountId];
+      return !!(accountInfo && accountInfo.url && accountInfo.key && mProjectItemIds.size > 0);
+    },
+    async shouldVisible(_info, _tab, _message) {
+      return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable(info, tab);
     }
   }
 };
@@ -101,6 +128,7 @@ for (const [id, item] of Object.entries(MENU_ITEMS)) {
     id,
     parentId: item.parentId,
     contexts: item.contexts,
+    type:     item.type || 'normal',
     title:    item.title
   };
   browser.menus.create(item.params);
@@ -131,8 +159,12 @@ browser.menus.onShown.addListener(async (info, tab) => {
     })());
   }
 
-  if (info.contexts.includes('folder_pane') &&
-      info.selectedFolder) {
+  const isFolderPane = info.contexts.includes('folder_pane');
+  const isThreadPane = info.contexts.includes('message_list');
+  const folder = info.selectedFolder || (message && message.raw.folder);
+  if (configs.context_mappedProject &&
+      (isFolderPane || isThreadPane) &&
+      folder) {
     modificationCount++;
     tasks.push(redmine.getProjects().catch(_error => []).then(async projects => {
       if (projects.length == 0)
@@ -140,42 +172,46 @@ browser.menus.onShown.addListener(async (info, tab) => {
 
       const creatings = [];
       const mappedFolders = configs.accountMappedFolders[accountId] || {};
-      const projectId = mappedFolders[info.selectedFolder.path];
+      const projectId = mappedFolders[folder.path];
 
-      mProjectItemIds.add('map-to-project:');
+      const suffix   = isFolderPane ? '' : ':sub';
+      const parentId = isFolderPane ? 'mappedProject' : 'mappedProjectSub';
+      const contexts = isFolderPane ? ['folder_pane'] : ['message_list'];
+
+      mProjectItemIds.add(`map-to-project:${suffix}`);
       creatings.push(browser.menus.create({
-        id:       'map-to-project:',
-        parentId: 'mappedProject',
+        id:       `map-to-project:${suffix}`,
         title:    browser.i18n.getMessage('menu_mappedProject_unmapped_label'),
-        contexts: ['folder_pane'],
         type:     'radio',
-        checked:  !projectId
+        checked:  !projectId,
+        parentId,
+        contexts
       }));
-      mProjectItemIds.add('map-to-project-separator');
+      mProjectItemIds.add(`map-to-project-separator:${suffix}`);
       creatings.push(browser.menus.create({
-        id:       'map-to-project-separator',
-        parentId: 'mappedProject',
-        contexts: ['folder_pane'],
-        type:     'separator'
+        id:       `map-to-project-separator:${suffix}`,
+        type:     'separator',
+        parentId,
+        contexts
       }));
 
       for (const project of projects) {
-        const id = `map-to-project:${project.id}`;
+        const id = `map-to-project:${project.id}${suffix}`;
         mProjectItemIds.add(id);
         creatings.push(browser.menus.create({
           id,
-          parentId: 'mappedProject',
           title:    project.indentedName,
-          contexts: ['folder_pane'],
           type:     'radio',
-          checked:  project.id == projectId
+          checked:  project.id == projectId,
+          parentId,
+          contexts
         }));
       }
       await Promise.all(creatings);
-      browser.menus.update('mappedProject', {
+      browser.menus.update(parentId, {
         enabled: true
       });
-      MENU_ITEMS.mappedProject.lastEnabled = true;
+      MENU_ITEMS[parentId].lastEnabled = true;
       browser.menus.refresh();
     }));
   }
@@ -186,16 +222,24 @@ browser.menus.onShown.addListener(async (info, tab) => {
     browser.menus.refresh();
 });
 
-browser.menus.onHidden.addListener(async (_info, _tab) => {
+browser.menus.onHidden.addListener(async () => {
   if (mProjectItemIds.size > 0) {
     for (const id of mProjectItemIds) {
       browser.menus.remove(id);
     }
     mProjectItemIds.clear();
-    browser.menus.update('mappedProject', {
-      enabled: false
-    });
-    MENU_ITEMS.mappedProject.lastEnabled = false;
+    if (MENU_ITEMS.mappedProject.lastEnabled) {
+      browser.menus.update('mappedProject', {
+        enabled: false
+      });
+      MENU_ITEMS.mappedProject.lastEnabled = false;
+    }
+    if (MENU_ITEMS.mappedProjectSub.lastEnabled) {
+      browser.menus.update('mappedProjectSub', {
+        enabled: false
+      });
+      MENU_ITEMS.mappedProjectSub.lastEnabled = false;
+    }
     browser.menus.refresh();
   }
 });
@@ -250,15 +294,16 @@ browser.menus.onClicked.addListener(async (info, tab) => {
     }; break;
 
     default:
-      if (/^map-to-project:(.*)$/.test(info.menuItemId) &&
-          info.selectedFolder) {
+      const folder = info.selectedFolder || (message && message.raw.folder);
+      if (/^map-to-project:([^:]*)(?::sub)?$/.test(info.menuItemId) &&
+          folder) {
         const projectId = RegExp.$1 || null;
         const accountMappedFolders = JSON.parse(JSON.stringify(configs.accountMappedFolders));
         const mappedFolders = accountMappedFolders[accountId] || {};
         if (projectId)
-          mappedFolders[info.selectedFolder.path] = projectId;
+          mappedFolders[folder.path] = projectId;
         else
-          delete mappedFolders[info.selectedFolder.path];
+          delete mappedFolders[folder.path];
         accountMappedFolders[accountId] = mappedFolders;
         configs.accountMappedFolders = accountMappedFolders;
       }

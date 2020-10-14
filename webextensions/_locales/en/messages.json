@@ -145,6 +145,10 @@
   "config_notesTemplate_label": { "message": "Template for Notes" },
   "config_placeholders_description": { "message": "Available placeholders:\n%headers% : headers of the original message\n%body% : body of the original message\n%body_for_markdown% : body of the original message, converted to keep linebreaks in the Markdown format" },
 
+  "config_menu_caption": { "message": "Context Menu" },
+
+  "config_context_mappedProject_label": { "message": "Activate \"Folder Mapping\" in context menus" },
+
   "config_debug_caption": { "message": "Development" },
 
   "config_debug_label": { "message": "Debug mode" },

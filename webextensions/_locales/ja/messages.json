@@ -146,6 +146,10 @@
   "config_notesTemplate_label": { "message": "ノート追記のテンプレート" },
   "config_placeholders_description": { "message": "以下のプレースホルダを使用できます。\n%headers% : メッセージのヘッダ\n%body% : メッセージの本文\n%body_for_markdown% : メッセージの本文をMarkdown記法で改行を維持するよう変換した内容" },
 
+  "config_menu_caption": { "message": "コンテキストメニュー" },
+
+  "config_context_mappedProject_label": { "message": "コンテキストメニューからフォルダーマッピングを行えるようにする" },
+
   "config_debug_caption": { "message": "開発者向け" },
 
   "config_debug_label": { "message": "デバッグモード" },
