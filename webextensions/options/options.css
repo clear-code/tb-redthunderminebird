@@ -132,3 +132,17 @@ legend label.locked {
 .placeholders-description {
   white-space: pre-wrap;
 }
+
+
+.in-page-dialog.dialog table {
+  border-collapse: collapse;
+}
+
+.mappedFoldersRows td {
+  padding: 0.15em;
+  vertical-align: top;
+}
+
+.mappedFoldersRows tr:nth-child(2n+1) td {
+  background: var(--blue-40-a10);
+}
