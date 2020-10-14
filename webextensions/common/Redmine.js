@@ -342,12 +342,13 @@ export class Redmine {
           if (!response.projects)
             return projects;
           projects.push(...response.projects.map(project => {
-            project.fullname = `${project.parent !== undefined ? project.parent.name + '/' : ''}${project.name}`;
+            project.fullName = this._getProjectFullName(project);
+            project.indentedName = this._getIndentedName(project);
             return project;
           }));
           offset += limit;
         } while (response.offset + response.limit <= response.total_count);
-        return projects.sort((a, b) => (a.fullname > b.fullname) ? 1 : -1 );
+        return projects.sort((a, b) => (a.fullName > b.fullName) ? 1 : -1 );
       }
     );
 
@@ -367,6 +368,16 @@ export class Redmine {
       project.visible = shouldShow;
       return true;
     });
+  }
+  _getProjectFullName(project) {
+    if (project.parent)
+      return `${this._getProjectFullName(project.parent)}/${project.name}`;
+    return project.name;
+  }
+  _getIndentedName(project) {
+    if (project.parent)
+      return `${this._getIndentedName(project.parent)}\n${project.name}`.replace(/.+\n/g, '\u00A0»\u00A0');
+    return project.name;
   }
 
   async getMembers(projectId) {

@@ -249,7 +249,7 @@ export class IssueEditor {
     this.initSelect(
       this.mProjectField,
       projects,
-      project => ({ label: project.fullname, value: project.id })
+      project => ({ label: project.indentedName, value: project.id })
     );
     document.querySelector('[data-field-row="project"]').classList.toggle('hidden', projects.length == 0 || !this.isFieldVisible('project'));
   }

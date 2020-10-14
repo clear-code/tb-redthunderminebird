@@ -165,7 +165,7 @@ browser.menus.onShown.addListener(async (info, tab) => {
         creatings.push(browser.menus.create({
           id,
           parentId: 'mappedProject',
-          title:    project.fullname,
+          title:    project.indentedName,
           contexts: ['folder_pane'],
           type:     'radio',
           checked:  project.id == projectId

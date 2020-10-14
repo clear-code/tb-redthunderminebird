@@ -487,7 +487,7 @@ async function initProjectVisibilityCheckboxes(projects) {
     projects,
     project => ({
       value: project.id,
-      label: project.fullname,
+      label: project.indentedName,
       checked: visibleProjects.has(project.id) || visibleProjects.has(String(project.id)) || visibleProjects.has(project.identifier)
     })
   );
@@ -496,7 +496,7 @@ async function initProjectVisibilityCheckboxes(projects) {
     projects,
     project => ({
       value: project.id,
-      label: project.fullname,
+      label: project.indentedName,
       checked: hiddenProjects.has(project.id) || hiddenProjects.has(String(project.id)) || hiddenProjects.has(project.identifier)
     })
   );
@@ -554,13 +554,13 @@ async function initFolderMappings(projects) {
   initSelect(
     defaultChooser,
     projects,
-    project => project.visible ? ({ label: project.fullname, value: project.id }) : null
+    project => project.visible ? ({ label: project.indentedName, value: project.id }) : null
   );
   defaultChooser.value = 'defaultProject' in mAccountInfo ? mAccountInfo.defaultProject : configs.defaultProject;
 
   const projectOptionsSource = [
     generateOptionSource({ label: browser.i18n.getMessage('config_mappedFolders_fallbackToDefault_label'), value: '' }),
-    ...projects.map(project => project.visible ? generateOptionSource({ label: project.fullname, value: project.id }) : null)
+    ...projects.map(project => project.visible ? generateOptionSource({ label: project.indentedName, value: project.id }) : null)
   ].join('');
 
   const addRow = (folder, parent) => {
