@@ -81,7 +81,7 @@ const MENU_ITEMS = {
       const accountInfo = configs.accounts[accountId];
       return !!(accountInfo && accountInfo.url && accountInfo.key && mProjectItemIds.size > 0);
     },
-    async shouldVisible(_info, _tab, _message) {
+    async shouldVisible(info, tab, _message) {
       return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable(info, tab);
     }
   },
@@ -90,7 +90,7 @@ const MENU_ITEMS = {
     ...SUBMENU_COMMON_PARAMS,
     contexts: ['message_list'],
     type: 'separator',
-    async shouldVisible(_info, _tab, _message) {
+    async shouldVisible(info, tab, _message) {
       return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable(info, tab);
     }
   },
@@ -105,7 +105,7 @@ const MENU_ITEMS = {
       const accountInfo = configs.accounts[accountId];
       return !!(accountInfo && accountInfo.url && accountInfo.key && mProjectItemIds.size > 0);
     },
-    async shouldVisible(_info, _tab, _message) {
+    async shouldVisible(info, tab, _message) {
       return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable(info, tab);
     }
   }
