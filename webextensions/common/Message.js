@@ -56,7 +56,8 @@ export class Message {
   }
 
   getProjectId() {
-    return parseInt((configs.accountMappedFolders[this.accountId] || {})[this.raw.folder.path] || this.accountInfo.defaultProject || 0);
+    const mappedProject = (configs.accountMappedFolders[this.accountId] || {})[this.raw.folder.path];
+    return parseInt(mappedProject || this.accountInfo.defaultProject || 0);
   }
 
   getSanitizedSubject() {
