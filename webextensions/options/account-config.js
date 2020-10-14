@@ -190,7 +190,7 @@ function onRedmineChanged() {
   }, 250);
 }
 
-for (const field of mDialog.contents.querySelectorAll('#redmineURL, #redmineAPIKey')) {
+for (const field of mDialog.contents.querySelectorAll('.redmineURL, .redmineAPIKey')) {
   field.addEventListener('change', () => onRedmineChanged());
 }
 
