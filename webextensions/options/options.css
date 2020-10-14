@@ -100,6 +100,16 @@ legend label.locked {
   resize: none;
 }
 
+.in-page-dialog.dialog h1 {
+  background: var(--bg-color);
+  left: 0;
+  margin: 0;
+  padding: 0 0 0.2em;
+  position: sticky;
+  right: 0;
+  top: 0;
+}
+
 
 .checkboxes-for-array-config {
   border: 1px solid;
