@@ -94,6 +94,13 @@ legend label.locked {
 }
 
 
+.in-page-dialog.dialog {
+  height: 90%;
+  width: 90%;
+  resize: none;
+}
+
+
 .checkboxes-for-array-config {
   border: 1px solid;
   height: 10em;
