@@ -327,16 +327,9 @@ export class Redmine {
 
   async getProjects({ all } = {}) {
     log('projects ', this.accountId);
-    return Cache.getAndFallback(
+    const projects = await Cache.getAndFallback(
       `redmine[${this.accountId}]:projects`,
       async () => {
-        //識別子でフィルタ
-        const visibleProjects = new Set((configs.accountVisibleProjects[this.accountId] || []).map(project => String(project)));
-        const hiddenProjects = new Set((configs.accountHiddenProjects[this.accountId] || []).map(project => String(project)));
-        const accountInfo = this.accountInfo;
-        const visibilityMode = accountInfo.projectsVisibilityMode || configs.projectsVisibilityMode;
-        const showByDefault = visibilityMode != Constants.PROJECTS_VISIBILITY_HIDE_BY_DEFAULT;
-
         const projects = [];
         let offset = 0;
         let response;
@@ -348,24 +341,32 @@ export class Redmine {
           });
           if (!response.projects)
             return projects;
-          projects.push(...response.projects.filter(project => {
-            const projectId = String(project.id);
-            const shouldShow = all ? true : showByDefault ?
-              (!hiddenProjects.has(projectId) && !hiddenProjects.has(project.identifier)) :
-              (visibleProjects.has(projectId) || visibleProjects.has(project.identifier));
-            if (!shouldShow)
-              return false;
-            // fullnameプロパティを定義
+          projects.push(...response.projects.map(project => {
             project.fullname = `${project.parent !== undefined ? project.parent.name + '/' : ''}${project.name}`;
-            return true;
+            return project;
           }));
           offset += limit;
         } while (response.offset + response.limit <= response.total_count);
-
-        //fullnameでソートして返却
         return projects.sort((a, b) => (a.fullname > b.fullname) ? 1 : -1 );
       }
     );
+
+    const visibleProjects = new Set((configs.accountVisibleProjects[this.accountId] || []).map(project => String(project)));
+    const hiddenProjects = new Set((configs.accountHiddenProjects[this.accountId] || []).map(project => String(project)));
+    const accountInfo = this.accountInfo;
+    const visibilityMode = accountInfo.projectsVisibilityMode || configs.projectsVisibilityMode;
+    const showByDefault = visibilityMode != Constants.PROJECTS_VISIBILITY_HIDE_BY_DEFAULT;
+    return projects.filter(project => {
+      const projectId = String(project.id);
+      const shouldShow = showByDefault ?
+        (!hiddenProjects.has(projectId) && !hiddenProjects.has(project.identifier)) :
+        (visibleProjects.has(projectId) || visibleProjects.has(project.identifier));
+      if (!all && !shouldShow)
+        return false;
+      project.fullname = `${project.parent !== undefined ? project.parent.name + '/' : ''}${project.name}`;
+      project.visible = shouldShow;
+      return true;
+    });
   }
 
   async getMembers(projectId) {
