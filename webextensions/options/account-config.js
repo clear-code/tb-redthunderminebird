@@ -559,7 +559,8 @@ async function initFolderMappings(projects) {
       `);
       const projectChooser = rowsContainer.lastChild.querySelector('select');
       if (folder.path in mMappedFolders &&
-          allProjects.has(mMappedFolders[folder.path]))
+          allProjects.has(mMappedFolders[folder.path]) &&
+          projectChooser.querySelector(`option[value=${JSON.stringify(sanitizeForHTMLText(String(mMappedFolders[folder.path])))}]`))
         projectChooser.value = mMappedFolders[folder.path];
       else
         projectChooser.value = '';
