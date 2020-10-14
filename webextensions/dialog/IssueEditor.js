@@ -493,6 +493,8 @@ export class IssueEditor {
         if (field.localName != 'select' ||
             field.querySelector(`option[value=${JSON.stringify(sanitizeForHTMLText(String(value)))}]`))
           field.value = value;
+        else if (name == 'project_id')
+          field.value = ((configs.accounts || {})[this.mAccountId] || {}).defaultProject || '';
         else
           field.value = '';
       }
