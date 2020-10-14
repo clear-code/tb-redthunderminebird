@@ -462,7 +462,6 @@ async function initProjectVisibilityCheckboxes(projects) {
     projects = await mRedmine.getProjects({ all: true }).catch(_error => []);
   const visibleProjects = new Set(mVisibleProjects);
   const hiddenProjects = new Set(mHiddenProjects);
-  console.log('mHiddenProjects ', mHiddenProjects);
   initCheckboxes(
     mDialog.contents.querySelector('.visibleProjectsCheckboxes'),
     projects,
