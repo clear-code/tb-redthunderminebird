@@ -462,13 +462,14 @@ async function initProjectVisibilityCheckboxes(projects) {
     projects = await mRedmine.getProjects({ all: true }).catch(_error => []);
   const visibleProjects = new Set(mVisibleProjects);
   const hiddenProjects = new Set(mHiddenProjects);
+  console.log('mHiddenProjects ', mHiddenProjects);
   initCheckboxes(
     mDialog.contents.querySelector('.visibleProjectsCheckboxes'),
     projects,
     project => ({
       value: project.id,
       label: project.fullname,
-      checked: visibleProjects.has(String(project.id)) || visibleProjects.has(project.identifier)
+      checked: visibleProjects.has(project.id) || visibleProjects.has(String(project.id)) || visibleProjects.has(project.identifier)
     })
   );
   initCheckboxes(
@@ -477,7 +478,7 @@ async function initProjectVisibilityCheckboxes(projects) {
     project => ({
       value: project.id,
       label: project.fullname,
-      checked: hiddenProjects.has(String(project.id)) || hiddenProjects.has(project.identifier)
+      checked: hiddenProjects.has(project.id) || hiddenProjects.has(String(project.id)) || hiddenProjects.has(project.identifier)
     })
   );
 }
@@ -492,7 +493,7 @@ async function initStatusVisibilityCheckboxes(statuses) {
     status => ({
       value: status.id,
       label: status.name,
-      checked: visibleStatuses.has(String(status.id)) || visibleStatuses.has(status.name)
+      checked: visibleStatuses.has(status.id) || visibleStatuses.has(String(status.id)) || visibleStatuses.has(status.name)
     })
   );
 }
