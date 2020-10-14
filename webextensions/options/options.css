@@ -66,6 +66,10 @@ textarea {
   width: 100%;
 }
 
+select {
+  max-width: 100%;
+}
+
 
 .disabled {
   opacity: 0.5;
@@ -136,11 +140,17 @@ legend label.locked {
 
 .in-page-dialog.dialog table {
   border-collapse: collapse;
+  max-width: 100%;
+  width: 100%;
 }
 
 .mappedFoldersRows td {
   padding: 0.15em;
   vertical-align: top;
+}
+
+.mappedFoldersRows select {
+  width: 100%;
 }
 
 .mappedFoldersRows tr:nth-child(2n+1) td {
