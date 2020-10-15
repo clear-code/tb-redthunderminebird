@@ -101,12 +101,12 @@
 
 
   "config_title": { "message": "RedThunderMineBird Plusの設定" },
-  "config_accountConfig_title": { "message": "$NAME$と関連付けるRedmineの設定",
+  "config_accountConfig_title": { "message": "$NAME$のRedmine設定",
     "placeholders": {
       "name": { "content": "$1", "example": "Local Folders" }
     }},
 
-  "config_accounts_caption": { "message": "アカウントと関連付けるRedmineの設定" },
+  "config_accounts_caption": { "message": "アカウントごとのRedmine設定" },
 
   "config_base_caption": { "message": "基本設定" },
   "config_redmineURL_label": { "message": "Redmine URL" },
