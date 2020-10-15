@@ -109,7 +109,7 @@
 
   "config_base_caption": { "message": "Basic Settings" },
   "config_redmineURL_label": { "message": "Redmine URL" },
-  "config_redmineAPIKey_label": { "message": "API KEY" },
+  "config_redmineAPIKey_label": { "message": "REST API Key" },
   "config_account_label": { "message": "Account" },
 
   "config_visibility_caption": { "message": "Visibility" },
