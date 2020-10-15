@@ -518,23 +518,23 @@ export class IssueEditor {
     return new Promise((resolve, _reject) => {
       resolvers.add(resolve);
       field.$onChangeFieldValueResolvers = resolvers;
-    field.$onChangeFieldValueTimer = setTimeout(async () => {
-      delete field.$onChangeFieldValueTimer;
-      const resolvers = new Set(field.$onChangeFieldValueResolvers);
-      field.$onChangeFieldValueResolvers.clear();
-      this.validateFields();
+      field.$onChangeFieldValueTimer = setTimeout(async () => {
+        delete field.$onChangeFieldValueTimer;
+        const resolvers = new Set(field.$onChangeFieldValueResolvers);
+        field.$onChangeFieldValueResolvers.clear();
+        this.validateFields();
 
-      const name = field.dataset.field;
-      const paramName = name.replace(/\[\]$/, '');
-      if (paramName in this.params) {
-        const value = this.getRequestParamValueFor(paramName);
-        this.params[paramName] = value;
-        log('onChangeFieldValue ', field, paramName, value);
-      }
-      for (const resolver of resolvers) {
-        resolver();
-      }
-    }, 150);
+        const name = field.dataset.field;
+        const paramName = name.replace(/\[\]$/, '');
+        if (paramName in this.params) {
+          const value = this.getRequestParamValueFor(paramName);
+          this.params[paramName] = value;
+          log('onChangeFieldValue ', field, paramName, value);
+        }
+        for (const resolver of resolvers) {
+          resolver();
+        }
+      }, 150);
     });
   }
 
