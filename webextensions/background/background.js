@@ -147,8 +147,6 @@ for (const [id, item] of Object.entries(MENU_ITEMS)) {
 browser.menus.onShown.addListener(async (info, tab) => {
   const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
   const message = messages && messages.length > 0 ? messages[0] : null;
-  const accountId = (info.selectedFolder && info.selectedFolder.accountId) || (message && message.accountId);
-  const redmine = new Redmine({ accountId });
 
   let modificationCount = 0;
   const tasks = [];
@@ -171,7 +169,7 @@ browser.menus.onShown.addListener(async (info, tab) => {
 
   if (MENU_ITEMS.mappedProject.shouldVisible(info, tab, message) ||
       MENU_ITEMS.mappedProjectSub.shouldVisible(info, tab, message))
-    buildProjectsList(info, info.contexts.includes('message_list') ? 'mappedProjectSub' : 'mappedProject');
+    buildProjectsList(info, message, info.contexts.includes('message_list') ? 'mappedProjectSub' : 'mappedProject');
 
   await Promise.all(tasks);
 
@@ -179,9 +177,7 @@ browser.menus.onShown.addListener(async (info, tab) => {
     browser.menus.refresh();
 });
 
-async function buildProjectsList(info, parentId) {
-  const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
-  const message = messages && messages.length > 0 ? messages[0] : null;
+async function buildProjectsList(info, message, parentId) {
   const accountId = (info.selectedFolder && info.selectedFolder.accountId) || (message && message.accountId);
   const redmine = new Redmine({ accountId });
 
@@ -189,47 +185,47 @@ async function buildProjectsList(info, parentId) {
   if (!folder)
     return;
 
-    const projects = await redmine.getProjects();
-      if (projects.length == 0)
-        return;
+  const projects = await redmine.getProjects();
+  if (projects.length == 0)
+    return;
 
-      const mappedFolders = configs.accountMappedFolders[accountId] || {};
-      const projectId = mappedFolders[folder.path];
+  const mappedFolders = configs.accountMappedFolders[accountId] || {};
+  const projectId = mappedFolders[folder.path];
 
-      const suffix   = parentId == 'mappedProject' ? '' : ':sub';
-      const contexts = parentId == 'mappedProject' ? ['folder_pane'] : ['message_list'];
+  const suffix   = parentId == 'mappedProject' ? '' : ':sub';
+  const contexts = parentId == 'mappedProject' ? ['folder_pane'] : ['message_list'];
 
-      mProjectItemIds.add(`map-to-project:${suffix}`);
-      browser.menus.create({
-        id:       `map-to-project:${suffix}`,
-        title:    browser.i18n.getMessage('menu_mappedProject_unmapped_label'),
-        type:     'radio',
-        checked:  !projectId,
-        parentId,
-        contexts
-      });
-      mProjectItemIds.add(`map-to-project-separator:${suffix}`);
-      browser.menus.create({
-        id:       `map-to-project-separator:${suffix}`,
-        type:     'separator',
-        parentId,
-        contexts
-      });
+  mProjectItemIds.add(`map-to-project:${suffix}`);
+  browser.menus.create({
+    id:       `map-to-project:${suffix}`,
+    title:    browser.i18n.getMessage('menu_mappedProject_unmapped_label'),
+    type:     'radio',
+    checked:  !projectId,
+    parentId,
+    contexts
+  });
+  mProjectItemIds.add(`map-to-project-separator:${suffix}`);
+  browser.menus.create({
+    id:       `map-to-project-separator:${suffix}`,
+    type:     'separator',
+    parentId,
+    contexts
+  });
 
   const parentItem = MENU_ITEMS[parentId];
   if (projects.length > 0) {
-      for (const project of projects) {
-        const id = `map-to-project:${project.id}${suffix}`;
-        mProjectItemIds.add(id);
-        browser.menus.create({
-          id,
-          title:    project.indentedName,
-          type:     'radio',
-          checked:  project.id == projectId,
-          parentId,
-          contexts
-        });
-      }
+    for (const project of projects) {
+      const id = `map-to-project:${project.id}${suffix}`;
+      mProjectItemIds.add(id);
+      browser.menus.create({
+        id,
+        title:    project.indentedName,
+        type:     'radio',
+        checked:  project.id == projectId,
+        parentId,
+        contexts
+      });
+    }
     parentItem.hasItems = true;
   }
   else {
@@ -243,7 +239,7 @@ async function buildProjectsList(info, parentId) {
       contexts
     });
   }
-      browser.menus.refresh();
+  browser.menus.refresh();
 }
 
 browser.menus.onHidden.addListener(async () => {
