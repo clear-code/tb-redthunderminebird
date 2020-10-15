@@ -71,8 +71,8 @@ export class IssueEditor {
       log('IssueEditor values are applied');
 
       for (const field of document.querySelectorAll('[data-field]')) {
-        field.addEventListener('change', () => {
-          this.onChangeFieldValue(field);
+        field.addEventListener('change', async () => {
+          await this.onChangeFieldValue(field);
           if (field == this.mProjectField)
             this.reinitFieldsForProject();
         });
@@ -324,6 +324,7 @@ export class IssueEditor {
 
   async reinitFieldsForProject() {
     const projectId = this.mProjectField ? this.mProjectField.value : this.params.project_id;
+    log('reinitFieldsForProject ', projectId);
     const [members, ] = await Promise.all([
       this.mRedmine.getMembers(projectId),
       this.mProjectField && this.initTrackers(projectId), // create
@@ -341,6 +342,8 @@ export class IssueEditor {
       issue = {
         id: parseInt(this.mIssueField && this.mIssueField.value || 0)
       };
+
+    log('reinitFieldsForIssue ', issue.id);
 
     this.params.id = issue.id;
 
@@ -488,6 +491,7 @@ export class IssueEditor {
           field.checked = value.includes(field.value);
         else
           field.checked = !!value;
+        log('applyFieldValues: ', field, name, value, field.checked);
       }
       else {
         if (field.localName != 'select' ||
@@ -497,6 +501,7 @@ export class IssueEditor {
           field.value = ((configs.accounts || {})[this.mAccountId] || {}).defaultProject || '';
         else
           field.value = '';
+        log('applyFieldValues: ', field, name, value, field.value);
       }
     }
 
@@ -509,10 +514,28 @@ export class IssueEditor {
   onChangeFieldValue(field) {
     if (field.$onChangeFieldValueTimer)
       clearTimeout(field.$onChangeFieldValueTimer);
-    field.$onChangeFieldValueTimer = setTimeout(() => {
+    const resolvers = field.$onChangeFieldValueResolvers || new Set();
+    return new Promise((resolve, _reject) => {
+      resolvers.add(resolve);
+      field.$onChangeFieldValueResolvers = resolvers;
+    field.$onChangeFieldValueTimer = setTimeout(async () => {
       delete field.$onChangeFieldValueTimer;
+      const resolvers = new Set(field.$onChangeFieldValueResolvers);
+      field.$onChangeFieldValueResolvers.clear();
       this.validateFields();
+
+      const name = field.dataset.field;
+      const paramName = name.replace(/\[\]$/, '');
+      if (paramName in this.params) {
+        const value = this.getRequestParamValueFor(paramName);
+        this.params[paramName] = value;
+        log('onChangeFieldValue ', field, paramName, value);
+      }
+      for (const resolver of resolvers) {
+        resolver();
+      }
     }, 150);
+    });
   }
 
   async validateFields() {
@@ -528,10 +551,12 @@ export class IssueEditor {
       await this.mRelationsField.validateFields();
     }
 
-    if (document.querySelector('.invalid'))
-      this.onInvalid.dispatch();
-    else
+    const valid = !document.querySelector('.invalid');
+    if (valid)
       this.onValid.dispatch();
+    else
+      this.onInvalid.dispatch();
+    return valid;
   }
 
   getRequestParams() {
