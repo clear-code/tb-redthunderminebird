@@ -14,6 +14,9 @@ import {
 import * as Constants from '/common/constants.js';
 import * as Dialog from '/extlib/dialog.js';
 import { Redmine } from '/common/Redmine.js';
+import EventListenerManager from '/extlib/EventListenerManager.js';
+
+export const onShown = new EventListenerManager();
 
 let mRedmine;
 let mAccountId;
@@ -389,6 +392,8 @@ export async function show(accountId) {
   mDialog.contents.querySelector('.defaultProject').value = mAccountInfo.defaultProject || '';
 
   mDialog.show();
+
+  onShown.dispatch();
 }
 
 function save() {

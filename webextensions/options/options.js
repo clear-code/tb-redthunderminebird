@@ -51,7 +51,15 @@ window.addEventListener('DOMContentLoaded', async () => {
   Dialog.initButton(editAccountButtons, event => {
     const button = event.target.closest('button');
     const accountId = button.getAttribute('value');
+    for (const button of editAccountButtons.querySelectorAll('button')) {
+      button.disabled = true;
+    }
     AccountConfig.show(accountId);
+  });
+  AccountConfig.onShown.addListener(() => {
+    for (const button of editAccountButtons.querySelectorAll('button')) {
+      button.disabled = false;
+    }
   });
 
   options.buildUIForAllConfigs(document.querySelector('#debug-configs'));
