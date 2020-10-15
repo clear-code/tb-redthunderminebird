@@ -395,10 +395,6 @@ export async function show(accountId) {
   mDialog.contents.querySelector('.defaultProject').value = mAccountInfo.defaultProject || '';
 
   mDialog.show();
-
-  // move focus to the first input field
-  mDialog.contents.querySelector('input').focus();
-
   onShown.dispatch();
 }
 
