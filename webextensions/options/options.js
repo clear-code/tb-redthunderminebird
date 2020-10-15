@@ -29,7 +29,10 @@ async function initAccounts() {
   const localFolderAccounts = accounts.filter(account => account.type == 'none');
   for (const account of [...regularAccounts, ...localFolderAccounts]) {
     appendContents(container, `
-      <li class="flex-box row"><button class="flex-box column" value=${JSON.stringify(sanitizeForHTMLText(account.id))}>${sanitizeForHTMLText(account.name)}</button></li>
+      <li class="flex-box row"
+         ><button class="flex-box column"
+                  value=${JSON.stringify(sanitizeForHTMLText(account.id))}
+                 >${sanitizeForHTMLText(account.name)}</button></li>
     `);
   }
 }
