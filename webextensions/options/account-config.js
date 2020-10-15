@@ -50,76 +50,122 @@ appendContents(mDialog.contents, `
   <section>
   <h2>${sanitizeForHTMLText(browser.i18n.getMessage('config_base_caption'))}</h2>
   <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_redmineURL_label'))}
-            <input type="text" class="flex-box column redmineURL"></label></p>
+            <input type="text"
+                   class="flex-box column redmineURL"
+                   data-config-key="accounts"></label></p>
   <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_redmineAPIKey_label'))}
-            <input type="text" class="flex-box column redmineAPIKey"></label></p>
+            <input type="text"
+                   class="flex-box column redmineAPIKey"
+                   data-config-key="accounts"></label></p>
   <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_customFields_label'))}
-            <input type="text" class="flex-box column customFields"></label></p>
+            <input type="text"
+                   class="flex-box column customFields"
+                   data-config-key="accounts"></label></p>
   </section>
 
   <section>
   <h2>${sanitizeForHTMLText(browser.i18n.getMessage('config_visibility_caption'))}</h2>
   <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_projectsVisibilityMode_label'))}
-            <select class="projectsVisibilityMode">
+            <select class="projectsVisibilityMode"
+                    data-config-key="accounts">
               <option value="1">${sanitizeForHTMLText(browser.i18n.getMessage('config_projectsVisibilityMode_showByDefault'))}</option>
               <option value="2">${sanitizeForHTMLText(browser.i18n.getMessage('config_projectsVisibilityMode_hideByDefault'))}</option>
             </select></label></p>
   <div class="sub hiddenProjectsContainer">
     <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_hiddenProjects_label'))}
-              <input type="text" class="flex-box column hiddenProjectsText"></label></p>
+              <input type="text"
+                     class="flex-box column hiddenProjectsText"
+                     data-config-key="accountHiddenProjects"></label></p>
     <p class="checkboxes-for-array-config hiddenProjectsCheckboxes"></p>
   </div>
   <div class="sub hidden mVisibleProjectsContainer">
     <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_visibleProjects_label'))}
-              <input type="text" class="flex-box column visibleProjectsText"></label></p>
+              <input type="text"
+                     class="flex-box column visibleProjectsText"
+                     data-config-key="accountVisibleProjects"></label></p>
     <p class="checkboxes-for-array-config visibleProjectsCheckboxes"></p>
   </div>
   <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_statusesVisibilityMode_label'))}
-            <select class="statusesVisibilityMode">
+            <select class="statusesVisibilityMode"
+                    data-config-key="accounts">
               <option value="1">${sanitizeForHTMLText(browser.i18n.getMessage('config_statusesVisibilityMode_showByDefault'))}</option>
               <option value="2">${sanitizeForHTMLText(browser.i18n.getMessage('config_statusesVisibilityMode_hideByDefault'))}</option>
             </select></label></p>
   <div class="sub hidden mVisibleStatusesContainer">
     <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_visibleStatuses_label'))}
-              <input type="text" class="flex-box column visibleStatusesText"></label></p>
+              <input type="text"
+                     class="flex-box column visibleStatusesText"
+                     data-config-key="accountVisibleStatuses"></label></p>
     <p class="checkboxes-for-array-config visibleStatusesCheckboxes"></p>
   </div>
   <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_visibleFields_label'))}</label>
-     <label><input type="checkbox" class="useGlobalVisibleFields">
+     <label><input type="checkbox"
+                   class="useGlobalVisibleFields"
+                   data-config-key="accounts">
              ${sanitizeForHTMLText(browser.i18n.getMessage('config_useGlobalVisibleFields_label'))}</label></p>
   <div class="sub visibleFields hidden">
     <p>
-      <label><input type="checkbox" class="visible-field" data-field-name="project">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="project"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_project_label'))}</label>
-      <label><input type="checkbox" class="visible-field" data-field-name="tracker">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="tracker"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_tracker_label'))}</label>
-      <label><input type="checkbox" class="visible-field" data-field-name="subject">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="subject"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_subject_label'))}</label>
-      <label><input type="checkbox" class="visible-field" data-field-name="description">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="description"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_description_label'))}</label>
-      <label><input type="checkbox" class="visible-field" data-field-name="parentIssue">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="parentIssue"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_parentIssue_label'))}</label>
-      <label><input type="checkbox" class="visible-field" data-field-name="status">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="status"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_status_label'))}</label>
-      <label><input type="checkbox" class="visible-field" data-field-name="assigned">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="assigned"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_assigned_label'))}</label>
-      <label><input type="checkbox" class="visible-field" data-field-name="watcher">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="watcher"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_watcher_label'))}</label>
-      <label><input type="checkbox" class="visible-field" data-field-name="version">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="version"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_version_label'))}</label>
-      <label><input type="checkbox" class="visible-field" data-field-name="period">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="period"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_period_label'))}</label>
-      <label><input type="checkbox" class="visible-field" data-field-name="file">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="file"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_file_label'))}</label>
-      <label><input type="checkbox" class="visible-field" data-field-name="relations">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="relations"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_relations_label'))}</label>
-      <label><input type="checkbox" class="visible-field" data-field-name="other">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="other"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_other_label'))}</label>
     </p>
     <p>
-      <label><input type="checkbox" class="visible-field" data-field-name="issue">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="issue"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_updateIssue_issue_label'))}</label>
-      <label><input type="checkbox" class="visible-field" data-field-name="notes">
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="notes"
+                    data-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_updateIssue_notes_label'))}</label>
     </p>
   </div>
@@ -128,25 +174,34 @@ appendContents(mDialog.contents, `
   <section>
   <h2>${sanitizeForHTMLText(browser.i18n.getMessage('config_defaultValue_caption'))}</h2>
   <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_defaultTracker_label'))}
-            <select class="defaultTracker"></select></label></p>
-  <p><label><input type="checkbox" class="useGlobalDefaultFieldValues">
+            <select class="defaultTracker"
+                    data-config-key="accounts"></select></label></p>
+  <p><label><input type="checkbox"
+                   class="useGlobalDefaultFieldValues"
+                   data-config-key="accounts">
              ${sanitizeForHTMLText(browser.i18n.getMessage('config_useGlobalDefaultFieldValues_label'))}</label></p>
   <div class="defaultValues">
   <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_defaultDueDate_label'))}
-            <input class="defaultDueDate" type="number"></label></p>
+            <input type="number"
+                   class="defaultDueDate"
+                   data-config-key="accounts"></label></p>
   <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_defaultTitleCleanupPattern_label'))}
-            <input type="text" class="flex-box column defaultTitleCleanupPattern"></label></p>
+            <input type="text"
+                   class="flex-box column defaultTitleCleanupPattern"
+                   data-config-key="accounts"></label></p>
   <!--
   <p><label><input class="defaultUploadAttachments" type="checkbox"/>
             ${sanitizeForHTMLText(browser.i18n.getMessage('config_defaultUploadAttachments_label'))}</label></p>
   -->
   <fieldset>
     <legend>${sanitizeForHTMLText(browser.i18n.getMessage('config_descriptionTemplate_label'))}</legend>
-    <textarea class="descriptionTemplate"></textarea>
+    <textarea class="descriptionTemplate"
+              data-config-key="accounts"></textarea>
   </fieldset>
   <fieldset>
     <legend>${sanitizeForHTMLText(browser.i18n.getMessage('config_notesTemplate_label'))}</legend>
-    <textarea class="notesTemplate"></textarea>
+    <textarea class="notesTemplate"
+              data-config-key="accounts"></textarea>
   </fieldset>
   <p class="placeholders-description">${sanitizeForHTMLText(browser.i18n.getMessage('config_placeholders_description'))}</p>
   </div>
@@ -155,9 +210,12 @@ appendContents(mDialog.contents, `
   <section>
   <h2>${sanitizeForHTMLText(browser.i18n.getMessage('config_mappedFolders_caption'))}</h2>
   <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_mappedFolders_default_label'))}
-            <select class="defaultProject"><option value="">${sanitizeForHTMLText(browser.i18n.getMessage('config_mappedFolders_unmapped_label'))}</option></select></label></p>
+            <select class="defaultProject"
+                    data-config-key="accounts"><option value="">${sanitizeForHTMLText(browser.i18n.getMessage('config_mappedFolders_unmapped_label'))}</option></select></label></p>
   <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_visibleFolderPattern_label'))}
-            <input type="text" class="flex-box column visibleFolderPattern"></label></p>
+            <input type="text"
+                   class="flex-box column visibleFolderPattern"
+                   data-config-key="accountMappedFolders"></label></p>
   <table>
     <thead>
       <tr>
@@ -394,6 +452,27 @@ export async function show(accountId) {
   mDialog.contents.querySelector('.defaultTracker').value = mAccountInfo.defaultTracker || '';
   mDialog.contents.querySelector('.defaultProject').value = mAccountInfo.defaultProject || '';
 
+  for (const container of mDialog.contents.querySelectorAll('section, fieldset, p, div')) {
+    const fields = container.querySelectorAll('input, textarea, select');
+    if (fields.length == 0)
+      continue;
+
+    let lockedFieldsCount = 0;;
+    for (const field of fields) {
+      const key = field.dataset.configKey;
+      if (!key)
+        continue;
+      const locked = configs.$isLocked(key);
+      field.disabled = locked;
+      const label = field.closest('label') || (field.id && field.ownerDocument.querySelector(`label[for="${field.id}"]`)) || field;
+      if (label)
+        label.classList.toggle('locked', locked);
+      if (locked)
+        lockedFieldsCount++;
+    }
+    container.classList.toggle('locked', fields.length == lockedFieldsCount);
+  }
+
   mDialog.show();
   onShown.dispatch();
 }
@@ -497,7 +576,7 @@ async function initProjectVisibilityCheckboxes(projects) {
   initCheckboxes(
     mDialog.contents.querySelector('.visibleProjectsCheckboxes'),
     projects,
-    project => ({
+    project => configs.$isLocked('accountVisibleProjects') ? null : ({
       value: project.id,
       label: project.indentedName,
       checked: visibleProjects.has(project.id) || visibleProjects.has(String(project.id)) || visibleProjects.has(project.identifier)
@@ -506,7 +585,7 @@ async function initProjectVisibilityCheckboxes(projects) {
   initCheckboxes(
     mDialog.contents.querySelector('.hiddenProjectsCheckboxes'),
     projects,
-    project => ({
+    project => configs.$isLocked('accountHiddenProjects') ? null : ({
       value: project.id,
       label: project.indentedName,
       checked: hiddenProjects.has(project.id) || hiddenProjects.has(String(project.id)) || hiddenProjects.has(project.identifier)
@@ -521,7 +600,7 @@ async function initStatusVisibilityCheckboxes(statuses) {
   initCheckboxes(
     mDialog.contents.querySelector('.visibleStatusesCheckboxes'),
     statuses,
-    status => ({
+    status => configs.$isLocked('accountVisibleStatuses') ? null : ({
       value: status.id,
       label: status.name,
       checked: visibleStatuses.has(status.id) || visibleStatuses.has(String(status.id)) || visibleStatuses.has(status.name)
@@ -569,6 +648,9 @@ async function initFolderMappings(projects) {
     project => project.visible ? ({ label: project.indentedName, value: project.id }) : null
   );
   defaultChooser.value = 'defaultProject' in mAccountInfo ? mAccountInfo.defaultProject : configs.defaultProject;
+
+  if (configs.$isLocked('accountMappedFolders'))
+    return;
 
   const projectOptionsSource = [
     generateOptionSource({ label: browser.i18n.getMessage('config_mappedFolders_fallbackToDefault_label'), value: '' }),
