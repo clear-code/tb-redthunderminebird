@@ -343,7 +343,7 @@ export class IssueEditor {
         id: parseInt(this.mIssueField && this.mIssueField.value || 0)
       };
 
-    log('reinitFieldsForIssue ', issue.id);
+    log('reinitFieldsForIssue ', issue.id, issue);
 
     this.params.id = issue.id;
 
@@ -368,10 +368,8 @@ export class IssueEditor {
       this.mParentIssueSubject.value = '';
     }
 
-    if (this.params.start_date)
-      this.params.start_date = issue.start_date;
-    if (this.params.due_date)
-      this.params.due_date = issue.due_date;
+    this.params.start_date = issue.start_date || '';
+    this.params.due_date = issue.due_date || '';
 
     if (this.mRelationsField)
       /*await */this.mRelationsField.reinit({
@@ -505,10 +503,17 @@ export class IssueEditor {
       }
     }
 
-    if (this.params.start_date)
-      this.mStartDateField.value = this.params.start_date;
-    if (this.params.due_date)
-      this.mDueDateField.value = this.params.due_date;
+    this.setDateFieldValeu(this.mStartDateField, this.params.start_date);
+    this.setDateFieldValeu(this.mDueDateField, this.params.due_date);
+  }
+  setDateFieldValeu(field, value) {
+    if (value || !field.disabled) {
+      field.value = value;
+      return;
+    }
+    field.disabled = false;
+    field.value = '';
+    field.disabled = true;
   }
 
   onChangeFieldValue(field) {
