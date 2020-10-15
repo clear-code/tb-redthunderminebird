@@ -94,6 +94,7 @@ configs.$loaded.then(async () => {
         appendContents(completedMessage.buttons, `
           <button>${sanitizeForHTMLText(browser.i18n.getMessage('dialog_updateIssue_complete_button_label'))}</button>
         `);
+        completedMessage.hide(); // init tabIndex
         Dialog.initButton(completedMessage.buttons.firstChild, async _event => {
           Dialog.accept(issue);
         });

@@ -17,6 +17,7 @@ import { Redmine } from '/common/Redmine.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 
 export const onShown = new EventListenerManager();
+export const onHidden = new EventListenerManager();
 
 let mRedmine;
 let mAccountId;
@@ -38,10 +39,10 @@ appendContents(mDialog.buttons, `
 
 Dialog.initButton(mDialog.buttons.firstChild, async _event => {
   save();
-  mDialog.hide();
+  hide();
 });
 Dialog.initButton(mDialog.buttons.lastChild, async _event => {
-  mDialog.hide();
+  hide();
 });
 appendContents(mDialog.contents, `
   <h1></h1>
@@ -168,6 +169,8 @@ appendContents(mDialog.contents, `
   </table>
   </section>
 `);
+
+mDialog.hide(); // reset tabIndex
 
 
 const mProjectsVisibilityModeSelector = mDialog.contents.querySelector('.projectsVisibilityMode');
@@ -393,7 +396,15 @@ export async function show(accountId) {
 
   mDialog.show();
 
+  // move focus to the first input field
+  mDialog.contents.querySelector('input').focus();
+
   onShown.dispatch();
+}
+
+function hide() {
+  mDialog.hide();
+  onHidden.dispatch();
 }
 
 function save() {

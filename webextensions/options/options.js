@@ -51,9 +51,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   initAccounts();
   const editAccountButtons = document.querySelector('#editAccountButtons');
+  let lastAccountId = null;
   Dialog.initButton(editAccountButtons, event => {
     const button = event.target.closest('button');
     const accountId = button.getAttribute('value');
+    lastAccountId = accountId;
     for (const button of editAccountButtons.querySelectorAll('button')) {
       button.disabled = true;
     }
@@ -63,6 +65,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     for (const button of editAccountButtons.querySelectorAll('button')) {
       button.disabled = false;
     }
+  });
+  AccountConfig.onHidden.addListener(() => {
+    const button = editAccountButtons.querySelector(`button[value=${JSON.stringify(sanitizeForHTMLText(lastAccountId))}`);
+    button.focus();
+    lastAccountId = null;
   });
 
   options.buildUIForAllConfigs(document.querySelector('#debug-configs'));

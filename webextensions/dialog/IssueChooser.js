@@ -94,6 +94,7 @@ export class IssueChooser {
       <button class="choose-issue-accept">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_accept_label'))}</button>
       <button class="choose-issue-cancel">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_createIssue_cancel_label'))}</button>
     `);
+    this.mDialog.hide(); // init tabIndex
 
     Dialog.initButton(this.mDialog.buttons.firstChild, async _event => {
       this.onChose.dispatch(this.issue);
