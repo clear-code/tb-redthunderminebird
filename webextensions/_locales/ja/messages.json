@@ -13,6 +13,7 @@
 
   "menu_mappedProject_label": { "message": "Redmineプロジェクトの割り当て" },
   "menu_mappedProject_unmapped_label": { "message": "(初期値に従う)" },
+  "menu_mappedProject_noProject_label": { "message": "プロジェクトがありません" },
 
 
   "dialog_chooseIssue_title_general": { "message": "チケット選択" },

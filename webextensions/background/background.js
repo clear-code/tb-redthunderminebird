@@ -79,10 +79,15 @@ const MENU_ITEMS = {
     async shouldEnable(info, _tab, _message) {
       const accountId = info.selectedFolder && info.selectedFolder.accountId;
       const accountInfo = configs.accounts[accountId];
-      return !!(accountInfo && accountInfo.url && accountInfo.key && mProjectItemIds.size > 0);
+      return !!(
+        accountInfo &&
+        accountInfo.url &&
+        accountInfo.key &&
+        info.contexts.includes('folder_pane')
+      );
     },
-    async shouldVisible(info, tab, _message) {
-      return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable(info, tab);
+    async shouldVisible(info, tab, message) {
+      return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable(info, tab, message);
     }
   },
 
@@ -90,8 +95,8 @@ const MENU_ITEMS = {
     ...SUBMENU_COMMON_PARAMS,
     contexts: ['message_list'],
     type: 'separator',
-    async shouldVisible(info, tab, _message) {
-      return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable(info, tab);
+    async shouldVisible(info, tab, message) {
+      return MENU_ITEMS.mappedProjectSub.shouldVisible(info, tab, message);
     }
   },
 
@@ -100,13 +105,18 @@ const MENU_ITEMS = {
     contexts: ['message_list'],
     title: browser.i18n.getMessage('menu_mappedProject_label'),
     shouldVisible: null,
-    async shouldEnable(info, _tab, _message) {
-      const accountId = info.selectedFolder && info.selectedFolder.accountId;
+    async shouldEnable(info, _tab, message) {
+      const accountId = message && message.accountId;
       const accountInfo = configs.accounts[accountId];
-      return !!(accountInfo && accountInfo.url && accountInfo.key && mProjectItemIds.size > 0);
+      return !!(
+        accountInfo &&
+        accountInfo.url &&
+        accountInfo.key &&
+        info.contexts.includes('message_list')
+      );
     },
-    async shouldVisible(info, tab, _message) {
-      return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable(info, tab);
+    async shouldVisible(info, tab, message) {
+      return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable(info, tab, message);
     }
   }
 };
@@ -159,62 +169,9 @@ browser.menus.onShown.addListener(async (info, tab) => {
     })());
   }
 
-  const isFolderPane = info.contexts.includes('folder_pane');
-  const isThreadPane = info.contexts.includes('message_list');
-  const folder = info.selectedFolder || (message && message.raw.folder);
-  if (configs.context_mappedProject &&
-      (isFolderPane || isThreadPane) &&
-      folder) {
-    modificationCount++;
-    tasks.push(redmine.getProjects().catch(_error => []).then(async projects => {
-      if (projects.length == 0)
-        return;
-
-      const creatings = [];
-      const mappedFolders = configs.accountMappedFolders[accountId] || {};
-      const projectId = mappedFolders[folder.path];
-
-      const suffix   = isFolderPane ? '' : ':sub';
-      const parentId = isFolderPane ? 'mappedProject' : 'mappedProjectSub';
-      const contexts = isFolderPane ? ['folder_pane'] : ['message_list'];
-
-      mProjectItemIds.add(`map-to-project:${suffix}`);
-      creatings.push(browser.menus.create({
-        id:       `map-to-project:${suffix}`,
-        title:    browser.i18n.getMessage('menu_mappedProject_unmapped_label'),
-        type:     'radio',
-        checked:  !projectId,
-        parentId,
-        contexts
-      }));
-      mProjectItemIds.add(`map-to-project-separator:${suffix}`);
-      creatings.push(browser.menus.create({
-        id:       `map-to-project-separator:${suffix}`,
-        type:     'separator',
-        parentId,
-        contexts
-      }));
-
-      for (const project of projects) {
-        const id = `map-to-project:${project.id}${suffix}`;
-        mProjectItemIds.add(id);
-        creatings.push(browser.menus.create({
-          id,
-          title:    project.indentedName,
-          type:     'radio',
-          checked:  project.id == projectId,
-          parentId,
-          contexts
-        }));
-      }
-      await Promise.all(creatings);
-      browser.menus.update(parentId, {
-        enabled: true
-      });
-      MENU_ITEMS[parentId].lastEnabled = true;
-      browser.menus.refresh();
-    }));
-  }
+  if (MENU_ITEMS.mappedProject.shouldVisible(info, tab, message) ||
+      MENU_ITEMS.mappedProjectSub.shouldVisible(info, tab, message))
+    buildProjectsList(info, info.contexts.includes('message_list') ? 'mappedProjectSub' : 'mappedProject');
 
   await Promise.all(tasks);
 
@@ -222,26 +179,103 @@ browser.menus.onShown.addListener(async (info, tab) => {
     browser.menus.refresh();
 });
 
+async function buildProjectsList(info, parentId) {
+  const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
+  const message = messages && messages.length > 0 ? messages[0] : null;
+  const accountId = (info.selectedFolder && info.selectedFolder.accountId) || (message && message.accountId);
+  const redmine = new Redmine({ accountId });
+
+  const folder = info.selectedFolder || (message && message.raw.folder);
+  if (!folder)
+    return;
+
+    const projects = await redmine.getProjects();
+      if (projects.length == 0)
+        return;
+
+      const mappedFolders = configs.accountMappedFolders[accountId] || {};
+      const projectId = mappedFolders[folder.path];
+
+      const suffix   = parentId == 'mappedProject' ? '' : ':sub';
+      const contexts = parentId == 'mappedProject' ? ['folder_pane'] : ['message_list'];
+
+      mProjectItemIds.add(`map-to-project:${suffix}`);
+      browser.menus.create({
+        id:       `map-to-project:${suffix}`,
+        title:    browser.i18n.getMessage('menu_mappedProject_unmapped_label'),
+        type:     'radio',
+        checked:  !projectId,
+        parentId,
+        contexts
+      });
+      mProjectItemIds.add(`map-to-project-separator:${suffix}`);
+      browser.menus.create({
+        id:       `map-to-project-separator:${suffix}`,
+        type:     'separator',
+        parentId,
+        contexts
+      });
+
+  const parentItem = MENU_ITEMS[parentId];
+  if (projects.length > 0) {
+      for (const project of projects) {
+        const id = `map-to-project:${project.id}${suffix}`;
+        mProjectItemIds.add(id);
+        browser.menus.create({
+          id,
+          title:    project.indentedName,
+          type:     'radio',
+          checked:  project.id == projectId,
+          parentId,
+          contexts
+        });
+      }
+    parentItem.hasItems = true;
+  }
+  else {
+    mProjectItemIds.add(`map-to-project-no-project:${suffix}`);
+    browser.menus.create({
+      id:       `map-to-project-no-project:${suffix}`,
+      title:    browser.i18n.getMessage('menu_mappedProject_noProject_label'),
+      type:     'normal',
+      enabled:  false,
+      parentId,
+      contexts
+    });
+  }
+      browser.menus.refresh();
+}
+
 browser.menus.onHidden.addListener(async () => {
+  let modificationCount = 0;
+
+  if (MENU_ITEMS.mappedProject.lastEnabled) {
+    browser.menus.update('mappedProject', {
+      enabled: false
+    });
+    MENU_ITEMS.mappedProject.lastEnabled = false;
+    modificationCount++;
+  }
+
+  if (MENU_ITEMS.mappedProjectSub.lastEnabled) {
+    browser.menus.update('mappedProjectSub', {
+      enabled: false
+    });
+    MENU_ITEMS.mappedProjectSub.lastEnabled = false;
+    modificationCount++;
+  }
+
   if (mProjectItemIds.size > 0) {
     for (const id of mProjectItemIds) {
       browser.menus.remove(id);
     }
     mProjectItemIds.clear();
-    if (MENU_ITEMS.mappedProject.lastEnabled) {
-      browser.menus.update('mappedProject', {
-        enabled: false
-      });
-      MENU_ITEMS.mappedProject.lastEnabled = false;
-    }
-    if (MENU_ITEMS.mappedProjectSub.lastEnabled) {
-      browser.menus.update('mappedProjectSub', {
-        enabled: false
-      });
-      MENU_ITEMS.mappedProjectSub.lastEnabled = false;
-    }
-    browser.menus.refresh();
+    MENU_ITEMS.mappedProject.hasItems = MENU_ITEMS.mappedProjectSub.hasItems = false;
+    modificationCount++;
   }
+
+  if (modificationCount > 0)
+    browser.menus.refresh();
 });
 
 browser.menus.onClicked.addListener(async (info, tab) => {
