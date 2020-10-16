@@ -18,7 +18,7 @@ export class Redmine {
   }
 
   get accountInfo() {
-    return configs.accounts[this.accountId] || {};
+    return (configs.accounts || {})[this.accountId] || {};
   }
 
 

@@ -40,7 +40,7 @@ const MENU_ITEMS = {
     title: browser.i18n.getMessage('menu_redmine_label'),
     async shouldEnable(info, _tab, message) {
       const accountId = (info.selectedFolder && info.selectedFolder.accountId) || (message && message.accountId);
-      const accountInfo = configs.accounts[accountId];
+      const accountInfo = (configs.accounts || {})[accountId];
       return !!(accountInfo && accountInfo.url && accountInfo.key);
     }
   },
@@ -78,7 +78,7 @@ const MENU_ITEMS = {
     shouldVisible: null,
     async shouldEnable(info, _tab, _message) {
       const accountId = info.selectedFolder && info.selectedFolder.accountId;
-      const accountInfo = configs.accounts[accountId];
+      const accountInfo = (configs.accounts || {})[accountId];
       return !!(
         accountInfo &&
         accountInfo.url &&
@@ -107,7 +107,7 @@ const MENU_ITEMS = {
     shouldVisible: null,
     async shouldEnable(info, _tab, message) {
       const accountId = message && message.accountId;
-      const accountInfo = configs.accounts[accountId];
+      const accountInfo = (configs.accounts || {})[accountId];
       return !!(
         accountInfo &&
         accountInfo.url &&

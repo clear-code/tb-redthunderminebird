@@ -22,7 +22,7 @@ export class Message {
   }
 
   get accountInfo() {
-    return configs.accounts[this.accountId] || {};
+    return (configs.accounts || {})[this.accountId] || {};
   }
 
   async getFull() {

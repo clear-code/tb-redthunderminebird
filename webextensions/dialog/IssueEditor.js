@@ -199,7 +199,7 @@ export class IssueEditor {
       });
     }
 
-    const accountInfo = configs.accounts[this.mAccountId] || {};
+    const accountInfo = (configs.accounts || {})[this.mAccountId] || {};
     const deleteLastQuotationBlockFromBody = !!(accountInfo.useGlobalDefaultFieldValues ? configs.deleteLastQuotationBlockFromBody : accountInfo.deleteLastQuotationBlockFromBody);
     for (const checkbox of document.querySelectorAll('.deleteLastQuotationBlockFromBody')) {
       checkbox.checked = deleteLastQuotationBlockFromBody;
@@ -222,7 +222,7 @@ export class IssueEditor {
   }
 
   isFieldVisible(name) {
-    const accountInfo = configs.accounts[this.mAccountId] || {};
+    const accountInfo = (configs.accounts || {})[this.mAccountId] || {};
     const useAccountValue = 'useGlobalVisibleFields' in accountInfo && !accountInfo.useGlobalVisibleFields;
     const fieldVisibility = configs.accountVisibleFields[this.mAccountId] || {};
     return useAccountValue ? !!fieldVisibility[name] : configs[`fieldVisibility_${name}`];
@@ -397,7 +397,7 @@ export class IssueEditor {
   rebuildCustomFields(fields) {
     if (!fields) {
       try {
-        const accountInfo = configs.accounts[this.mAccountId] || {};
+        const accountInfo = (configs.accounts || {})[this.mAccountId] || {};
         fields = JSON.parse(accountInfo.customFields || '[]');
         if (!Array.isArray(fields) && fields && fields.custom_fields)
           fields = fields.custom_fields;
