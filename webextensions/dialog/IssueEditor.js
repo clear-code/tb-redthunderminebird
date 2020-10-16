@@ -346,6 +346,7 @@ export class IssueEditor {
       this.mProjectField && this.initWatchers(projectId, members) // create
     ]);
     this.applyFieldValues();
+    this.sizeToContent();
   }
 
   async reinitFieldsForIssue(issue) {
