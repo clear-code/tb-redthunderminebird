@@ -199,6 +199,17 @@ export class IssueEditor {
       });
     }
 
+    const accountInfo = configs.accounts[this.mAccountId] || {};
+    const deleteLastQuotationBlockFromBody = !!(accountInfo.useGlobalDefaultFieldValues ? configs.deleteLastQuotationBlockFromBody : accountInfo.deleteLastQuotationBlockFromBody);
+    for (const checkbox of document.querySelectorAll('.deleteLastQuotationBlockFromBody')) {
+      checkbox.checked = deleteLastQuotationBlockFromBody;
+      checkbox.addEventListener('change', () => {
+        const field = checkbox.closest('.grid-row').querySelector('textarea');
+        const paramName = field.dataset.field;
+        field.value = checkbox.checked ? this.params[`${paramName}WithoutQuotation`] : this.params[paramName];
+      });
+    }
+
     const resizeObserver = new ResizeObserver(_entries => {
       this.sizeToContent();
     });
@@ -491,6 +502,9 @@ export class IssueEditor {
           field.checked = !!value;
         log('applyFieldValues: ', field, name, value, field.checked);
       }
+      else if (this.shouldUseNoQuotationVersion(field)) {
+        field.value = this.params[`${paramName}WithoutQuotation`];
+      }
       else {
         if (field.localName != 'select' ||
             field.querySelector(`option[value=${JSON.stringify(sanitizeForHTMLText(String(value)))}]`))
@@ -515,6 +529,12 @@ export class IssueEditor {
     field.value = '';
     field.disabled = true;
   }
+  shouldUseNoQuotationVersion(field) {
+    return (
+      (field.id == 'description' || field.id == 'notes') &&
+      field.closest('.grid-row').querySelector('.deleteLastQuotationBlockFromBody').checked
+    );
+  }
 
   onChangeFieldValue(field) {
     if (field.$onChangeFieldValueTimer)
@@ -533,8 +553,14 @@ export class IssueEditor {
         const paramName = name.replace(/\[\]$/, '');
         if (paramName in this.params) {
           const value = this.getRequestParamValueFor(paramName);
-          this.params[paramName] = value;
-          log('onChangeFieldValue ', field, paramName, value);
+          if (this.shouldUseNoQuotationVersion(field)) {
+            this.params[`${paramName}WithoutQuotation`] = value;
+            log('onChangeFieldValue (without quotation) ', field, paramName, value);
+          }
+          else {
+            this.params[paramName] = value;
+            log('onChangeFieldValue ', field, paramName, value);
+          }
         }
         for (const resolver of resolvers) {
           resolver();

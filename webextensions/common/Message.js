@@ -179,11 +179,22 @@ export class Message {
       { body,
         headers: this.getHeadersSummary(rawHeaders, descriptionHeaders) }
     );
+    const bodyWithoutQuotation = body.split('\n').reverse().join('\n').replace(/(\n|^)(?:>(?: .*)?\n)+\s*On.+, .+ wrote:\n/, '$1').split('\n').reverse().join('\n');
+    const descriptionWithoutQuotation = this.fillTemplate(
+      descriptionTemplate,
+      { body:    bodyWithoutQuotation,
+        headers: this.getHeadersSummary(rawHeaders, descriptionHeaders) }
+    );
     const notesTemplate = useAccountValue && 'notesTemplate' in accountInfo ? accountInfo.notesTemplate : configs.notesTemplate;
     const notesHeaders = useAccountValue && 'defaultNotesHeaders' in accountInfo ? accountInfo.defaultNotesHeaders : configs.defaultNotesHeaders;
     const notes = this.fillTemplate(
       notesTemplate,
       { body,
+        headers: this.getHeadersSummary(rawHeaders, notesHeaders) }
+    );
+    const notesWithoutQuotation = this.fillTemplate(
+      notesTemplate,
+      { body:    bodyWithoutQuotation,
         headers: this.getHeadersSummary(rawHeaders, notesHeaders) }
     );
     const defaultTracker = accountInfo.defaultTracker;
@@ -193,7 +204,9 @@ export class Message {
       project_id:  this.getProjectId(),
       tracker_id:  defaultTracker,
       description,
-      notes
+      descriptionWithoutQuotation,
+      notes,
+      notesWithoutQuotation
     };
 
     const defaultDueDate = useAccountValue && 'defaultDueDate' in accountInfo ? accountInfo.defaultDueDate : configs.defaultDueDate;

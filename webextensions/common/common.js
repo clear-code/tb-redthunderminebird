@@ -12,7 +12,7 @@ const OVERRIDE_DEFAULT_CONFIGS = {}; /* Replace this for more customization on a
 
 export const configs = new Configs({
   // per-account configs
-  accounts: null, // url, key, defaultProject, customFields, projectsVisibilityMode, statusesVisibilityMode, useGlobalVisibleFields, useGlobalDefaultFieldValues, defaultTracker, defaultDueDate, defaultTitleCleanupPattern, defaultDescriptionHeaders, defaultNotesHeaders, descriptionTemplate, notesTemplate, visibleFolderPattern
+  accounts: null, // url, key, defaultProject, customFields, projectsVisibilityMode, statusesVisibilityMode, useGlobalVisibleFields, useGlobalDefaultFieldValues, defaultTracker, defaultDueDate, defaultTitleCleanupPattern, defaultDescriptionHeaders, defaultNotesHeaders, descriptionTemplate, notesTemplate, deleteLastQuotationBlockFromBody, visibleFolderPattern
   accountMappedFolders: {},
   accountVisibleProjects: {},
   accountHiddenProjects: {},
@@ -45,6 +45,7 @@ export const configs = new Configs({
   defaultNotesHeaders: ['Subject', 'From', 'Resent-From', 'Date', 'To', 'Cc', 'Newsgroups'],
   descriptionTemplate: '<pre>\n%headers%\n\n%body%\n</pre>',
   notesTemplate: '<pre>\n%headers%\n\n%body%\n</pre>',
+  deleteLastQuotationBlockFromBody: true,
 
 
   linkToIssueDialogWidth: 500,

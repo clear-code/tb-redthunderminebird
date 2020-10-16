@@ -98,6 +98,8 @@
   "dialog_updateIssue_complete_button_label": { "message": "OK" },
   "dialog_updateIssue_multipleDialogsRequested_message": { "message": "Please complete updating before starting new operation" },
 
+  "dialog_deleteLastQuotationBlockFromBody_label": { "message": "Delete last quotation block from the message body" },
+
 
   "config_title": { "message": "RedThunderMineBird Plus Configuration" },
   "config_accountConfig_title": { "message": "Redmine Settings for $NAME$",

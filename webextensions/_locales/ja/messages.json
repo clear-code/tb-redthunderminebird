@@ -99,6 +99,8 @@
   "dialog_updateIssue_complete_button_label": { "message": "OK" },
   "dialog_updateIssue_multipleDialogsRequested_message": { "message": "先にチケットの更新を完了してください" },
 
+  "dialog_deleteLastQuotationBlockFromBody_label": { "message": "本文から最後の引用ブロックを取り除く" },
+
 
   "config_title": { "message": "RedThunderMineBird Plusの設定" },
   "config_accountConfig_title": { "message": "$NAME$のRedmine設定",

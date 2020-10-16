@@ -204,6 +204,10 @@ appendContents(mDialog.contents, `
               data-config-key="accounts"></textarea>
   </fieldset>
   <p class="placeholders-description">${sanitizeForHTMLText(browser.i18n.getMessage('config_placeholders_description'))}</p>
+  <p><label><input class="deleteLastQuotationBlockFromBody"
+                   type="checkbox"
+                   data-config-key="accounts">
+            ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_deleteLastQuotationBlockFromBody_label'))}</label></p>
   </div>
   </section>
 
@@ -439,6 +443,7 @@ export async function show(accountId) {
   mDialog.contents.querySelector('.defaultTitleCleanupPattern').value = 'defaultTitleCleanupPattern' in mAccountInfo ? mAccountInfo.defaultTitleCleanupPattern : configs.defaultTitleCleanupPattern;
   mDialog.contents.querySelector('.descriptionTemplate').value = 'descriptionTemplate' in mAccountInfo ? mAccountInfo.descriptionTemplate : configs.descriptionTemplate;
   mDialog.contents.querySelector('.notesTemplate').value = 'notesTemplate' in mAccountInfo ? mAccountInfo.notesTemplate : configs.notesTemplate;
+  mDialog.contents.querySelector('.deleteLastQuotationBlockFromBody').checked = !!('deleteLastQuotationBlockFromBody' in mAccountInfo ? mAccountInfo.deleteLastQuotationBlockFromBody : configs.deleteLastQuotationBlockFromBody);
 
   await Promise.all([
     initProjectVisibilityCheckboxes(mProjects),
@@ -485,18 +490,22 @@ function hide() {
 function save() {
   mAccountInfo.url = mDialog.contents.querySelector('.redmineURL').value;
   mAccountInfo.key = mDialog.contents.querySelector('.redmineAPIKey').value;
+  mAccountInfo.customFields = mDialog.contents.querySelector('.customFields').value;
   mAccountInfo.projectsVisibilityMode = parseInt(mProjectsVisibilityModeSelector.value);
   mAccountInfo.statusesVisibilityMode = parseInt(mStatusesVisibilityModeSelector.value);
+  mAccountInfo.useGlobalVisibleFields = mUseGlobalVisibleFieldsCheck.checked;
+  if (!mAccountInfo.useGlobalVisibleFields)
+    mAccountInfo.visibleFolderPattern = mVisibleFolderPatternField.value;
+  mAccountInfo.useGlobalDefaultFieldValues = mUseGlobalDefaultFieldValuesCheck.checked;
+  if (!mAccountInfo.useGlobalDefaultFieldValues) {
   mAccountInfo.defaultProject = parseInt(mDialog.contents.querySelector('.defaultProject').value || 0);
   mAccountInfo.defaultTracker = parseInt(mDialog.contents.querySelector('.defaultTracker').value || 0);
   mAccountInfo.defaultDueDate = parseInt(mDialog.contents.querySelector('.defaultDueDate').value || configs.defaultDueDate);
-  mAccountInfo.visibleFolderPattern = mVisibleFolderPatternField.value;
   mAccountInfo.defaultTitleCleanupPattern = mDialog.contents.querySelector('.defaultTitleCleanupPattern').value;
-  mAccountInfo.customFields = mDialog.contents.querySelector('.customFields').value;
   mAccountInfo.descriptionTemplate = mDialog.contents.querySelector('.descriptionTemplate').value;
   mAccountInfo.notesTemplate = mDialog.contents.querySelector('.notesTemplate').value;
-  mAccountInfo.useGlobalVisibleFields = mUseGlobalVisibleFieldsCheck.checked;
-  mAccountInfo.useGlobalDefaultFieldValues = mUseGlobalDefaultFieldValuesCheck.checked;
+    mAccountInfo.deleteLastQuotationBlockFromBody = mDialog.contents.querySelector('.deleteLastQuotationBlockFromBody').checked;
+  }
   saveAccountConfig('accounts', mAccountInfo);
 
   saveAccountConfig('accountVisibleProjects', mVisibleProjects);
