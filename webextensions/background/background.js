@@ -30,18 +30,16 @@ const MENU_COMMON_PARAMS = {
 const SUBMENU_COMMON_PARAMS = {
   ...MENU_COMMON_PARAMS,
   parentId: 'redmine',
-  async shouldVisible(info, tab, message) {
-    return !!(message && MENU_ITEMS.redmine.shouldEnable(info, tab)); // eslint-disable-line no-use-before-define
+  async shouldVisible({ info, tab, message, redmine } = {}) {
+    return !!(message && MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine })); // eslint-disable-line no-use-before-define
   }
 };
 const MENU_ITEMS = {
   redmine: {
     ...MENU_COMMON_PARAMS,
     title: browser.i18n.getMessage('menu_redmine_label'),
-    async shouldEnable(info, _tab, message) {
-      const accountId = (info.selectedFolder && info.selectedFolder.accountId) || (message && message.accountId);
-      const accountInfo = (configs.accounts || {})[accountId];
-      return !!(accountInfo && accountInfo.url && accountInfo.key);
+    async shouldEnable({ redmine } = {}) {
+      return !!(redmine.accountInfo.url && redmine.accountInfo.key);
     }
   },
   openWebUI: {
@@ -51,7 +49,7 @@ const MENU_ITEMS = {
   linkToIssue: {
     ...SUBMENU_COMMON_PARAMS,
     title: browser.i18n.getMessage('menu_linkToIssue_label'),
-    async shouldEnable(_info, _tab, message) {
+    async shouldEnable({ message } = {}) {
       return !!(message && message.getProjectId());
     }
   },
@@ -66,7 +64,7 @@ const MENU_ITEMS = {
   openIssue: {
     ...SUBMENU_COMMON_PARAMS,
     title: browser.i18n.getMessage('menu_openIssue_label'),
-    async shouldEnable(info, _tab, _message) {
+    async shouldEnable({ info } = {}) {
       return !!(await getContextIssueId(info));
     }
   },
@@ -76,18 +74,15 @@ const MENU_ITEMS = {
     contexts: ['folder_pane'],
     title: browser.i18n.getMessage('menu_mappedProject_label'),
     shouldVisible: null,
-    async shouldEnable(info, _tab, _message) {
-      const accountId = info.selectedFolder && info.selectedFolder.accountId;
-      const accountInfo = (configs.accounts || {})[accountId];
+    async shouldEnable({ info, redmine } = {}) {
       return !!(
-        accountInfo &&
-        accountInfo.url &&
-        accountInfo.key &&
+        redmine.accountInfo.url &&
+        redmine.accountInfo.key &&
         info.contexts.includes('folder_pane')
       );
     },
-    async shouldVisible(info, tab, message) {
-      return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable(info, tab, message);
+    async shouldVisible({ info, tab, message, redmine } = {}) {
+      return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
     }
   },
 
@@ -105,18 +100,15 @@ const MENU_ITEMS = {
     contexts: ['message_list'],
     title: browser.i18n.getMessage('menu_mappedProject_label'),
     shouldVisible: null,
-    async shouldEnable(info, _tab, message) {
-      const accountId = message && message.accountId;
-      const accountInfo = (configs.accounts || {})[accountId];
+    async shouldEnable({ info, redmine } = {}) {
       return !!(
-        accountInfo &&
-        accountInfo.url &&
-        accountInfo.key &&
+        redmine.accountInfo.url &&
+        redmine.accountInfo.key &&
         info.contexts.includes('message_list')
       );
     },
-    async shouldVisible(info, tab, message) {
-      return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable(info, tab, message);
+    async shouldVisible({ info, tab, message, redmine }) {
+      return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
     }
   }
 };
@@ -147,14 +139,16 @@ for (const [id, item] of Object.entries(MENU_ITEMS)) {
 browser.menus.onShown.addListener(async (info, tab) => {
   const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
   const message = messages && messages.length > 0 ? messages[0] : null;
+  const accountId = (info.selectedFolder && info.selectedFolder.accountId) || (message && message.accountId);
+  const redmine = new Redmine({ accountId });
 
   let modificationCount = 0;
   const tasks = [];
   for (const [id, item] of Object.entries(MENU_ITEMS)) {
     tasks.push((async () => {
       const [enabled, visible] = await Promise.all([
-        typeof item.shouldEnable == 'function' ? item.shouldEnable(info, tab, message) : true,
-        typeof item.shouldVisible == 'function' ? item.shouldVisible(info, tab, message) : true
+        typeof item.shouldEnable == 'function' ? item.shouldEnable({ info, tab, message, redmine }) : true,
+        typeof item.shouldVisible == 'function' ? item.shouldVisible({ info, tab, message, redmine }) : true
       ]);
       browser.menus.update(id, {
         enabled,
@@ -169,7 +163,12 @@ browser.menus.onShown.addListener(async (info, tab) => {
 
   if (MENU_ITEMS.mappedProject.shouldVisible(info, tab, message) ||
       MENU_ITEMS.mappedProjectSub.shouldVisible(info, tab, message))
-    buildProjectsList(info, message, info.contexts.includes('message_list') ? 'mappedProjectSub' : 'mappedProject');
+    buildProjectsList({
+      info,
+      message,
+      parentId: info.contexts.includes('message_list') ? 'mappedProjectSub' : 'mappedProject',
+      redmine
+    });
 
   await Promise.all(tasks);
 
@@ -177,9 +176,8 @@ browser.menus.onShown.addListener(async (info, tab) => {
     browser.menus.refresh();
 });
 
-async function buildProjectsList(info, message, parentId) {
+async function buildProjectsList({ info, message, parentId, redmine } = {}) {
   const accountId = (info.selectedFolder && info.selectedFolder.accountId) || (message && message.accountId);
-  const redmine = new Redmine({ accountId });
 
   const folder = info.selectedFolder || (message && message.raw.folder);
   if (!folder)
