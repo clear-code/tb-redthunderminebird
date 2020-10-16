@@ -498,12 +498,12 @@ function save() {
     mAccountInfo.visibleFolderPattern = mVisibleFolderPatternField.value;
   mAccountInfo.useGlobalDefaultFieldValues = mUseGlobalDefaultFieldValuesCheck.checked;
   if (!mAccountInfo.useGlobalDefaultFieldValues) {
-  mAccountInfo.defaultProject = parseInt(mDialog.contents.querySelector('.defaultProject').value || 0);
-  mAccountInfo.defaultTracker = parseInt(mDialog.contents.querySelector('.defaultTracker').value || 0);
-  mAccountInfo.defaultDueDate = parseInt(mDialog.contents.querySelector('.defaultDueDate').value || configs.defaultDueDate);
-  mAccountInfo.defaultTitleCleanupPattern = mDialog.contents.querySelector('.defaultTitleCleanupPattern').value;
-  mAccountInfo.descriptionTemplate = mDialog.contents.querySelector('.descriptionTemplate').value;
-  mAccountInfo.notesTemplate = mDialog.contents.querySelector('.notesTemplate').value;
+    mAccountInfo.defaultProject = parseInt(mDialog.contents.querySelector('.defaultProject').value || 0);
+    mAccountInfo.defaultTracker = parseInt(mDialog.contents.querySelector('.defaultTracker').value || 0);
+    mAccountInfo.defaultDueDate = parseInt(mDialog.contents.querySelector('.defaultDueDate').value || configs.defaultDueDate);
+    mAccountInfo.defaultTitleCleanupPattern = mDialog.contents.querySelector('.defaultTitleCleanupPattern').value;
+    mAccountInfo.descriptionTemplate = mDialog.contents.querySelector('.descriptionTemplate').value;
+    mAccountInfo.notesTemplate = mDialog.contents.querySelector('.notesTemplate').value;
     mAccountInfo.deleteLastQuotationBlockFromBody = mDialog.contents.querySelector('.deleteLastQuotationBlockFromBody').checked;
   }
   saveAccountConfig('accounts', mAccountInfo);
