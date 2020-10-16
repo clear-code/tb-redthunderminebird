@@ -199,7 +199,7 @@ export class IssueEditor {
       });
     }
 
-    const accountInfo = (configs.accounts || {})[this.mAccountId] || {};
+    const accountInfo = this.mRedmine.accountInfo;
     const deleteLastQuotationBlockFromBody = !!(accountInfo.useGlobalDefaultFieldValues ? configs.deleteLastQuotationBlockFromBody : accountInfo.deleteLastQuotationBlockFromBody);
     for (const checkbox of document.querySelectorAll('.deleteLastQuotationBlockFromBody')) {
       checkbox.checked = deleteLastQuotationBlockFromBody;
@@ -222,7 +222,7 @@ export class IssueEditor {
   }
 
   isFieldVisible(name) {
-    const accountInfo = (configs.accounts || {})[this.mAccountId] || {};
+    const accountInfo = this.mRedmine.accountInfo;
     const useAccountValue = 'useGlobalVisibleFields' in accountInfo && !accountInfo.useGlobalVisibleFields;
     const fieldVisibility = configs.accountVisibleFields[this.mAccountId] || {};
     return useAccountValue ? !!fieldVisibility[name] : configs[`fieldVisibility_${name}`];
@@ -397,7 +397,7 @@ export class IssueEditor {
   rebuildCustomFields(fields) {
     if (!fields) {
       try {
-        const accountInfo = (configs.accounts || {})[this.mAccountId] || {};
+        const accountInfo = this.mRedmine.accountInfo;
         fields = JSON.parse(accountInfo.customFields || '[]');
         if (!Array.isArray(fields) && fields && fields.custom_fields)
           fields = fields.custom_fields;
@@ -510,7 +510,7 @@ export class IssueEditor {
             field.querySelector(`option[value=${JSON.stringify(sanitizeForHTMLText(String(value)))}]`))
           field.value = value;
         else if (name == 'project_id')
-          field.value = ((configs.accounts || {})[this.mAccountId] || {}).defaultProject || '';
+          field.value = this.mRedmine.accountInfo.defaultProject || '';
         else
           field.value = '';
         log('applyFieldValues: ', field, name, value, field.value);
