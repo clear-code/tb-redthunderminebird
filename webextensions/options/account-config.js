@@ -263,9 +263,12 @@ function onRedmineChanged() {
     clearTimeout(onRedmineChanged.timer);
   onRedmineChanged.timer = setTimeout(async () => {
     delete onRedmineChanged.timer;
-    if (!mDialog.contents.querySelector('.redmineURL').value.trim() ||
-        !mDialog.contents.querySelector('.redmineAPIKey').value.trim())
+    const url = mDialog.contents.querySelector('.redmineURL').value.trim();
+    const key = mDialog.contents.querySelector('.redmineAPIKey').value.trim();
+    if (!url || !key)
       return;
+    mRedmine = new Redmine({ accountId: mAccountId, url, key });
+    mRedmine.recache();
     const [projects, statuses] = await Promise.all([getProjects(), getStatuses()])
     mProjects = projects;
     mStatuses = statuses;

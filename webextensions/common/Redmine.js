@@ -13,24 +13,33 @@ import * as Constants from './constants.js';
 import * as Cache from './cache.js';
 
 export class Redmine {
-  constructor({ accountId }) {
+  constructor({ accountId, url, key }) {
     this.accountId = accountId;
+    this.__url = url;
+    this.__key = key;
   }
 
   get accountInfo() {
     return (configs.accounts || {})[this.accountId] || {};
   }
 
+  get _url() {
+    return (this.__url || this.accountInfo.url || '').trim();
+  }
+
+  get _key() {
+    return (this.__key || this.accountInfo.key || '').trim();
+  }
+
 
   _getURL(path = '', params = {}) {
-    const accountInfo = this.accountInfo;
-    if (!accountInfo || !accountInfo.url)
+    if (!this._url)
       throw new Error(`Missing Redmine URL: you need to configure it at first for the account ${this.accountId}`);
     const queryParams = new URLSearchParams();
     for (const name in params) {
       queryParams.set(name, params[name]);
     }
-    return `${accountInfo.url.replace(/\/$/, '')}/${path.replace(/^\//, '')}${Object.keys(params).length > 0 ? '?' : ''}${queryParams.toString()}`;
+    return `${this._url.replace(/\/$/, '')}/${path.replace(/^\//, '')}${Object.keys(params).length > 0 ? '?' : ''}${queryParams.toString()}`;
   }
 
   async _request({ method, path, params, data, type, response } = {}) {
@@ -41,11 +50,10 @@ export class Redmine {
     if (!type)
       type = 'application/json';
 
-    const accountInfo = this.accountInfo;
     const url = this._getURL(path, {
       ...(params || {}),
       ...(method == 'GET' && data !== undefined ? data : {}),
-      key: accountInfo && accountInfo.key
+      key: this._key
     });
 
     let body = '';
@@ -100,18 +108,16 @@ export class Redmine {
   }
 
   getIssueURL(id, { withAPIKey } = {}) {
-    const accountInfo = this.accountInfo;
     return this._getURL(
       `/issues/${id}`,
-      withAPIKey ? { key: accountInfo && accountInfo.key || '' } : {}
+      withAPIKey ? { key: this._key } : {}
     );
   }
 
   getProjectURL(id, { withAPIKey } = {}) {
-    const accountInfo = this.accountInfo;
     return this._getURL(
       `/projects/${id}`,
-      withAPIKey ? { key: accountInfo && accountInfo.key || '' } : {}
+      withAPIKey ? { key: this._key } : {}
     );
   }
 
