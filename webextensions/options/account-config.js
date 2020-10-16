@@ -557,7 +557,7 @@ function initSelect(field, items, itemTranslator) {
 
   let hasOldValueOption = false;
   for (const item of items) {
-    const translated = itemTranslator ? itemTranslator(item) : item;
+    const translated = item && itemTranslator ? itemTranslator(item) : item;
     if (!translated)
       continue;
     appendContents(field, generateOptionSource(translated));

@@ -238,7 +238,7 @@ export class IssueEditor {
 
     let hasOldValueOption = false;
     for (const item of items) {
-      const translated = itemTranslator(item);
+      const translated = item && itemTranslator(item);
       if (!translated)
         continue;
       appendContents(field, `
