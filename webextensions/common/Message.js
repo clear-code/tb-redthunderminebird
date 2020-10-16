@@ -209,10 +209,13 @@ export class Message {
       notesWithoutQuotation
     };
 
+    const now = new Date();
+    params.start_date = Format.formatDate(now);
+
     const defaultDueDate = useAccountValue && 'defaultDueDate' in accountInfo ? accountInfo.defaultDueDate : configs.defaultDueDate;
     const dueDays = parseInt(defaultDueDate);
     if (!isNaN(dueDays) && dueDays > 0)
-      params.due_date = Format.formatDate(new Date(), dueDays);
+      params.due_date = Format.formatDate(now, dueDays);
 
     return params;
   }
