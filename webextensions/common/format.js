@@ -10,7 +10,8 @@ export function htmlToPlaintext(source) {
   return nodeToText(doc.body || doc);
 }
 
-function nodeToText(node, preformatted = false) {
+function nodeToText(node) {
+  let prefix = '';
   let suffix = '';
   switch (node.nodeType) {
     case Node.ELEMENT_NODE:
@@ -19,7 +20,6 @@ function nodeToText(node, preformatted = false) {
           return '\n';
 
         case 'pre':
-          preformatted = true;
         case 'h0':
         case 'h1':
         case 'h2':
@@ -31,12 +31,20 @@ function nodeToText(node, preformatted = false) {
         case 'li':
           suffix = '\n';
           break;
+
+        case 'blockquote':
+          prefix = '> ';
+          break;
       }
-    case Node.DOCUMENT_NODE:
-      return `${Array.from(node.childNodes, node => nodeToText(node)).join('')}${suffix}`;
+    case Node.DOCUMENT_NODE: {
+      let contents = Array.from(node.childNodes, node => nodeToText(node)).join('');
+      if (prefix)
+        contents = contents.replace(/^( )?/gm, `${prefix}$1`);
+      return `${contents}${suffix}`;
+    };
 
     case Node.TEXT_NODE:
-      return preformatted ? node.nodeValue : node.nodeValue.replace(/\s\s+/g, ' ');
+      return node.parentNode.closest('pre') ? node.nodeValue : node.nodeValue.replace(/\s\s+/g, ' ').replace(/^\s+$/, '');
 
     default:
       return '';
