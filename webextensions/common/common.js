@@ -45,7 +45,7 @@ export const configs = new Configs({
   defaultNotesHeaders: ['Subject', 'From', 'Resent-From', 'Date', 'To', 'Cc', 'Newsgroups'],
   descriptionTemplate: '<pre>\n%headers%\n\n%body%\n</pre>',
   notesTemplate: '<pre>\n%headers%\n\n%body%\n</pre>',
-  deleteLastQuotationBlockFromBody: true,
+  deleteLastQuotationBlockFromBody: false,
 
 
   linkToIssueDialogWidth: 500,
