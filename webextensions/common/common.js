@@ -85,11 +85,14 @@ export const configs = new Configs({
 
   ...OVERRIDE_DEFAULT_CONFIGS
 }, {
+  syncKeys: [] // sync storage values can be resolved with invalidly saved values, so we always ignmore sync storage...
+  /*
   localKeys: [
     'configsVersion',
     'debug',
     'dryRun'
   ]
+  */
 });
 
 export function log(message, ...args) {
