@@ -494,18 +494,17 @@ function save() {
   mAccountInfo.projectsVisibilityMode = parseInt(mProjectsVisibilityModeSelector.value);
   mAccountInfo.statusesVisibilityMode = parseInt(mStatusesVisibilityModeSelector.value);
   mAccountInfo.useGlobalVisibleFields = mUseGlobalVisibleFieldsCheck.checked;
-  if (!mAccountInfo.useGlobalVisibleFields)
-    mAccountInfo.visibleFolderPattern = mVisibleFolderPatternField.value;
+  mAccountInfo.defaultTracker = parseInt(mDialog.contents.querySelector('.defaultTracker').value || 0);
   mAccountInfo.useGlobalDefaultFieldValues = mUseGlobalDefaultFieldValuesCheck.checked;
   if (!mAccountInfo.useGlobalDefaultFieldValues) {
-    mAccountInfo.defaultProject = parseInt(mDialog.contents.querySelector('.defaultProject').value || 0);
-    mAccountInfo.defaultTracker = parseInt(mDialog.contents.querySelector('.defaultTracker').value || 0);
     mAccountInfo.defaultDueDate = parseInt(mDialog.contents.querySelector('.defaultDueDate').value || configs.defaultDueDate);
     mAccountInfo.defaultTitleCleanupPattern = mDialog.contents.querySelector('.defaultTitleCleanupPattern').value;
     mAccountInfo.descriptionTemplate = mDialog.contents.querySelector('.descriptionTemplate').value;
     mAccountInfo.notesTemplate = mDialog.contents.querySelector('.notesTemplate').value;
     mAccountInfo.deleteLastQuotationBlockFromBody = mDialog.contents.querySelector('.deleteLastQuotationBlockFromBody').checked;
   }
+  mAccountInfo.defaultProject = parseInt(mDialog.contents.querySelector('.defaultProject').value || 0);
+  mAccountInfo.visibleFolderPattern = mVisibleFolderPatternField.value;
   saveAccountConfig('accounts', mAccountInfo);
 
   saveAccountConfig('accountVisibleProjects', mVisibleProjects);
@@ -522,7 +521,7 @@ function save() {
 }
 
 function saveAccountConfig(key, value) {
-  const values = clone(configs[key]);
+  const values = clone(configs[key]) || {};
   values[mRedmine.accountId] = value;
   configs[key] = values;
 }
