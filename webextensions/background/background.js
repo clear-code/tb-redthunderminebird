@@ -292,7 +292,7 @@ browser.menus.onClicked.addListener(async (info, tab) => {
     case 'linkToIssue':
       if (!message)
         return;
-      runTask(async () => linkToIssue(message, { tab, accountId }));
+      runTask(async () => linkToIssue(message, { tab, accountId, redmine }));
       break;
 
     case 'createIssue':
@@ -304,7 +304,7 @@ browser.menus.onClicked.addListener(async (info, tab) => {
     case 'updateIssue':
       if (!message)
         return;
-      runTask(async () => updateIssue(message, { tab, accountId }));
+      runTask(async () => updateIssue(message, { tab, accountId, redmine }));
       break;
 
     case 'openIssue': {
@@ -340,7 +340,7 @@ browser.menus.onClicked.addListener(async (info, tab) => {
 });
 
 
-async function linkToIssue(message, { tab, accountId } = {}) {
+async function linkToIssue(message, { tab, accountId, redmine } = {}) {
   try {
     const dialogParams = {
       url:    '/dialog/link-to-issue/link-to-issue.html',
@@ -354,11 +354,17 @@ async function linkToIssue(message, { tab, accountId } = {}) {
     if (typeof configs.linkToIssueDialogTop == 'number')
       dialogParams.top = configs.linkToIssueDialogTop;
     try {
+      let projectId = message.getProjectId();
+      if (!projectId) {
+        const project = await redmine.getFirstProject();
+        if (project)
+          projectId = project.id;
+      }
       const result = await Dialog.open(
         dialogParams,
         { accountId,
           defaultId: await message.getIssueId(),
-          projectId: message.getProjectId() }
+          projectId }
       );
       const issue = result && result.detail;
       log('chosen issue: ', issue);
@@ -396,9 +402,9 @@ async function createIssue(message, { tab, accountId } = {}) {
   }
 }
 
-async function updateIssue(message, { tab, accountId } = {}) {
+async function updateIssue(message, { tab, accountId, redmine } = {}) {
   if (!(await message.getIssueId())) {
-    await linkToIssue(message, { tab, accountId });
+    await linkToIssue(message, { tab, accountId, redmine });
     if (!(await message.getIssueId()))
       return;
   }

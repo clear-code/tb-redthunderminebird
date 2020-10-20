@@ -20,7 +20,14 @@ export class IssueChooser {
 
     this.mAccountId = accountId;
     this.mDefaultId = defaultId;
-    this.mProjectId = projectId;
+    if (typeof projectId == 'function')
+      Object.defineProperty(this, 'mProjectId', {
+        enumerable: true,
+        configurable: true,
+        get: projectId
+      });
+    else
+      this.mProjectId = projectId;
     this.mLastOffset = 0;
 
     this.mRedmine = new Redmine({ accountId: this.mAccountId });

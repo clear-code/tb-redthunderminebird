@@ -386,6 +386,11 @@ export class Redmine {
     return project.name;
   }
 
+  async getFirstProject() {
+    const projects = await this.getProjects();
+    return projects.length > 0 ? projects[0] : null;
+  }
+
   async getMembers(projectId) {
     log('members:', projectId, this.accountId);
     //取得(権限の関係で例外が飛びやすい)

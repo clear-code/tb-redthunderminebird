@@ -50,12 +50,13 @@ export class IssueEditor {
     this.initialized = Promise.all([
       this.mRedmine.getMyself(),
       this.mRedmine.getMembers(this.params.project_id),
-      this.mProjectField && this.initProjects(), // create
+      this.initProjects(), // create
       this.mProjectField && this.initTrackers(this.params.project_id), // create
       this.initStatuses(),
       this.initVersions(this.params.project_id)
-    ]).then(async ([myself, members, ]) => {
+    ]).then(async ([myself, members, projects, ]) => {
       this.mMyself = myself;
+      this.mProjects = projects;
       log('IssueEditor initialization, members = ', members);
       await Promise.all([
         this.initAssignees(this.params.project_id, members),
@@ -100,10 +101,11 @@ export class IssueEditor {
     });
     this.mDueDateField.disabled = true;
 
+    const projectIdGetter = () => this.mProjectField ? this.mProjectField.value : this.params.project_id || this.mProjects.length > 0 && this.mProjects[0].id || null;
     this.mIssueChooser = new IssueChooser({
       accountId: this.mAccountId,
       defaultId: 0,
-      projectId: this.params.project_id
+      projectId: projectIdGetter
     });
 
     const postInitializations = [];
@@ -140,8 +142,7 @@ export class IssueEditor {
       Dialog.initButton(chooser.querySelector('.issue-choose'), async _event => {
         const issue = await this.mIssueChooser.show({
           accountId: this.mAccountId,
-          defaultId: parseInt(idField.value || 0),
-          projectId: this.mProjectField ? this.mProjectField.value : this.params.project_id
+          defaultId: parseInt(idField.value || 0)
         });
         if (issue) {
           idField.value = issue.id;
@@ -156,7 +157,7 @@ export class IssueEditor {
       this.mRelationsField = new RelationsField({
         accountId: this.mAccountId,
         container: document.querySelector('#relations'),
-        projectId: () => this.mProjectField ? this.mProjectField.value : this.params.project_id
+        projectId: projectIdGetter
       });
       this.mRelationsField.onValid.addListener(() => this.onValid.dispatch());
       this.mRelationsField.onInvalid.addListener(() => this.onInvalid.dispatch());
@@ -231,6 +232,9 @@ export class IssueEditor {
   }
 
   initSelect(field, items, itemTranslator) {
+    if (!field)
+      return;
+
     const oldValue = field.value;
 
     const range = document.createRange();
@@ -264,7 +268,10 @@ export class IssueEditor {
       projects,
       project => ({ label: project.indentedName, value: project.id })
     );
-    document.querySelector('[data-field-row="project"]').classList.toggle('hidden', projects.length == 0 || !this.isFieldVisible('project'));
+    const row = document.querySelector('[data-field-row="project"]');
+    if (row)
+      row.classList.toggle('hidden', projects.length == 0 || !this.isFieldVisible('project'));
+    return projects;
   }
 
   async initTrackers(projectId) {
@@ -274,7 +281,10 @@ export class IssueEditor {
       trackers,
       tracker => ({ label: tracker.name, value: tracker.id })
     );
-    document.querySelector('[data-field-row="tracker"]').classList.toggle('hidden', trackers.length == 0 || !this.isFieldVisible('tracker'));
+    const row = document.querySelector('[data-field-row="tracker"]');
+    if (row)
+      row.classList.toggle('hidden', trackers.length == 0 || !this.isFieldVisible('tracker'));
+    return trackers;
   }
 
   async initStatuses() {
@@ -284,7 +294,10 @@ export class IssueEditor {
       statuses,
       status => ({ label: status.name, value: status.id })
     );
-    document.querySelector('[data-field-row="status"]').classList.toggle('hidden', statuses.length == 0 || !this.isFieldVisible('status'));
+    const row = document.querySelector('[data-field-row="status"]');
+    if (row)
+      row.classList.toggle('hidden', statuses.length == 0 || !this.isFieldVisible('status'));
+    return statuses;
   }
 
   async initVersions(projectId) {
@@ -294,7 +307,10 @@ export class IssueEditor {
       versions,
       version => ({ label: version.name, value: version.id })
     );
-    document.querySelector('[data-field-row="version"]').classList.toggle('hidden', versions.length == 0 || !this.isFieldVisible('version'));
+    const row = document.querySelector('[data-field-row="version"]');
+    if (row)
+      row.classList.toggle('hidden', versions.length == 0 || !this.isFieldVisible('version'));
+    return versions;
   }
 
   async initAssignees(projectId, cachedMembers) {
@@ -311,18 +327,21 @@ export class IssueEditor {
         };
       }
     );
-    document.querySelector('[data-field-row="assigned"]').classList.toggle('hidden', members.length == 0 || !this.isFieldVisible('assigned'));
+    const row = document.querySelector('[data-field-row="assigned"]');
+    if (row)
+      row.classList.toggle('hidden', members.length == 0 || !this.isFieldVisible('assigned'));
+    return members;
   }
 
   async initWatchers(projectId, cachedMembers) {
     const members = cachedMembers || await this.mRedmine.getMembers(projectId).catch(error => []);
     const container = document.querySelector('#watcherUsers');
-  
+    if (container) {  
     const range = document.createRange();
     range.selectNodeContents(container);
     range.deleteContents();
     range.detach();
-  
+
     for (const member of members) {
       if (!member.user)
         continue;
@@ -336,7 +355,11 @@ export class IssueEditor {
                ${sanitizeForHTMLText(label)}</label>
       `);
     }
-    document.querySelector('[data-field-row="watcher"]').classList.toggle('hidden', members.length == 0 || !this.isFieldVisible('watcher'));
+    }
+    const row = document.querySelector('[data-field-row="watcher"]');
+    if (row)
+      row.classList.toggle('hidden', members.length == 0 || !this.isFieldVisible('watcher'));
+    return members;
   }
 
   async reinitFieldsForProject() {
@@ -497,14 +520,11 @@ export class IssueEditor {
     for (const field of document.querySelectorAll('[data-field]')) {
       const name = field.dataset.field;
       const paramName = name.replace(/\[\]$/, '');
-      if (!(paramName in this.params))
-        continue;
-
       const valueHolder = field.dataset.fieldId ? (this.params[paramName] || []).find(field => field.id == field.dataset.fieldId) : this.params[paramName];
       const value = field.dataset.fieldId ? (valueHolder && valueHolder.value) : valueHolder;
       if (field.matches('input[type="checkbox"]')) {
         if (field.dataset.fieldIsArray == 'true')
-          field.checked = value.includes(field.value);
+          field.checked = Array.isArray(value) && value.includes(field.value);
         else
           field.checked = !!value;
         log('applyFieldValues: ', field, name, value, field.checked);
@@ -517,7 +537,18 @@ export class IssueEditor {
             field.querySelector(`option[value=${JSON.stringify(sanitizeForHTMLText(String(value)))}]`))
           field.value = value;
         else if (name == 'project_id')
-          field.value = this.mRedmine.accountInfo.defaultProject || '';
+          field.value = this.mRedmine.accountInfo.defaultProject || field.querySelector('option[value]:not([value=""])').value || '';
+        else if (field.localName == 'select') {
+          switch (name) {
+            case 'fixed_version_id':
+              field.value = '';
+              break;
+
+            default:
+              field.value = field.querySelector('option[value]:not([value=""])').value || '';
+              break;
+          }
+        }
         else
           field.value = '';
         log('applyFieldValues: ', field, name, value, field.value);
