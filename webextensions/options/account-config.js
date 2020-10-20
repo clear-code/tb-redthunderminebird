@@ -458,7 +458,8 @@ export async function show(accountId) {
   onProjectVisibilityModeChanged();
   onStatustVisibilityModeChanged();
   mDialog.contents.querySelector('.defaultTracker').value = mAccountInfo.defaultTracker || '';
-  mDialog.contents.querySelector('.defaultProject').value = mAccountInfo.defaultProject || '';
+  const firstVisibleProject = mProjects.find(project => project.visible);
+  mDialog.contents.querySelector('.defaultProject').value = mAccountInfo.defaultProject || firstVisibleProject && firstVisibleProject.id;
 
   for (const container of mDialog.contents.querySelectorAll('section, fieldset, p, div')) {
     const fields = container.querySelectorAll('input, textarea, select');
@@ -506,8 +507,7 @@ function save() {
     mAccountInfo.notesTemplate = mDialog.contents.querySelector('.notesTemplate').value;
     mAccountInfo.deleteLastQuotationBlockFromBody = mDialog.contents.querySelector('.deleteLastQuotationBlockFromBody').checked;
   }
-  const firstVisibleProject = mProjects.find(project => project.visible);
-  mAccountInfo.defaultProject = parseInt(mDialog.contents.querySelector('.defaultProject').value || firstVisibleProject && firstVisibleProject.id || 0);
+  mAccountInfo.defaultProject = parseInt(mDialog.contents.querySelector('.defaultProject').value || 0);
   mAccountInfo.visibleFolderPattern = mVisibleFolderPatternField.value;
   saveAccountConfig('accounts', mAccountInfo);
 
