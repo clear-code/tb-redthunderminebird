@@ -29,6 +29,13 @@ button {
   white-space: nowrap;
 }
 
+select,
+button {
+  font: caption;
+  font-size: 1em;
+  font-weight: noraml;
+}
+
 
 /* copied from /extlib/dialog.css */
 .flex-box {
