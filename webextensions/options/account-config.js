@@ -506,7 +506,8 @@ function save() {
     mAccountInfo.notesTemplate = mDialog.contents.querySelector('.notesTemplate').value;
     mAccountInfo.deleteLastQuotationBlockFromBody = mDialog.contents.querySelector('.deleteLastQuotationBlockFromBody').checked;
   }
-  mAccountInfo.defaultProject = parseInt(mDialog.contents.querySelector('.defaultProject').value || 0);
+  const firstVisibleProject = mProjects.find(project => project.visible);
+  mAccountInfo.defaultProject = parseInt(mDialog.contents.querySelector('.defaultProject').value || firstVisibleProject && firstVisibleProject.id || 0);
   mAccountInfo.visibleFolderPattern = mVisibleFolderPatternField.value;
   saveAccountConfig('accounts', mAccountInfo);
 
