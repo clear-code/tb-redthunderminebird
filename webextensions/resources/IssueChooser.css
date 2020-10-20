@@ -66,3 +66,7 @@ input[type="number"].issue-id {
   width: 100%;
   resize: vertical;
 }
+
+button.issue-choose {
+  min-width: 0;
+}
