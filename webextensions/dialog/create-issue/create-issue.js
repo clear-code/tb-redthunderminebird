@@ -142,7 +142,7 @@ async function createIssue() {
   const result = await mRedmine.createIssue(createParams);
   log('result: ', result);
   if (result.errors) {
-    alert(result.erros.join('\n'));
+    alert(result.errors.join('\n'));
     return;
   }
 

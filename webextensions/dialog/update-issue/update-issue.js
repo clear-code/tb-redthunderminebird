@@ -168,7 +168,7 @@ async function updateIssue() {
     const result = await mRedmine.updateIssue(updateParams);
     log('result: ', result);
     if (result.errors) {
-      alert(result.erros.join('\n'));
+      alert(result.errors.join('\n'));
       return;
     }
 
