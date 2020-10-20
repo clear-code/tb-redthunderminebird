@@ -11,6 +11,14 @@ import {
 import * as DB from './db.js';
 import * as Format from './format.js';
 
+export const RAW_PROPERTIES_FOR_HEADERS = {
+  subject: 'subject',
+  from:    'author',
+  to:      'recipients',
+  cc:      'ccList',
+  bcc:     'bccList'
+};
+
 export class Message {
   constructor(message) {
     this.raw = message;
@@ -77,7 +85,10 @@ export class Message {
       if (!name)
         continue;
       const normalizedName = name.toLowerCase();
-      const value = (normalizedName == 'subject') ? this.raw.subject.trim() : (rawHeaders[normalizedName] || []).join(', ').trim();
+      let value = (normalizedName in RAW_PROPERTIES_FOR_HEADERS) ?
+        this.raw[RAW_PROPERTIES_FOR_HEADERS[normalizedName]] :
+        (rawHeaders[normalizedName] || []);
+      value = (Array.isArray(value) ? value.join(', ') : value).trim();
       if (!value)
         continue;
       headers.push(`${name}: ${value}`);
