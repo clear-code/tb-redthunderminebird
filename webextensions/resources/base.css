@@ -82,7 +82,8 @@ label.flex-box.row > select:last-child {
 
 .grid-row > * {
   display: table-cell;
-  padding-bottom: 0.25em;
+  padding-bottom: 0.15em;
+  padding-top: 0.15em;
   vertical-align: middle;
 }
 
