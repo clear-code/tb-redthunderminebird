@@ -93,8 +93,8 @@ legend label.locked {
 
 #editAccountButtons button {
   font-size: medium;
-  height: 1.8em;
   line-height: 1.8;
+  text-align: left;
 }
 
 
