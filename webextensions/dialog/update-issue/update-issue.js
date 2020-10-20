@@ -166,12 +166,19 @@ async function updateIssue() {
 
   try {
     const result = await mRedmine.updateIssue(updateParams);
-    log('updated issue: ', result);
+    log('result: ', result);
+    if (result.errors) {
+      alert(result.erros.join('\n'));
+      return;
+    }
+
+    log('successfully updated');
     await mIssueEditor.saveRelations();
     return mRedmine.getIssue(updateParams.id);
   }
   catch(error) {
     log('update failed: ', error);
+    alert(`${String(error)}\n${error.stack}`);
     return null;
   }
 }

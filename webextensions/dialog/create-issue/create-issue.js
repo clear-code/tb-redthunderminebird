@@ -140,6 +140,12 @@ async function createIssue() {
   const createParams = mIssueEditor.getRequestParams();
 
   const result = await mRedmine.createIssue(createParams);
+  log('result: ', result);
+  if (result.errors) {
+    alert(result.erros.join('\n'));
+    return;
+  }
+
   const issue = result && result.issue;
   log('created issue: ', issue);
 
