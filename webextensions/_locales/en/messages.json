@@ -44,6 +44,8 @@
   "dialog_linkToIssue_cancel_label": { "message": "Cancel" },
   "dialog_linkToIssue_multipleDialogsRequested_message": { "message": "Please complete linking before starting new operation" },
 
+  "dialog_myself_label": { "message": "«Myself»" },
+
   "dialog_createIssue_title": { "message": "Create New Issue" },
   "dialog_createIssue_project_label": { "message": "Project" },
   "dialog_createIssue_tracker_label": { "message": "Tracker" },

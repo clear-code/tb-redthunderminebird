@@ -44,6 +44,8 @@
   "dialog_linkToIssue_cancel_label": { "message": "キャンセル" },
   "dialog_linkToIssue_multipleDialogsRequested_message": { "message": "先にチケットの関連付けを完了してください" },
 
+  "dialog_myself_label": { "message": "«自分»" },
+
   "dialog_createIssue_title": { "message": "チケット作成" },
   "dialog_createIssue_project_label": { "message": "プロジェクト" },
   "dialog_createIssue_tracker_label": { "message": "トラッカー" },

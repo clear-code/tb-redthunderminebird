@@ -48,12 +48,14 @@ export class IssueEditor {
     this.onInvalid = new EventListenerManager();
 
     this.initialized = Promise.all([
+      this.mRedmine.getMyself(),
       this.mRedmine.getMembers(this.params.project_id),
       this.mProjectField && this.initProjects(), // create
       this.mProjectField && this.initTrackers(this.params.project_id), // create
       this.initStatuses(),
       this.initVersions(this.params.project_id)
-    ]).then(async ([members,]) => {
+    ]).then(async ([myself, members, ]) => {
+      this.mMyself = myself;
       log('IssueEditor initialization, members = ', members);
       await Promise.all([
         this.initAssignees(this.params.project_id, members),
@@ -303,7 +305,10 @@ export class IssueEditor {
       member => {
         if (!member.user)
           return null;
-        return { label: member.user.name, value: member.user.id };
+        return {
+          label: this.mMyself && this.mMyself.id == member.user.id ? browser.i18n.getMessage('dialog_myself_label') : member.user.name,
+          value: member.user.id
+        };
       }
     );
     document.querySelector('[data-field-row="assigned"]').classList.toggle('hidden', members.length == 0 || !this.isFieldVisible('assigned'));
@@ -321,13 +326,14 @@ export class IssueEditor {
     for (const member of members) {
       if (!member.user)
         continue;
+      const label = this.mMyself && this.mMyself.id == member.user.id ? browser.i18n.getMessage('dialog_myself_label') : member.user.name;
       appendContents(container, `
         <label><input type="checkbox"
                       value=${JSON.stringify(sanitizeForHTMLText(member.user.id))}
                       data-field="watcher_user_ids[]"
                       data-field-is-array="true"
                       data-value-type="integer">
-               ${sanitizeForHTMLText(member.user.name)}</label>
+               ${sanitizeForHTMLText(label)}</label>
       `);
     }
     document.querySelector('[data-field-row="watcher"]').classList.toggle('hidden', members.length == 0 || !this.isFieldVisible('watcher'));
