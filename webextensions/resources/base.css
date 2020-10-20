@@ -21,6 +21,7 @@
   display: none !important;
 }
 
+input[type="text"],
 textarea {
   font: menu;
 }
