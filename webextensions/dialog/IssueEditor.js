@@ -337,24 +337,24 @@ export class IssueEditor {
     const members = cachedMembers || await this.mRedmine.getMembers(projectId).catch(error => []);
     const container = document.querySelector('#watcherUsers');
     if (container) {  
-    const range = document.createRange();
-    range.selectNodeContents(container);
-    range.deleteContents();
-    range.detach();
+      const range = document.createRange();
+      range.selectNodeContents(container);
+      range.deleteContents();
+      range.detach();
 
-    for (const member of members) {
-      if (!member.user)
-        continue;
-      const label = this.mMyself && this.mMyself.id == member.user.id ? browser.i18n.getMessage('dialog_myself_label') : member.user.name;
-      appendContents(container, `
-        <label><input type="checkbox"
-                      value=${JSON.stringify(sanitizeForHTMLText(member.user.id))}
-                      data-field="watcher_user_ids[]"
-                      data-field-is-array="true"
-                      data-value-type="integer">
-               ${sanitizeForHTMLText(label)}</label>
-      `);
-    }
+      for (const member of members) {
+        if (!member.user)
+          continue;
+        const label = this.mMyself && this.mMyself.id == member.user.id ? browser.i18n.getMessage('dialog_myself_label') : member.user.name;
+        appendContents(container, `
+          <label><input type="checkbox"
+                        value=${JSON.stringify(sanitizeForHTMLText(member.user.id))}
+                        data-field="watcher_user_ids[]"
+                        data-field-is-array="true"
+                        data-value-type="integer">
+                 ${sanitizeForHTMLText(label)}</label>
+        `);
+      }
     }
     const row = document.querySelector('[data-field-row="watcher"]');
     if (row)
