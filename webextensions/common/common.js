@@ -46,6 +46,7 @@ export const configs = new Configs({
   descriptionTemplate: '<pre>\n%headers%\n\n%body%\n</pre>',
   notesTemplate: '<pre>\n%headers%\n\n%body%\n</pre>',
   deleteLastQuotationBlockFromBody: false,
+  assignMyselfByDefault: false,
 
 
   linkToIssueDialogWidth: 500,

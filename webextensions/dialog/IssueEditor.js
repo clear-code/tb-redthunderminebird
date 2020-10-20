@@ -540,6 +540,10 @@ export class IssueEditor {
           field.value = this.mRedmine.accountInfo.defaultProject || field.querySelector('option[value]:not([value=""])').value || '';
         else if (field.localName == 'select') {
           switch (name) {
+            case 'assigned_to_id':
+              field.value = configs.assignMyselfByDefault && this.mMyself && this.mMyself.id || '';
+              break;
+
             case 'fixed_version_id':
               field.value = '';
               break;

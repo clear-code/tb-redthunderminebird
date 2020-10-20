@@ -133,6 +133,7 @@
 
   "config_useGlobalDefaultFieldValues_label": { "message": "Follow other options to the global setting" },
   "config_defaultValue_caption": { "message": "Default Values for issue creation and updating dialogs" },
+  "config_assignMyselfByDefault_label": { "message": "Assign myself to new issues by default" },
   "config_defaultTracker_label": { "message": "Tracker" },
   "config_defaultTracker_blank_label": { "message": "(blank)" },
   "config_defaultDueDate_label": { "message": "Due Date (days)" },
