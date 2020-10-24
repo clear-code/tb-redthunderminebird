@@ -5,12 +5,12 @@
 */
 'use strict';
 
-export function htmlToPlaintext(source) {
+export function htmlToPlaintext(source, { withoutQuotation } = {}) {
   const doc = (new DOMParser()).parseFromString(source, 'text/html');
-  return nodeToText(doc.body || doc);
+  return nodeToText(doc.body || doc, { withoutQuotation });
 }
 
-function nodeToText(node) {
+function nodeToText(node, { withoutQuotation } = {}) {
   let prefix = '';
   let suffix = '';
   switch (node.nodeType) {
@@ -33,11 +33,18 @@ function nodeToText(node) {
           break;
 
         case 'blockquote':
+          if (withoutQuotation)
+            return '';
           prefix = '> ';
           break;
       }
     case Node.DOCUMENT_NODE: {
-      let contents = Array.from(node.childNodes, node => nodeToText(node)).join('');
+      let contents = Array.from(node.childNodes).reverse().map(node => {
+        const text = nodeToText(node, { withoutQuotation });
+        if (node.localName && node.localName.toLowerCase() == 'blockquote') // apply "withoutQuotation" only for the last uotation part
+          withoutQuotation = false;
+        return text;
+      }).reverse().join('');
       if (prefix)
         contents = contents.replace(/^( )?/gm, `${prefix}$1`);
       return `${contents}${suffix}`;

@@ -97,14 +97,18 @@ export class Message {
     return headers.join('\n').trim();
   }
 
-  async getBody() {
+  async getBody({ withoutQuotation } = {}) {
     log('getBody for ', this.raw);
     const full = await this.getFull();
     log(' full => ', full);
     const { lastPlaintext, lastHTML } = this._collectPlaintextAndHTMLBodies(full);
-    const bodyText = (lastHTML && Format.htmlToPlaintext(lastHTML) || lastPlaintext).replace(/\r\n?/g, '\n').trim();
-    log(' bodyText: ', bodyText);
-    return bodyText;
+    const HTMLBody = lastHTML && Format.htmlToPlaintext(lastHTML, { withoutQuotation });
+    const plaintextBody = withoutQuotation ?
+      lastPlaintext.split('\n').reverse().join('\n').replace(/(\n|^)(?:>(?: .*)?\n)+\s*On.+, .+ wrote:\n/, '$1').split('\n').reverse().join('\n') :
+      lastPlaintext;
+    const body = (HTMLBody || plaintextBody).replace(/\r\n?/g, '\n').trim();
+    log(' body: ', { body, HTMLBody, plaintextBody });
+    return body;
   }
   _collectPlaintextAndHTMLBodies(part) {
     log(' _collectPlaintextAndHTMLBodies: ', { part });
@@ -158,9 +162,10 @@ export class Message {
   */
 
   async toRedmineParams() {
-    const [issueId, body, rawHeaders] = await Promise.all([
+    const [issueId, body, bodyWithoutQuotation, rawHeaders] = await Promise.all([
       this.getIssueId(),
       this.getBody(),
+      this.getBody({ withoutQuotation: true }),
       this.getFull().then(full => full.headers)
     ]);
     const accountInfo = this.accountInfo;
@@ -172,7 +177,6 @@ export class Message {
       { body,
         headers: this.getHeadersSummary(rawHeaders, descriptionHeaders) }
     );
-    const bodyWithoutQuotation = body.split('\n').reverse().join('\n').replace(/(\n|^)(?:>(?: .*)?\n)+\s*On.+, .+ wrote:\n/, '$1').split('\n').reverse().join('\n');
     const descriptionWithoutQuotation = this.fillTemplate(
       descriptionTemplate,
       { body:    bodyWithoutQuotation,
