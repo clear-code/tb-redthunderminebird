@@ -6,7 +6,8 @@
 'use strict';
 
 import {
-  configs
+  configs,
+  log
 } from './common.js';
 import * as DB from './db.js';
 import * as Format from './format.js';
@@ -97,65 +98,47 @@ export class Message {
   }
 
   async getBody() {
+    log('getBody for ', this.raw);
     const full = await this.getFull();
-    let lastMultipartPlaintext = '';
-    let lastMultipartHTML = '';
+    log(' full => ', full);
+    const { lastPlaintext, lastHTML } = this._collectPlaintextAndHTMLBodies(full, { fromLast: true });
+    const bodyText = (lastHTML && Format.htmlToPlaintext(lastHTML) || lastPlaintext).replace(/\r\n?/g, '\n').trim();
+    log(' bodyText: ', bodyText);
+    return bodyText;
+  }
+  _collectPlaintextAndHTMLBodies(part, { fromLast } = {}) {
+    log(' _collectPlaintextAndHTMLBodies: ', { part, fromLast });
     let lastPlaintext = '';
     let lastHTML;
-    for (const part of full.parts.slice(0).reverse()) {
-      switch (part.contentType.replace(/\s*;.*$/, '')) {
+    const parts = fromLast ? part.parts.slice(0).reverse() : part.parts;
+    for (const subPart of parts) {
+      log(' subPart.contentType: ', subPart.contentType);
+      switch (subPart.contentType.replace(/\s*;.*$/, '')) {
         case 'multipart/alternative':
-          for (const subPart of part.parts) {
-            switch (subPart.contentType.replace(/\s*;.*$/, '')) {
-              case 'text/html':
-                lastMultipartHTML = subPart.body;
-                break;
-
-              case 'text/plain':
-                lastMultipartPlaintext = subPart.body;
-                break;
-
-              default:
-                break;
-            }
-          }
-          break;
-
         case 'multipart/mixed':
-          for (const subPart of part.parts) {
-            switch (subPart.contentType.replace(/\s*;.*$/, '')) {
-              case 'text/html':
-                if (!subPart.name)
-                  lastHTML = subPart.body;
-                break;
-
-              case 'text/plain':
-                if (!subPart.name)
-                  lastPlaintext = subPart.body;
-                break;
-
-              default:
-                break;
-            }
-          }
+          const result = this._collectPlaintextAndHTMLBodies(subPart);
+          if (!lastPlaintext && result.lastPlaintext)
+            lastPlaintext = result.lastPlaintext;
+          if (!lastHTML && result.lastHTML)
+            lastHTML = result.lastHTML;
           break;
 
         case 'text/plain':
-          if (!part.name)
-            lastPlaintext = part.body;
+          if (!subPart.name)
+            lastPlaintext = subPart.body;
           break;
 
         case 'text/html':
-          if (!part.name)
-            lastHTML = part.body;
+          if (!subPart.name)
+            lastHTML = subPart.body;
           break;
 
         default:
           break;
       }
     }
-    const bodyText = lastMultipartHTML ? Format.htmlToPlaintext(lastMultipartHTML) : lastMultipartPlaintext || lastPlaintext;
-    return (bodyText || lastHTML && Format.htmlToPlaintext(lastHTML) || '').replace(/\r\n?/g, '\n').trim();
+    log(' _collectPlaintextAndHTMLBodies result: ', { part, fromLast, lastPlaintext, lastHTML });
+    return { lastPlaintext, lastHTML };
   }
 
   /*
