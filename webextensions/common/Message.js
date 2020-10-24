@@ -124,12 +124,12 @@ export class Message {
 
         case 'text/plain':
           if (!subPart.name)
-            lastPlaintext = subPart.body;
+            lastPlaintext = subPart.body.replace(/\r\n|\r/g, '\n');
           break;
 
         case 'text/html':
           if (!subPart.name)
-            lastHTML = subPart.body;
+            lastHTML = subPart.body.replace(/\r\n|\r/g, '\n');
           break;
 
         default:
