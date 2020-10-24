@@ -572,10 +572,10 @@ export class IssueEditor {
     field.disabled = true;
   }
   shouldUseNoQuotationVersion(field) {
-    return (
-      (field.id == 'description' || field.id == 'notes') &&
-      field.closest('.grid-row').querySelector('.deleteLastQuotationBlockFromBody').checked
-    );
+    if (field.id != 'description' && field.id != 'notes')
+      return false;
+    const checkbox = field.closest('.grid-row').querySelector('.deleteLastQuotationBlockFromBody');
+    return !!(checkbox && checkbox.checked);
   }
 
   onChangeFieldValue(field) {
