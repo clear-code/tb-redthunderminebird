@@ -101,17 +101,16 @@ export class Message {
     log('getBody for ', this.raw);
     const full = await this.getFull();
     log(' full => ', full);
-    const { lastPlaintext, lastHTML } = this._collectPlaintextAndHTMLBodies(full, { fromLast: true });
+    const { lastPlaintext, lastHTML } = this._collectPlaintextAndHTMLBodies(full);
     const bodyText = (lastHTML && Format.htmlToPlaintext(lastHTML) || lastPlaintext).replace(/\r\n?/g, '\n').trim();
     log(' bodyText: ', bodyText);
     return bodyText;
   }
-  _collectPlaintextAndHTMLBodies(part, { fromLast } = {}) {
+  _collectPlaintextAndHTMLBodies(part) {
     log(' _collectPlaintextAndHTMLBodies: ', { part, fromLast });
     let lastPlaintext = '';
     let lastHTML;
-    const parts = fromLast ? part.parts.slice(0).reverse() : part.parts;
-    for (const subPart of parts) {
+    for (const subPart of part.parts.slice(0).reverse()) {
       log(' subPart.contentType: ', subPart.contentType);
       switch (subPart.contentType.replace(/\s*;.*$/, '')) {
         case 'multipart/alternative':
