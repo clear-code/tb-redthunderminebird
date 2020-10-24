@@ -19,6 +19,7 @@
   resize: vertical;
 }
 
-#description:not(.shown) {
+#description:not(.shown),
+#description:not(.shown) + div {
   display: none;
 }
