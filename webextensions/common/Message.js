@@ -107,7 +107,7 @@ export class Message {
     return bodyText;
   }
   _collectPlaintextAndHTMLBodies(part) {
-    log(' _collectPlaintextAndHTMLBodies: ', { part, fromLast });
+    log(' _collectPlaintextAndHTMLBodies: ', { part });
     let lastPlaintext = '';
     let lastHTML;
     for (const subPart of part.parts.slice(0).reverse()) {
@@ -136,7 +136,7 @@ export class Message {
           break;
       }
     }
-    log(' _collectPlaintextAndHTMLBodies result: ', { part, fromLast, lastPlaintext, lastHTML });
+    log(' _collectPlaintextAndHTMLBodies result: ', { part, lastPlaintext, lastHTML });
     return { lastPlaintext, lastHTML };
   }
 
