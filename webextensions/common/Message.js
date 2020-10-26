@@ -104,7 +104,7 @@ export class Message {
     const { lastPlaintext, lastHTML } = this._collectPlaintextAndHTMLBodies(full);
     const HTMLBody = lastHTML && Format.htmlToPlaintext(lastHTML, { withoutQuotation });
     const plaintextBody = withoutQuotation ?
-      lastPlaintext.split('\n').reverse().join('\n').replace(/(\n|^)(?:>(?: .*)?\n)+\s*On.+, .+ wrote:\n/, '$1').split('\n').reverse().join('\n') :
+      lastPlaintext.split('\n').reverse().join('\n').replace(/(\n|^)(?:>(?:.*)?\n)+\s*On.+, .+ wrote:\n/, '$1').split('\n').reverse().join('\n') :
       lastPlaintext;
     const body = (HTMLBody || plaintextBody).replace(/\r\n?/g, '\n').trim();
     log(' body: ', { body, HTMLBody, plaintextBody });
