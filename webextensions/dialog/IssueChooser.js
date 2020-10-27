@@ -56,6 +56,8 @@ export class IssueChooser {
         const radio = this.mIssuesContainer.querySelector(`input[type="radio"][value="${id}"]`);
         if (radio) {
           radio.checked = true;
+          this.onIssueChange();
+          return;
         }
         else {
           const issue = await this.mRedmine.getIssue(this.mIssueIdField.value);
@@ -63,6 +65,7 @@ export class IssueChooser {
             this.addRowForIssue(issue);
             this.mIssuesContainer.querySelector(`input[type="radio"][value="${id}"]`).checked = true;
             this.onIssueChange();
+            return;
           }
         }
         this.onChanged.dispatch();
