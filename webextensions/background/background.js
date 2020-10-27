@@ -31,7 +31,7 @@ const SUBMENU_COMMON_PARAMS = {
   ...MENU_COMMON_PARAMS,
   parentId: 'redmine',
   async shouldVisible({ info, tab, message, redmine } = {}) {
-    return !!(message && MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine })); // eslint-disable-line no-use-before-define
+    return !!(message && await MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine })); // eslint-disable-line no-use-before-define
   }
 };
 const MENU_ITEMS = {
@@ -94,7 +94,7 @@ const MENU_ITEMS = {
       );
     },
     async shouldVisible({ info, tab, message, redmine } = {}) {
-      return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
+      return configs.context_mappedProject && await MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
     }
   },
 
@@ -120,7 +120,7 @@ const MENU_ITEMS = {
       );
     },
     async shouldVisible({ info, tab, message, redmine }) {
-      return configs.context_mappedProject && MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
+      return configs.context_mappedProject && await MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
     }
   }
 };
