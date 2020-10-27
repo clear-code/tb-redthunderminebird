@@ -131,6 +131,15 @@ export class IssueChooser {
       return;
     this.mDescriptionField.value = checkedRadio.$issue.description.replace(/\r\n?/g, '\n');
     this.mIssueIdField.value = checkedRadio.value;
+    DialogCommon.updateAutoGrowFieldSize(this.mIssueIdField);
+
+    const containerBox = this.mIssuesContainer.getBoundingClientRect();
+    const itemBox      = checkedRadio.closest('li').getBoundingClientRect();
+    if (containerBox.top > itemBox.top + itemBox.height)
+      this.mIssuesContainer.scrollBy(0, itemBox.top - containerBox.top - itemBox.height);
+    else if (containerBox.top + containerBox.height < itemBox.top)
+      this.mIssuesContainer.scrollBy(0, itemBox.top - containerBox.top + itemBox.height);
+
     this.onChanged.dispatch(checkedRadio.$issue);
   }
 
