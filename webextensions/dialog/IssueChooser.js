@@ -172,12 +172,10 @@ export class IssueChooser {
     if (!row)
       return;
 
-    const containerBox = this.mIssuesContainer.getBoundingClientRect();
-    const rowBox       = row.getBoundingClientRect();
-    if (containerBox.top > rowBox.top + rowBox.height)
-      this.mIssuesContainer.scrollBy(0, rowBox.top - containerBox.top - rowBox.height);
-    else if (containerBox.top + containerBox.height < rowBox.top)
-      this.mIssuesContainer.scrollBy(0, rowBox.top - containerBox.top + rowBox.height);
+    row.scrollIntoView({
+      behavior: 'smooth',
+      block:    'nearest'
+    });
   }
 
   async fetchMore() {
