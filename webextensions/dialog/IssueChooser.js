@@ -51,7 +51,20 @@ export class IssueChooser {
     this.mIssueIdField.addEventListener('input', _event => {
       if (this.mIssueIdField.throttled)
         clearTimeout(this.mIssueIdField.throttled);
-      this.mIssueIdField.throttled = setTimeout(() => {
+      this.mIssueIdField.throttled = setTimeout(async () => {
+        const id = this.mIssueIdField.value;
+        const radio = this.mIssuesContainer.querySelector(`input[type="radio"][value="${id}"]`);
+        if (radio) {
+          radio.checked = true;
+        }
+        else {
+          const issue = await this.mRedmine.getIssue(this.mIssueIdField.value);
+          if (issue.id) {
+            this.addRowForIssue(issue);
+            this.mIssuesContainer.querySelector(`input[type="radio"][value="${id}"]`).checked = true;
+            this.onIssueChange();
+          }
+        }
         this.onChanged.dispatch();
       }, 150);
     });
@@ -150,23 +163,26 @@ export class IssueChooser {
       limit:  10
     });
     for (const issue of issues) {
-      appendContents(this.mIssuesContainer, `
-        <li class="flex-box column"
-            title=${JSON.stringify(sanitizeForHTMLText(issue.subject))}
-           ><label class="flex-box row"
-                  ><input type="radio"
-                          name="issueIds"
-                          value=${JSON.stringify(sanitizeForHTMLText(issue.id))}
-                          ${issue.id == this.mDefaultId ? 'checked' : ''}
-                         ><span class="subject"
-                               >#${sanitizeForHTMLText(issue.id)} ${sanitizeForHTMLText(issue.subject)}</span></label></li>
-      `);
-      this.mIssuesContainer.lastChild.querySelector('input[type="radio"]').$issue = issue;
-      DialogCommon.updateAutoGrowFieldSize(this.mIssuesContainer.lastChild.querySelector('input[type="number"].issue-id'));
+      this.addRowForIssue(issue);
     }
     this.mLastOffset += issues.length;
 
     if ((this.issue || {}).id != (lastIssue || {}).id)
       this.onIssueChange();
+  }
+
+  addRowForIssue(issue) {
+    appendContents(this.mIssuesContainer, `
+      <li class="flex-box column"
+          title=${JSON.stringify(sanitizeForHTMLText(issue.subject))}
+         ><label class="flex-box row"
+                ><input type="radio"
+                        name="issueIds"
+                        value=${JSON.stringify(sanitizeForHTMLText(issue.id))}
+                        ${issue.id == this.mDefaultId ? 'checked' : ''}
+                       ><span class="subject"
+                             >#${sanitizeForHTMLText(issue.id)} ${sanitizeForHTMLText(issue.subject)}</span></label></li>
+    `);
+    this.mIssuesContainer.lastChild.querySelector('input[type="radio"]').$issue = issue;
   }
 }
