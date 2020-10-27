@@ -297,6 +297,14 @@ browser.menus.onHidden.addListener(async () => {
     modificationCount++;
   }
 
+  if (MENU_ITEMS.issueSubject.title != MENU_ITEMS.issueSubject.defaultTitle) {
+    MENU_ITEMS.issueSubject.title = MENU_ITEMS.issueSubject.defaultTitle;
+    browser.menus.update('issueSubject', {
+      title: MENU_ITEMS.issueSubject.defaultTitle
+    });
+    modificationCount++;
+  }
+
   if (modificationCount > 0)
     browser.menus.refresh();
 });
