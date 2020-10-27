@@ -80,6 +80,24 @@
             <label>__MSG_dialog_updateIssue_relations_label__</label>
             <div class="grid-column" id="relations"></div>
           </div>
+          <div class="grid-row" data-field-row="timeEntry">
+            <label>__MSG_dialog_updateIssue_timeEntry_label__</label>
+            <span class="grid-column">
+              <span class="flex-box row">
+                <label><input id="timeEntryHours"
+                              class="auto-grow"
+                              type="text">
+                       __MSG_dialog_updateIssue_timeEntry_hours_suffix__</label>
+                <input id="timeEntryComments"
+                       class="flex-box column"
+                       type="text"
+                       placeholder="__MSG_dialog_updateIssue_timeEntry_comments_label__"></label>
+                <label>__MSG_dialog_updateIssue_timeEntry_activity_label__
+                       <select id="timeEntryActivity"
+                               data-value-type="integer"></select></label>
+              </span>
+            </span>
+          </div>
         </div>
       </div>
       <div class="dialog-buttons">

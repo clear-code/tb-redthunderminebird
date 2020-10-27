@@ -29,6 +29,6 @@ label + label {
 
 input.auto-grow {
   --base-width: 3ch;
-  --offset-width: 0;
+  --offset-width: 1em;
   width: calc(var(--base-width, 5ch) + var(--offset-width, 0));
 }

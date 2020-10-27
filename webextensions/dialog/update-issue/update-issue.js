@@ -173,7 +173,10 @@ async function updateIssue() {
     }
 
     log('successfully updated');
-    await mIssueEditor.saveRelations();
+    await Promise.all([
+      mIssueEditor.saveRelations(),
+      mIssueEditor.saveTimeEntry()
+    ]);
     return mRedmine.getIssue(updateParams.id);
   }
   catch(error) {

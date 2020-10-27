@@ -469,6 +469,46 @@ export class Redmine {
     return statuses;
   }
 
+  async saveTimeEntry(timeEntry) {
+    log('save timeEntry:', timeEntry, this.accountId);
+    try {
+      const data = {
+        time_entry: {
+          issue_id    : parseInt(timeEntry.issue_id),
+          activity_id : parseInt(timeEntry.activity_id),
+          hours       : String(timeEntry.hours),
+          comments    : String(timeEntry.comments),
+        }
+      };
+      return this._request({
+        method: 'POST',
+        path:   `time_entries.json`,
+        data,
+        response: {}
+      });
+    }
+    catch(error) {
+      log(`Redmine.timeEntry for ${this.accountId}: ` + String(error));
+      return {};
+    }
+  }
+
+  async getTimeEntryActivities() {
+    log('timeEntryActivities ', this.accountId);
+    const response = await Cache.getAndFallback(
+      `redmine[${this.accountId}]:timeEntryActivities`,
+      () => {
+        return this._request({
+          path:     'enumerations/time_entry_activities.json',
+          response: {
+            'time_entry_activities':[]
+          }
+        });
+      }
+    );
+    return response.time_entry_activities;
+  }
+
   async getCustomFields() {
     log('customFields ', this.accountId);
 

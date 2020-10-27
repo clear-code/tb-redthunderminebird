@@ -37,6 +37,9 @@ export class IssueEditor {
     this.mDueDateEnabled    = document.querySelector('#dueDateEnabled');
     this.mDueDateField      = document.querySelector('#dueDate');
     this.mFieldsContainer   = document.querySelector('#fields');
+    this.mTimeEntryHoursField       = document.querySelector('#timeEntryHours');
+    this.mTimeEntryActivitySelector = document.querySelector('#timeEntryActivity');
+    this.mTimeEntryCommentsField    = document.querySelector('#timeEntryComments');
 
     DialogCommon.updateAutoGrowFieldSize(this.mIssueField);
     DialogCommon.updateAutoGrowFieldSize(this.mParentIssueField);
@@ -214,6 +217,8 @@ export class IssueEditor {
       });
     }
 
+    this.initTimeEntry();
+
     const resizeObserver = new ResizeObserver(_entries => {
       this.sizeToContent();
     });
@@ -361,6 +366,25 @@ export class IssueEditor {
     if (row)
       row.classList.toggle('hidden', members.length == 0 || !this.isFieldVisible('watcher'));
     return members;
+  }
+
+  async initTimeEntry() {
+    const row = document.querySelector('[data-field-row="timeEntry"]');
+    if (!row)
+      return;
+
+    DialogCommon.updateAutoGrowFieldSize(this.mTimeEntryHoursField);
+
+    const activities = await this.mRedmine.getTimeEntryActivities().catch(error => []);
+    this.initSelect(
+      this.mTimeEntryActivitySelector,
+      activities,
+      activity => ({ label: activity.name, value: activity.id })
+    );
+    const defaultActivity = activities.find(activity => activity.is_default);
+    if (defaultActivity)
+      this.mTimeEntryActivitySelector.value = defaultActivity.id;
+    row.classList.toggle('hidden', activities.length == 0 || !this.isFieldVisible('timeEntry'));
   }
 
   async reinitFieldsForProject() {
@@ -716,9 +740,25 @@ export class IssueEditor {
     this.params.id = issueId;
   }
 
-  saveRelations() {
+  async saveRelations() {
     if (this.params.id && this.mRelationsField)
       return this.mRelationsField.save({ issueId: this.params.id });
+  }
+
+  async saveTimeEntry() {
+    if (!this.params.id ||
+        !this.mTimeEntryHoursField)
+      return;
+
+    const timeEntry = {
+      issue_id:    this.params.id,
+      activity_id: this.mTimeEntryActivitySelector.value,
+      hours:       this.mTimeEntryHoursField.value,
+      comments:    this.mTimeEntryCommentsField.value,
+    };
+    console.log('timeEntry ', timeEntry);
+    if (timeEntry.activity_id && timeEntry.hours)
+      return this.mRedmine.saveTimeEntry(timeEntry);
   }
 
   sizeToContent() {

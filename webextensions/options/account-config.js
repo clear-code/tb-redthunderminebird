@@ -167,6 +167,10 @@ appendContents(mDialog.contents, `
                     data-field-name="notes"
                     data-lock-config-key="accountVisibleFields">
              ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_updateIssue_notes_label'))}</label>
+      <label><input type="checkbox" class="visible-field"
+                    data-field-name="timeEntry"
+                    data-lock-config-key="accountVisibleFields">
+             ${sanitizeForHTMLText(browser.i18n.getMessage('dialog_updateIssue_timeEntry_label'))}</label>
     </p>
   </div>
   </section>

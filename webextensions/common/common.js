@@ -38,6 +38,7 @@ export const configs = new Configs({
   fieldVisibility_other: true,
   fieldVisibility_issue: true,
   fieldVisibility_notes: true,
+  fieldVisibility_timeEntry: true,
   defaultDueDate: 7,
   defaultTitleCleanupPattern: '((fwd:)|(re:))\s?',
   //defaultUploadAttachments: true,
