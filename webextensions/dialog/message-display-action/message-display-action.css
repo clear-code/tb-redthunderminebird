@@ -1,0 +1,62 @@
+/*
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*/
+
+@import url(/resources/dialog.css);
+
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul li {
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  background: transparent;
+  border: 0 none;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  font: menu;
+  margin: 0;
+  padding: 0.15em 1em;
+  text-align: left;
+}
+
+button:not([disabled]):hover,
+button:not([disabled]):focus {
+  color: HighlightText;
+  background: Highlight;
+}
+
+#issueInfo {
+  border-bottom: 1px solid;
+  display: flex;
+  flex-direction: row;
+  margin: 0 1em 0.5em;
+  opacity: 0.5;
+  padding: 0.25em 0 0.5em;
+}
+
+#issueInfo > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

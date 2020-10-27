@@ -301,7 +301,7 @@ browser.menus.onHidden.addListener(async () => {
     browser.menus.refresh();
 });
 
-browser.menus.onClicked.addListener(async (info, tab) => {
+async function onMenuClick(info, tab) {
   const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
   const message = messages && messages.length ? messages[0] : null;
   const accountId = (info.selectedFolder && info.selectedFolder.accountId) || (message && message.accountId);
@@ -364,6 +364,71 @@ browser.menus.onClicked.addListener(async (info, tab) => {
         accountMappedFolders[accountId] = mappedFolders;
         configs.accountMappedFolders = accountMappedFolders;
       }
+      break;
+  }
+}
+browser.menus.onClicked.addListener(onMenuClick);
+
+browser.runtime.onMessage.addListener((message, _sender) => {
+  switch (message && message.type) {
+    case Constants.TYPE_GET_DISPLAYED_MESSAGE_STATUS:
+      return browser.mailTabs.query({ windowId: browser.windows.WINDOW_ID_CURRENT }).then(async tabs => {
+        if (tabs.length == 0)
+          return null;
+
+        const tab        = tabs[0];
+        const rawMessage = await browser.messageDisplay.getDisplayedMessage(tab.id);
+        const message    = new Message(rawMessage);
+        const accountId  = message.accountId;
+        const redmine    = new Redmine({ accountId });
+        const menuStatus = {};
+
+        const tasks = [];
+        const info  = {
+          contexts: ['message_list'],
+          selectedMessages: { messages: [rawMessage] }
+        };
+        for (const [id, item] of Object.entries(MENU_ITEMS)) {
+          tasks.push((async () => {
+            const [enabled, visible] = await Promise.all([
+              typeof item.shouldEnable == 'function' ? item.shouldEnable({ info, tab, message, redmine }) : true,
+              typeof item.shouldVisible == 'function' ? item.shouldVisible({ info, tab, message, redmine }) : true
+            ]);
+            menuStatus[id] = {
+              enabled: enabled && (await MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine })),
+              visible
+            };
+          })());
+        }
+        const [issueId, ] = await Promise.all([
+          message.getIssueId(),
+          ...tasks
+        ]);
+
+        return {
+          message: rawMessage,
+          issueId,
+          menuStatus
+        };
+      });
+      break;
+
+    case Constants.TYPE_GET_ISSUE: {
+      const redmine = new Redmine({ accountId: message.accountId });
+      return redmine.getIssue(message.id);
+    };
+
+    case Constants.TYPE_DO_MESSAGE_COMMAND:
+      return browser.mailTabs.query({ windowId: browser.windows.WINDOW_ID_CURRENT }).then(async tabs => {
+        if (tabs.length == 0)
+          return null;
+        const info = {
+          menuItemId:       message.id,
+          contexts:         ['message_list'],
+          selectedMessages: { messages: [message.message] }
+        };
+        onMenuClick(info, tabs[0]);
+      });
       break;
   }
 });

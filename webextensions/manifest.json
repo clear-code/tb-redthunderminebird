@@ -19,6 +19,10 @@
     "page": "/options/options.html",
     "open_in_tab": true
   },
+  "message_display_action": {
+    "default_title": "__MSG_menu_redmine_label__",
+    "default_popup": "/dialog/message-display-action/message-display-action.html"
+  },
   "default_locale": "en",
   "applications": {
     "gecko": {
