@@ -11,7 +11,8 @@ import {
   sanitizeForHTMLText
 } from '/common/common.js';
 import { Redmine } from '/common/Redmine.js';
-import { IssueChooser, updateIdFieldSize } from '/dialog/IssueChooser.js';
+import * as DialogCommon from '/dialog/common.js';
+import { IssueChooser } from '/dialog/IssueChooser.js';
 import * as Dialog from '/extlib/dialog.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 
@@ -69,7 +70,6 @@ export class RelationsField {
         });
         if (issue) {
           issueIdField.value = issue.id;
-          updateIdFieldSize(issueIdField);
           issueSubjectField.value = issue.subject;
           this.validateFields();
         }
@@ -137,7 +137,7 @@ export class RelationsField {
           <option value="copied_to">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_copiedTo'))}</option>
           <option value="copied_from">${sanitizeForHTMLText(browser.i18n.getMessage('dialog_relations_type_copiedFrom'))}</option>
         </select>
-        <input class="related-issue-id issue-id" type="number" min="0" data-value-type="integer"
+        <input class="related-issue-id issue-id auto-grow" type="number" min="0" data-value-type="integer"
                value=${JSON.stringify(String(anotherIssueId || ''))}>
         <input class="related-issue-subject flex-box column" type="text" disabled="true">
         <label class="relation-delay-fields hidden"
@@ -157,7 +157,7 @@ export class RelationsField {
     this.showHideDelayFieldFor(select);
 
     const idField = row.querySelector('.related-issue-id');
-    updateIdFieldSize(idField);
+    DialogCommon.updateAutoGrowFieldSize(idField);
     this.onSizeChanged.dispatch();
 
     return this.fillSubjectFor(idField);

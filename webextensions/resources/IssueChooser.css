@@ -7,7 +7,7 @@
 
 input[type="number"].issue-id {
   text-align: right;
-  width: calc(var(--base-width, 5ch) + 2em);
+  --offset-width: 2em;
 }
 
 

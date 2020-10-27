@@ -36,3 +36,14 @@ browser.runtime.onMessage.addListener((message, sender) => {
       break;
   }
 });
+
+document.addEventListener('input', event => {
+  if (event.target.matches('input.auto-grow'))
+    updateAutoGrowFieldSize(event.target);
+});
+
+export function updateAutoGrowFieldSize(field) {
+  if (!field)
+    return;
+  field.style.setProperty('--base-width', `${Math.max(3, String(field.value).length)}ch`);
+}

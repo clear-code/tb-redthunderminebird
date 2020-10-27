@@ -14,7 +14,8 @@ import {
   sanitizeForHTMLText
 } from '/common/common.js';
 import { Redmine } from '/common/Redmine.js';
-import { IssueChooser, updateIdFieldSize } from '/dialog/IssueChooser.js';
+import * as DialogCommon from '/dialog/common.js';
+import { IssueChooser } from '/dialog/IssueChooser.js';
 import { FilesField } from '/dialog/FilesField.js';
 import { RelationsField } from '/dialog/RelationsField.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
@@ -37,8 +38,8 @@ export class IssueEditor {
     this.mDueDateField      = document.querySelector('#dueDate');
     this.mFieldsContainer   = document.querySelector('#fields');
 
-    updateIdFieldSize(this.mIssueField);
-    updateIdFieldSize(this.mParentIssueField);
+    DialogCommon.updateAutoGrowFieldSize(this.mIssueField);
+    DialogCommon.updateAutoGrowFieldSize(this.mParentIssueField);
 
     for (const row of document.querySelectorAll('[data-field-row]')) {
       row.classList.toggle('hidden', !this.isFieldVisible(row.dataset.fieldRow));
@@ -116,7 +117,7 @@ export class IssueEditor {
       const onIssueChanged = async () => {
         const issue = idField.value ? await this.mRedmine.getIssue(idField.value) : null;
         subjectField.value = issue && issue.subject || '';
-        updateIdFieldSize(idField);
+        DialogCommon.updateAutoGrowFieldSize(idField);
 
         switch (idField.dataset.field) {
           case 'id':
@@ -146,7 +147,7 @@ export class IssueEditor {
         });
         if (issue) {
           idField.value = issue.id;
-          updateIdFieldSize(idField);
+          DialogCommon.updateAutoGrowFieldSize(idField);
           subjectField.value = issue.subject;
           this.onChangeFieldValue(idField);
         }
@@ -395,7 +396,7 @@ export class IssueEditor {
 
     if (issue.parent) {
       this.mParentIssueField.value = issue.parent.id;
-      updateIdFieldSize(this.mParentIssueField);
+      DialogCommon.updateAutoGrowFieldSize(this.mParentIssueField);
       if (issue.parent.subject) {
         this.mParentIssueSubject.value = issue.parent.subject;
       }
