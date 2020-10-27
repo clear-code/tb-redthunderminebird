@@ -66,6 +66,7 @@ export const configs = new Configs({
   updateIssueDialogTop: null,
 
 
+  context_issueSubject: true,
   context_mappedProject: false,
 
 

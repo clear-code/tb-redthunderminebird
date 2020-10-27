@@ -165,7 +165,8 @@
 
   "config_menu_caption": { "message": "Context Menu" },
 
-  "config_context_mappedProject_label": { "message": "Activate \"Folder Mapping\" in context menus" },
+  "config_context_issueSubject_label": { "message": "Show linked issue information in the context menu" },
+  "config_context_mappedProject_label": { "message": "Activate \"Folder Mapping\" in the context menu" },
 
   "config_debug_caption": { "message": "Development" },
 

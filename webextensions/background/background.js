@@ -40,6 +40,9 @@ const MENU_ITEMS = {
     title: browser.i18n.getMessage('menu_redmine_label'),
     async shouldEnable({ redmine } = {}) {
       return !!(redmine.accountInfo.url && redmine.accountInfo.key);
+    },
+    async shouldVisible({ info, tab, message, redmine } = {}) {
+      return configs.context_issueSubject && await MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
     }
   },
   issueSubject: {
@@ -48,7 +51,10 @@ const MENU_ITEMS = {
       return false;
     },
     defaultTitle: browser.i18n.getMessage('menu_issueSubject_placeholder'),
-    title: browser.i18n.getMessage('menu_issueSubject_placeholder')
+    title: browser.i18n.getMessage('menu_issueSubject_placeholder'),
+    async shouldVisible({ info, tab, message, redmine } = {}) {
+      return configs.context_issueSubject && await MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
+    }
   },
   issueSubjectSeparator: {
     ...SUBMENU_COMMON_PARAMS,
