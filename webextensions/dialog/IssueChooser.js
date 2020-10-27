@@ -52,23 +52,8 @@ export class IssueChooser {
       if (this.mIssueIdField.throttled)
         clearTimeout(this.mIssueIdField.throttled);
       this.mIssueIdField.throttled = setTimeout(async () => {
-        const id = this.mIssueIdField.value;
-        const radio = this.mIssuesContainer.querySelector(`input[type="radio"][value="${id}"]`);
-        if (radio) {
-          radio.checked = true;
-          this.onIssueChange();
-          return;
-        }
-        else {
-          const issue = await this.mRedmine.getIssue(this.mIssueIdField.value);
-          if (issue.id) {
-            this.addRowForIssue(issue);
-            this.mIssuesContainer.querySelector(`input[type="radio"][value="${id}"]`).checked = true;
-            this.onIssueChange();
-            return;
-          }
-        }
-        this.onChanged.dispatch();
+        delete this.mIssueIdField.throttled;
+        this.onIssueIdInput();
       }, 150);
     });
     this.mIssuesContainer.addEventListener('change', _event => {
@@ -97,7 +82,18 @@ export class IssueChooser {
     range.selectNodeContents(this.mIssuesContainer);
     range.deleteContents();
     range.detach();
+    if (this.mDefaultId) {
+      this.mIssueIdField.value = this.mDefaultId;
+      await this.onIssueIdInput();
+    }
     await this.fetchMore();
+    if (this.mDefaultId) {
+      this.ensureRowVisible(this.getRowByIssueId(this.mDefaultId));
+    }
+
+    if (!this.mDialog)
+      return;
+
     this.mDialog.show();
     return new Promise((resolve, _reject) => {
       const onChose = issue => {
@@ -141,6 +137,26 @@ export class IssueChooser {
     return parseInt(this.mIssueIdField.value || 0);
   }
 
+  async onIssueIdInput() {
+    const id = this.mIssueIdField.value;
+    const radio = this.mIssuesContainer.querySelector(`input[type="radio"][value="${id}"]`);
+    if (radio) {
+      radio.checked = true;
+      this.onIssueChange();
+      return;
+    }
+    else {
+      const issue = await this.mRedmine.getIssue(this.mIssueIdField.value);
+      if (issue.id) {
+        this.addRowForIssue(issue);
+        this.mIssuesContainer.querySelector(`input[type="radio"][value="${id}"]`).checked = true;
+        this.onIssueChange();
+        return;
+      }
+    }
+    this.onChanged.dispatch();
+  }
+
   onIssueChange() {
     const checkedRadio = this.mIssuesContainer.querySelector('input[type="radio"]:checked');
     if (!checkedRadio)
@@ -148,15 +164,20 @@ export class IssueChooser {
     this.mDescriptionField.value = checkedRadio.$issue.description.replace(/\r\n?/g, '\n');
     this.mIssueIdField.value = checkedRadio.value;
     DialogCommon.updateAutoGrowFieldSize(this.mIssueIdField);
+    this.ensureRowVisible(checkedRadio.closest('li'));
+    this.onChanged.dispatch(checkedRadio.$issue);
+  }
+
+  ensureRowVisible(row) {
+    if (!row)
+      return;
 
     const containerBox = this.mIssuesContainer.getBoundingClientRect();
-    const itemBox      = checkedRadio.closest('li').getBoundingClientRect();
-    if (containerBox.top > itemBox.top + itemBox.height)
-      this.mIssuesContainer.scrollBy(0, itemBox.top - containerBox.top - itemBox.height);
-    else if (containerBox.top + containerBox.height < itemBox.top)
-      this.mIssuesContainer.scrollBy(0, itemBox.top - containerBox.top + itemBox.height);
-
-    this.onChanged.dispatch(checkedRadio.$issue);
+    const rowBox       = row.getBoundingClientRect();
+    if (containerBox.top > rowBox.top + rowBox.height)
+      this.mIssuesContainer.scrollBy(0, rowBox.top - containerBox.top - rowBox.height);
+    else if (containerBox.top + containerBox.height < rowBox.top)
+      this.mIssuesContainer.scrollBy(0, rowBox.top - containerBox.top + rowBox.height);
   }
 
   async fetchMore() {
@@ -165,16 +186,29 @@ export class IssueChooser {
       offset: this.mLastOffset,
       limit:  10
     });
+    let firstAddedRow;
     for (const issue of issues) {
-      this.addRowForIssue(issue);
+      const row = this.addRowForIssue(issue);
+      if (row && !firstAddedRow)
+        firstAddedRow = row;
     }
     this.mLastOffset += issues.length;
+
+    if (firstAddedRow)
+      this.ensureRowVisible(firstAddedRow);
 
     if ((this.issue || {}).id != (lastIssue || {}).id)
       this.onIssueChange();
   }
 
+  getRowByIssueId(id) {
+    return this.mIssuesContainer.querySelector(`input[type="radio"][value=${JSON.stringify(sanitizeForHTMLText(id))}]`);
+  }
+
   addRowForIssue(issue) {
+    if (this.getRowByIssueId(issue.id))
+      return null;
+
     appendContents(this.mIssuesContainer, `
       <li class="flex-box column"
           title=${JSON.stringify(sanitizeForHTMLText(issue.subject))}
@@ -186,6 +220,8 @@ export class IssueChooser {
                        ><span class="subject"
                              >#${sanitizeForHTMLText(issue.id)} ${sanitizeForHTMLText(issue.subject)}</span></label></li>
     `);
-    this.mIssuesContainer.lastChild.querySelector('input[type="radio"]').$issue = issue;
+    const row = this.mIssuesContainer.lastChild;
+    row.querySelector('input[type="radio"]').$issue = issue;
+    return row;
   }
 }
