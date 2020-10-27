@@ -420,6 +420,7 @@ browser.runtime.onMessage.addListener((message, _sender) => {
         ]);
 
         return {
+          available: !!(redmine.accountInfo.url && redmine.accountInfo.key),
           message: rawMessage,
           issueId,
           menuStatus

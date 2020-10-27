@@ -14,6 +14,8 @@ browser.runtime.sendMessage({ type: Constants.TYPE_GET_DISPLAYED_MESSAGE_STATUS 
   if (!response)
     return;
 
+  document.documentElement.classList.toggle('disabled', !response.available);
+  if (response.available) {
   const message = new Message(response.message);
   for (const [id, status] of Object.entries(response.menuStatus)) {
     const button = document.getElementById(id);
@@ -45,4 +47,5 @@ browser.runtime.sendMessage({ type: Constants.TYPE_GET_DISPLAYED_MESSAGE_STATUS 
     `#${issue.id} ${issue.subject}` :
     browser.i18n.getMessage('menu_issueSubject_notFound');
   subject.setAttribute('title', subject.firstChild.textContent);
+  }
 });

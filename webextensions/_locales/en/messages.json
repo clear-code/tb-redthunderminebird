@@ -23,6 +23,8 @@
   "menu_mappedProject_unmapped_label": { "message": "(Use the Default Project)" },
   "menu_mappedProject_noProject_label": { "message": "No Available Project" },
 
+  "menu_unavailable_label": { "message": "No Redmine configuration for this account" },
+
 
   "dialog_chooseIssue_title_general": { "message": "Choose an issue" },
   "dialog_chooseIssue_title_parent": { "message": "Choose the parent issue" },

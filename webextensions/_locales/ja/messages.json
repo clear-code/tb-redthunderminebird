@@ -23,6 +23,8 @@
   "menu_mappedProject_unmapped_label": { "message": "(初期値に従う)" },
   "menu_mappedProject_noProject_label": { "message": "プロジェクトがありません" },
 
+  "menu_unavailable_label": { "message": "このアカウントにはRedmineの設定がありません" },
+
 
   "dialog_chooseIssue_title_general": { "message": "チケット選択" },
   "dialog_chooseIssue_title_parent": { "message": "親チケットを選択" },

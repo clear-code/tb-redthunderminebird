@@ -6,6 +6,11 @@
 
 @import url(/resources/dialog.css);
 
+:root:not(.disabled) body > #unavailableMessage,
+:root.disabled body > *:not(#unavailableMessage) {
+  display: none;
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -59,4 +64,9 @@ button:not([disabled]):focus {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+#unavailableMessage {
+  margin: 0.5em 1em;
+  padding: 0;
 }
