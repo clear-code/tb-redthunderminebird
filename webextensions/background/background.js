@@ -42,6 +42,18 @@ const MENU_ITEMS = {
       return !!(redmine.accountInfo.url && redmine.accountInfo.key);
     }
   },
+  issueSubject: {
+    ...SUBMENU_COMMON_PARAMS,
+    shouldEnable() {
+      return false;
+    },
+    defaultTitle: browser.i18n.getMessage('menu_issueSubject_placeholder'),
+    title: browser.i18n.getMessage('menu_issueSubject_placeholder')
+  },
+  issueSubjectSeparator: {
+    ...SUBMENU_COMMON_PARAMS,
+    type: 'separator'
+  },
   openWebUI: {
     ...SUBMENU_COMMON_PARAMS,
     title: browser.i18n.getMessage('menu_openWebUI_label')
@@ -161,13 +173,30 @@ browser.menus.onShown.addListener(async (info, tab) => {
     })());
   }
 
-  if (MENU_ITEMS.mappedProject.shouldVisible(info, tab, message) ||
-      MENU_ITEMS.mappedProjectSub.shouldVisible(info, tab, message))
+  Promise.all([
+    MENU_ITEMS.mappedProject.shouldVisible(info, tab, message),
+    MENU_ITEMS.mappedProjectSub.shouldVisible(info, tab, message)
+  ]).then(([topLevelVisible, subMenuVisible]) => {
+    if (!topLevelVisible && !subMenuVisible)
+      return;
     buildProjectsList({
       info,
       message,
       parentId: info.contexts.includes('message_list') ? 'mappedProjectSub' : 'mappedProject',
       redmine
+    });
+  });
+
+  if (message)
+    message.getIssueId().then(async id => {
+      const issue = await redmine.getIssue(id);
+      MENU_ITEMS.issueSubject.title = issue && issue.id ?
+        browser.i18n.getMessage('menu_issueSubject_formatted', [issue.id, issue.subject]) :
+        browser.i18n.getMessage('menu_issueSubject_notFound');
+      browser.menus.update('issueSubject', {
+        title: MENU_ITEMS.issueSubject.title
+      });
+      browser.menus.refresh();
     });
 
   await Promise.all(tasks);

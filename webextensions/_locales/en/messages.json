@@ -5,6 +5,14 @@
 
   "menu_redmine_label": { "message": "Redmine" },
 
+  "menu_issueSubject_placeholder": { "message": "…" },
+  "menu_issueSubject_notFound":    { "message": "No linked issue" },
+  "menu_issueSubject_formatted":   { "message": "#$ID$ $SUBJECT$",
+    "placeholders": {
+      "id":      { "content": "$1", "example": "123" },
+      "subject": { "content": "$2", "example": "Subject" }
+    }},
+
   "menu_openWebUI_label": { "message": "Open Web UI with subject and body" },
   "menu_linkToIssue_label": { "message": "Link to existing issue" },
   "menu_createIssue_label": { "message": "Create new issue" },
