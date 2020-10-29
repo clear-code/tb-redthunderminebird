@@ -67,6 +67,9 @@ export const configs = new Configs({
 
 
   contextMenuType: Constants.CONTEXT_MENU_ALL_COMMANDS,
+  contextCommand_noProject: 'mappedProject',
+  contextCommand_noIssue:   'createIssue',
+  contextCommand_hasIssue:  'updateIssue',
   context_issueSubject: true,
   context_mappedProject: false,
 

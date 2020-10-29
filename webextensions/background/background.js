@@ -90,36 +90,55 @@ const MENU_ITEMS = {
     }
   },
 
-  createIssue_contextual: {
+
+  topLevel_openWebUI: {
+    ...MENU_COMMON_PARAMS,
+    title: browser.i18n.getMessage('menu_openWebUI_label'),
+    async shouldEnable({ info, tab, message, redmine } = {}) {
+      return MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
+    },
+    async shouldVisible({ message, redmine } = {}) {
+      return configs[`contextCommand_${await getContext({ message, redmine })}`] == 'openWebUI';
+    }
+  },
+  topLevel_linkToIssue: {
+    ...MENU_COMMON_PARAMS,
+    title: browser.i18n.getMessage('menu_linkToIssue_label'),
+    async shouldEnable({ info, tab, message, redmine } = {}) {
+      return MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
+    },
+    async shouldVisible({ message, redmine } = {}) {
+      return configs[`contextCommand_${await getContext({ message, redmine })}`] == 'linkToIssue';
+    }
+  },
+  topLevel_createIssue: {
     ...MENU_COMMON_PARAMS,
     title: browser.i18n.getMessage('menu_createIssue_label'),
     async shouldEnable({ info, tab, message, redmine } = {}) {
-      return await MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
+      return MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
     },
-    async shouldVisible({ info, tab, message, redmine } = {}) {
-      return !!(
-        configs.contextMenuType == Constants.CONTEXT_MENU_CONTEXTUAL &&
-        message &&
-        message.getProjectId() &&
-        !(await message.getIssueId()) &&
-        await MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine })
-      );
+    async shouldVisible({ message, redmine } = {}) {
+      return configs[`contextCommand_${await getContext({ message, redmine })}`] == 'createIssue';
     }
   },
-  updateIssue_contextual: {
+  topLevel_updateIssue: {
     ...MENU_COMMON_PARAMS,
     title: browser.i18n.getMessage('menu_updateIssue_label'),
     async shouldEnable({ info, tab, message, redmine } = {}) {
-      return await MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
+      return MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
     },
-    async shouldVisible({ info, tab, message, redmine } = {}) {
-      return !!(
-        configs.contextMenuType == Constants.CONTEXT_MENU_CONTEXTUAL &&
-        message &&
-        message.getProjectId() &&
-        await message.getIssueId() &&
-        await MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine })
-      );
+    async shouldVisible({ message, redmine } = {}) {
+      return configs[`contextCommand_${await getContext({ message, redmine })}`] == 'updateIssue';
+    }
+  },
+  topLevel_openIssue: {
+    ...MENU_COMMON_PARAMS,
+    title: browser.i18n.getMessage('menu_openIssue_label'),
+    async shouldEnable({ info, tab, message, redmine } = {}) {
+      return MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
+    },
+    async shouldVisible({ message, redmine } = {}) {
+      return configs[`contextCommand_${await getContext({ message, redmine })}`] == 'openIssue';
     }
   },
 
@@ -132,17 +151,13 @@ const MENU_ITEMS = {
       return !!(
         await MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine }) &&
         (info.contexts.includes('folder_pane') ||
-         (configs.contextMenuType == Constants.CONTEXT_MENU_CONTEXTUAL &&
-          message &&
-          !message.getProjectId()))
+         configs[`contextCommand_${await getContext({ message, redmine })}`] == 'mappedProject')
       );
     },
     async shouldVisible({ info, tab, message, redmine } = {}) {
       return !!(
         (configs.context_mappedProject ||
-         (configs.contextMenuType == Constants.CONTEXT_MENU_CONTEXTUAL &&
-          message &&
-          !message.getProjectId())) &&
+         configs[`contextCommand_${await getContext({ message, redmine })}`] == 'mappedProject') &&
         await MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine })
       );
     }
@@ -178,6 +193,22 @@ const MENU_ITEMS = {
     }
   }
 };
+
+async function getContext({ message, redmine } = {}) {
+  if (configs.contextMenuType != Constants.CONTEXT_MENU_CONTEXTUAL ||
+      !redmine.accountInfo.url ||
+      !redmine.accountInfo.key ||
+      !message)
+    return '';
+
+  if (!message.getProjectId())
+    return 'noProject';
+
+  if (await message.getIssueId())
+    return 'hasIssue';
+
+  return 'noIssue';
+}
 
 async function getContextIssueId(info) {
   const messages = info.selectedMessages && info.selectedMessages.messages.map(message => new Message(message));
@@ -274,7 +305,7 @@ async function buildProjectsList({ info, message, parentId, redmine } = {}) {
   const projectId = mappedFolders[folder.path];
 
   const suffix   = parentId == 'mappedProject' ? '' : ':sub';
-  const contexts = parentId == 'mappedProject' ? ['folder_pane'] : ['message_list'];
+  const contexts = parentId == 'mappedProject' ? ['folder_pane', 'message_list'] : ['message_list'];
 
   mProjectItemIds.add(`map-to-project:${suffix}`);
   browser.menus.create({
@@ -368,7 +399,7 @@ async function onMenuClick(info, tab) {
   const message = messages && messages.length ? messages[0] : null;
   const accountId = (info.selectedFolder && info.selectedFolder.accountId) || (message && message.accountId);
   const redmine = new Redmine({ accountId });
-  switch (info.menuItemId) {
+  switch (info.menuItemId.replace(/^topLevel_/, '')) {
     case 'openWebUI': {
       if (!message)
         return;
@@ -387,14 +418,12 @@ async function onMenuClick(info, tab) {
       break;
 
     case 'createIssue':
-    case 'createIssue_contextual':
       if (!message)
         return;
       runTask(async () => createIssue(message, { tab, accountId }));
       break;
 
     case 'updateIssue':
-    case 'updateIssue_contextual':
       if (!message)
         return;
       runTask(async () => updateIssue(message, { tab, accountId, redmine }));
