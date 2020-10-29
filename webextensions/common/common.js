@@ -66,6 +66,7 @@ export const configs = new Configs({
   updateIssueDialogTop: null,
 
 
+  contextMenuType: Constants.CONTEXT_MENU_ALL_COMMANDS,
   context_issueSubject: true,
   context_mappedProject: false,
 

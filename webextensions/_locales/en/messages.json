@@ -167,6 +167,8 @@
 
   "config_menu_caption": { "message": "Context Menu" },
 
+  "config_contextMenuType_allCommands_label": { "message": "Show all commands always" },
+  "config_contextMenuType_contextual_label":  { "message": "Show only one command based on the context" },
   "config_context_issueSubject_label": { "message": "Show linked issue information in the context menu" },
   "config_context_mappedProject_label": { "message": "Activate \"Folder Mapping\" in the context menu" },
 

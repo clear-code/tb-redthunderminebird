@@ -168,6 +168,8 @@
 
   "config_menu_caption": { "message": "コンテキストメニュー" },
 
+  "config_contextMenuType_allCommands_label": { "message": "すべてのコマンドを表示する" },
+  "config_contextMenuType_contextual_label":  { "message": "場合に応じて適切なコマンドのみ表示する" },
   "config_context_issueSubject_label": { "message": "関連付けられているチケットの情報をコンテキストメニュー内に表示する" },
   "config_context_mappedProject_label": { "message": "コンテキストメニューからフォルダーマッピングを行えるようにする" },
 
