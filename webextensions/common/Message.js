@@ -119,6 +119,7 @@ export class Message {
       switch (subPart.contentType.replace(/\s*;.*$/, '')) {
         case 'multipart/alternative':
         case 'multipart/mixed':
+        case 'multipart/related':
           const result = this._collectPlaintextAndHTMLBodies(subPart);
           if (!lastPlaintext && result.lastPlaintext)
             lastPlaintext = result.lastPlaintext;
