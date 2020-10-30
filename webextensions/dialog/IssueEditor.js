@@ -204,6 +204,15 @@ export class IssueEditor {
         if (files && files.length > 0)
           this.mFilesField.addFiles(files);
       });
+      document.addEventListener('paste', event => {
+        const dt = event.clipboardData;
+        const files = dt.files;
+        if (files && files.length > 0) {
+          this.mFilesField.addFiles(files);
+          event.stopPropagation();
+          event.preventDefault();
+        }
+      }, { capture: true });
     }
 
     const accountInfo = this.mRedmine.accountInfo;
