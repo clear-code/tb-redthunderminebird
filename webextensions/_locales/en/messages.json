@@ -88,6 +88,7 @@
   "dialog_updateIssue_description_edit_label": { "message": "Edit" },
   "dialog_updateIssue_parentIssue_label": { "message": "Parent Issue" },
   "dialog_updateIssue_parentIssue_choose_label": { "message": "Choose…" },
+  "dialog_updateIssue_notes_label": { "message": "Notes" },
   "dialog_updateIssue_status_label": { "message": "Status" },
   "dialog_updateIssue_assigned_label": { "message": "Assigned to (owner only)" },
   "dialog_updateIssue_watcher_label": { "message": "Watcher to (owner only)" },
