@@ -39,7 +39,7 @@ export class FilesField {
 
   async addFiles(files) {
     const uploadableFiles = Array.from(files, file => ({
-      name:        file.name,
+      name:        file._uploadName || file.name,
       contentType: file.type,
       get promisedData() {
         if (this.data)

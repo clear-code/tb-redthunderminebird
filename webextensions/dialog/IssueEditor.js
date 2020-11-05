@@ -208,6 +208,21 @@ export class IssueEditor {
         const dt = event.clipboardData;
         const files = dt.files;
         if (files && files.length > 0) {
+          const field = document.querySelector('textarea:focus');
+          if (field) {
+            const now = new Date();
+            for (const file of files) {
+              if ((!file.type ||
+                   !file.type.startsWith('image/')) &&
+                  !/\.(gif|jpe?g|png|svg)$/i.test(file.name))
+                continue;
+              file._uploadName = this.getFileNameForClipboardData(file, { now });
+              const text = `![](${file._uploadName})`;
+              const end  = field.selectionEnd;
+              field.value = `${field.value.slice(0, end)}${text}${field.value.slice(end)}`;
+              field.selectionStart = field.selectionEnd = end + text.length;
+            }
+          }
           this.mFilesField.addFiles(files);
           event.stopPropagation();
           event.preventDefault();
@@ -237,6 +252,25 @@ export class IssueEditor {
 
     if (postInitializations.length)
       this.initialized = Promise.all(postInitializations);
+  }
+
+  getFileNameForClipboardData(file, { now } = {}) {
+    if (!now)
+      now = new Date();
+    const dateTimePart = [
+      now.getFullYear(),
+      String(now.getMonth()+1).padStart(2, '0'),
+      String(now.getDate()).padStart(2, '0'),
+      String(now.getHours()).padStart(2, '0'),
+      String(now.getMinutes()).padStart(2, '0')
+    ].join('');
+
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const randomPart = [...new Array(8)].map(()=>chars[Math.floor(Math.random() * chars.length)]).join('');
+
+    const extensionMatched = file.name.match(/\.(.+)$/);
+
+    return `clipboard-${dateTimePart}-${randomPart}.${extensionMatched && extensionMatched[1] || '.dat'}`;
   }
 
   isFieldVisible(name) {
