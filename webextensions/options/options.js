@@ -15,10 +15,10 @@ import * as Dialog from '/extlib/dialog.js';
 import '/extlib/l10n.js';
 import * as AccountConfig from './account-config.js';
 
-const options = new Options(configs);
+let options;
 
 async function initAccounts() {
-  const container = document.querySelector('#editAccountButtons');
+  const container = document.querySelector('#editAccountButtons tbody');
   const range = document.createRange();
   range.selectNodeContents(container);
   range.deleteContents();
@@ -28,11 +28,15 @@ async function initAccounts() {
   const regularAccounts = accounts.filter(account => account.type != 'none');
   const localFolderAccounts = accounts.filter(account => account.type == 'none');
   for (const account of [...regularAccounts, ...localFolderAccounts]) {
+    const defaultAccountRadioItem = account.type == 'none' ? '' :
+      `<input type="radio"
+              name="defaultAccount"
+              value=${JSON.stringify(sanitizeForHTMLText(account.id))}>`;
     appendContents(container, `
-      <li class="flex-box row"
-         ><button class="flex-box column"
-                  value=${JSON.stringify(sanitizeForHTMLText(account.id))}
-                 >${sanitizeForHTMLText(account.name)}</button></li>
+      <tr><td><label>${defaultAccountRadioItem}</label></td>
+          <td><button class="flex-box column"
+                      value=${JSON.stringify(sanitizeForHTMLText(account.id))}
+                     >${sanitizeForHTMLText(account.name)}</button></td></tr>
     `);
   }
 }
@@ -47,12 +51,18 @@ function onConfigChanged(key) {
 configs.$addObserver(onConfigChanged);
 
 window.addEventListener('DOMContentLoaded', async () => {
-  await configs.$loaded;
+  await Promise.all([
+    configs.$loaded,
+    initAccounts()
+  ]);
+  options = new Options(configs);
+  options.onReady();
 
-  initAccounts();
-  const editAccountButtons = document.querySelector('#editAccountButtons');
+  const editAccountButtons = document.querySelector('#editAccountButtons tbody');
   Dialog.initButton(editAccountButtons, event => {
     const button = event.target.closest('button');
+    if (!button)
+      return;
     const accountId = button.getAttribute('value');
     for (const button of editAccountButtons.querySelectorAll('button')) {
       button.disabled = true;

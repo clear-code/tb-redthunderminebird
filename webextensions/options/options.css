@@ -87,14 +87,27 @@ legend label.locked {
 }
 
 
-#editAccountButtons li {
-  margin: 0 0 0.25em;
+#editAccountButtons {
+  width: 100%;
 }
 
-#editAccountButtons button {
+#editAccountButtons th {
+  text-align: center;
+}
+
+#editAccountButtons tr > *:nth-child(1) {
+  width: 5em;
+}
+
+#editAccountButtons td > label {
+  padding: 0 1.5em;
+}
+
+#editAccountButtons td > button {
   font-size: medium;
   line-height: 1.8;
   text-align: left;
+  width: 100%;
 }
 
 
@@ -112,6 +125,10 @@ legend label.locked {
   position: sticky;
   right: 0;
   top: 0;
+}
+
+.inherit-default-account .inheritableFromDefaultAccount {
+  display: none !important;
 }
 
 

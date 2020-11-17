@@ -26,12 +26,36 @@ export class Message {
     this.$full = null;
   }
 
-  get accountId() {
+  get _accountId() {
     return this.raw.folder.accountId;
   }
 
+  get accountId() {
+    return this.shouldInheritDefaultAccount ? configs.defaultAccount : this._accountId;
+  }
   get accountInfo() {
-    return (configs.accounts || {})[this.accountId] || {};
+    return this.shouldInheritDefaultAccount ? this.defaultAccountInfo : this.privateAccountInfo;
+  }
+  get privateAccountInfo() {
+    return (configs.accounts || {})[this._accountId] || {};
+  }
+  get defaultAccountInfo() {
+    return (configs.accounts || {})[configs.defaultAccount] || {};
+  }
+  get shouldInheritDefaultAccount() {
+    const accountInfo = this.privateAccountInfo;
+    return (
+      accountInfo.inheritDefaultAccount !== false &&
+      this._accountId != configs.defaultAccount &&
+      configs.defaultAccount
+    );
+  }
+  get mappedFolders() {
+    return (
+      this.shouldInheritDefaultAccount ?
+        configs.accountMappedFoldersDiverted[this._accountId] :
+        configs.accountMappedFolders[this._accountId]
+    ) || {};
   }
 
   async getFull() {
@@ -65,7 +89,7 @@ export class Message {
   }
 
   getProjectId() {
-    const mappedProject = (configs.accountMappedFolders[this.accountId] || {})[this.raw.folder.path];
+    const mappedProject = this.mappedFolders[this.raw.folder.path];
     return parseInt(mappedProject || this.accountInfo.defaultProject || 0);
   }
 

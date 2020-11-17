@@ -14,13 +14,44 @@ import * as Cache from './cache.js';
 
 export class Redmine {
   constructor({ accountId, url, key }) {
-    this.accountId = accountId;
+    this._accountId = accountId;
     this.__url = url;
     this.__key = key;
   }
 
+  get accountId() {
+    return this.shouldInheritDefaultAccount ? configs.defaultAccount : this._accountId;
+  }
   get accountInfo() {
-    return (configs.accounts || {})[this.accountId] || {};
+    return this.shouldInheritDefaultAccount ? this.defaultAccountInfo : this.privateAccountInfo;
+  }
+  get privateAccountInfo() {
+    return (configs.accounts || {})[this._accountId] || {};
+  }
+  get defaultAccountInfo() {
+    return (configs.accounts || {})[configs.defaultAccount] || {};
+  }
+  get shouldInheritDefaultAccount() {
+    const accountInfo = this.privateAccountInfo;
+    return (
+      accountInfo.inheritDefaultAccount !== false &&
+      this._accountId != configs.defaultAccount &&
+      configs.defaultAccount
+    );
+  }
+  get mappedFolders() {
+    return (
+      this.shouldInheritDefaultAccount ?
+        configs.accountMappedFoldersDiverted[this._accountId] :
+        configs.accountMappedFolders[this._accountId]
+    ) || {};
+  }
+  set mappedFolders(mappings) {
+    if (this.shouldInheritDefaultAccount)
+      configs.accountMappedFoldersDiverted[this._accountId] = mappings;
+    else
+      configs.accountMappedFolders[this._accountId] = mappings;
+    return mappings;
   }
 
   get _url() {

@@ -125,8 +125,10 @@
     }},
 
   "config_accounts_caption": { "message": "アカウントごとのRedmine設定" },
+  "config_defaultAccount_label": { "message": "既定" },
 
   "config_base_caption": { "message": "基本設定" },
+  "config_inheritDefaultAccount_label": { "message": "既定のアカウント用の基本設定を継承する" },
   "config_redmineURL_label": { "message": "Redmine URL" },
   "config_redmineAPIKey_label": { "message": "REST API キー" },
   "config_account_label": { "message": "アカウント" },

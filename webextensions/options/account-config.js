@@ -29,6 +29,7 @@ let mStatuses;
 let mVisibleProjects;
 let mHiddenProjects;
 let mVisibleStatuses;
+let mMappedFoldersDiverted;
 let mMappedFolders;
 
 const mDialog =  new Dialog.InPageDialog();
@@ -46,8 +47,13 @@ Dialog.initButton(mDialog.buttons.lastChild, async _event => {
 });
 appendContents(mDialog.contents, `
   <h1></h1>
+  <p class="inheritDefaultAccountContainer"
+    ><label><input type="checkbox"
+                   class="inheritDefaultAccount"
+                   data-lock-config-key="accounts">
+             ${sanitizeForHTMLText(browser.i18n.getMessage('config_inheritDefaultAccount_label'))}</label></p>
 
-  <section>
+  <section class="inheritableFromDefaultAccount">
   <h2>${sanitizeForHTMLText(browser.i18n.getMessage('config_base_caption'))}</h2>
   <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_redmineURL_label'))}
             <input type="text"
@@ -63,7 +69,7 @@ appendContents(mDialog.contents, `
                    data-lock-config-key="accounts"></label></p>
   </section>
 
-  <section>
+  <section class="inheritableFromDefaultAccount">
   <h2>${sanitizeForHTMLText(browser.i18n.getMessage('config_visibility_caption'))}</h2>
   <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_projectsVisibilityMode_label'))}
             <select class="projectsVisibilityMode"
@@ -175,7 +181,7 @@ appendContents(mDialog.contents, `
   </div>
   </section>
 
-  <section>
+  <section class="inheritableFromDefaultAccount">
   <h2>${sanitizeForHTMLText(browser.i18n.getMessage('config_defaultValue_caption'))}</h2>
   <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_defaultTracker_label'))}
             <select class="defaultTracker"
@@ -217,7 +223,8 @@ appendContents(mDialog.contents, `
 
   <section>
   <h2>${sanitizeForHTMLText(browser.i18n.getMessage('config_mappedFolders_caption'))}</h2>
-  <p><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_mappedFolders_default_label'))}
+  <p class="inheritableFromDefaultAccount"
+    ><label>${sanitizeForHTMLText(browser.i18n.getMessage('config_mappedFolders_default_label'))}
             <select class="defaultProject"
                     data-lock-config-key="accounts"><option value="">${sanitizeForHTMLText(browser.i18n.getMessage('config_mappedFolders_unmapped_label'))}</option></select></label></p>
   <p><label class="flex-box row">${sanitizeForHTMLText(browser.i18n.getMessage('config_visibleFolderPattern_label'))}
@@ -243,21 +250,38 @@ const mProjectsVisibilityModeSelector = mDialog.contents.querySelector('.project
 const mStatusesVisibilityModeSelector = mDialog.contents.querySelector('.statusesVisibilityMode');
 
 async function getProjects() {
+  const visibilityMode  = mRedmine.shouldInheritDefaultAccount ? (mRedmine.defaultAccountInfo.projectsVisibilityMode || configs.projectsVisibilityMode) : parseInt(mProjectsVisibilityModeSelector.value || 0);
+  const visibleProjects = mRedmine.shouldInheritDefaultAccount ? (configs.accountVisibleProjects[configs.defaultAccount] || []).map(project => String(project)) : mVisibleProjects;
+  const hiddenProjects  = mRedmine.shouldInheritDefaultAccount ? (configs.accountHiddenProjects[configs.defaultAccount] || []).map(project => String(project)) : mHiddenProjects;
   return mRedmine.getProjects({
     all: true,
-    visibilityMode: parseInt(mProjectsVisibilityModeSelector.value || 0),
-    visibleProjects: mVisibleProjects,
-    hiddenProjects: mHiddenProjects
+    visibilityMode,
+    visibleProjects,
+    hiddenProjects
   }).catch(_error => []);
 }
 
 async function getStatuses() {
+  const visibilityMode  = mRedmine.shouldInheritDefaultAccount ? (mRedmine.defaultAccountInfo.projectsVisibilityMode || configs.projectsVisibilityMode) : parseInt(mStatusesVisibilityModeSelector.value || 0);
+  const visibleStatuses = mRedmine.shouldInheritDefaultAccount ? (configs.accountVisibleStatuses[configs.defaultAccount] || []).map(project => String(project)) : mVisibleStatuses;
   return mRedmine.getIssueStatuses({
     all: true,
-    visibilityMode: parseInt(mStatusesVisibilityModeSelector.value || 0),
-    visibleStatuses: mVisibleStatuses
+    visibilityMode,
+    visibleStatuses
   }).catch(_error => []);
 }
+
+
+// inherit from the default account
+
+const mInheritDefaultAccountCheck = mDialog.contents.querySelector('.inheritDefaultAccount');
+function onInheritDefaultAccountChanged() {
+  mDialog.contents.classList.toggle('inherit-default-account', mInheritDefaultAccountCheck.checked);
+}
+mInheritDefaultAccountCheck.addEventListener('change', _event => {
+  onInheritDefaultAccountChanged();
+  onRedmineChanged();
+});
 
 
 // base settings
@@ -267,8 +291,9 @@ function onRedmineChanged() {
     clearTimeout(onRedmineChanged.timer);
   onRedmineChanged.timer = setTimeout(async () => {
     delete onRedmineChanged.timer;
-    const url = mDialog.contents.querySelector('.redmineURL').value.trim();
-    const key = mDialog.contents.querySelector('.redmineAPIKey').value.trim();
+    const defaultAccountInfo = configs.accounts[configs.defaultAccount] || {};
+    const url = (mInheritDefaultAccountCheck.checked ? (defaultAccountInfo.url || '') : mDialog.contents.querySelector('.redmineURL').value).trim();
+    const key = (mInheritDefaultAccountCheck.checked ? (defaultAccountInfo.key || '') : mDialog.contents.querySelector('.redmineAPIKey').value).trim();
     if (!url || !key)
       return;
     mRedmine = new Redmine({ accountId: mAccountId, url, key });
@@ -381,7 +406,10 @@ mMappingRows.addEventListener('change', _event => {
   for (const row of mMappingRows.querySelectorAll('tr')) {
     mapping[row.dataset.folderPath] = row.querySelector('select').value;
   }
-  mMappedFolders = mapping;
+  if (mInheritDefaultAccountCheck.checked)
+    mMappedFoldersDiverted = mapping;
+  else
+    mMappedFolders = mapping;
 });
 const mVisibleFolderPatternField = mDialog.contents.querySelector('.visibleFolderPattern');
 mVisibleFolderPatternField.addEventListener('input', () => {
@@ -397,8 +425,18 @@ mVisibleFolderPatternField.addEventListener('input', () => {
 
 export async function show(accountId) {
   mAccountId = accountId;
+
   mRedmine = new Redmine({ accountId: mAccountId });
-  mAccountInfo = clone(mRedmine.accountInfo);
+  mAccountInfo = clone(mRedmine.privateAccountInfo);
+
+  const isDefaultAccount = mAccountId == configs.defaultAccount;
+  const inheritDefaultAccount = !isDefaultAccount && mAccountInfo.inheritDefaultAccount !== false;
+  if (inheritDefaultAccount)
+    mRedmine = new Redmine({
+      accountId: mAccountId,
+      url:       mRedmine.defaultAccountInfo.url,
+      key:       mRedmine.defaultAccountInfo.key
+    });
 
   mVisibleProjects = (configs.accountVisibleProjects[mAccountId] || []).map(project => String(project));
   mHiddenProjects = (configs.accountHiddenProjects[mAccountId] || []).map(project => String(project));
@@ -418,10 +456,14 @@ export async function show(accountId) {
   const account = accounts.find(account => account.id == mAccountId) || {};
   mDialog.contents.querySelector('h1').textContent = browser.i18n.getMessage('config_accountConfig_title', [account.name || '']);
 
+  mDialog.contents.querySelector('.inheritDefaultAccountContainer').classList.toggle('hidden', isDefaultAccount);
+  mInheritDefaultAccountCheck.checked = inheritDefaultAccount;
+
   // base configs
   mDialog.contents.querySelector('.redmineURL').value = mAccountInfo.url || '';
   mDialog.contents.querySelector('.redmineAPIKey').value = mAccountInfo.key || '';
   mDialog.contents.querySelector('.customFields').value = mAccountInfo.customFields || '';
+  onInheritDefaultAccountChanged();
 
   // projects visibility
   mVisibleProjectsTextField.value = mVisibleProjects.join(',');
@@ -440,6 +482,7 @@ export async function show(accountId) {
   }
 
   mVisibleFolderPatternField.value = 'visibleFolderPattern' in mAccountInfo ? mAccountInfo.visibleFolderPattern : configs.visibleFolderPattern;
+  mMappedFoldersDiverted = clone(configs.accountMappedFoldersDiverted[accountId] || {});
   mMappedFolders = clone(configs.accountMappedFolders[accountId] || {});
 
   // default values
@@ -496,6 +539,8 @@ function hide() {
 }
 
 function save() {
+  if (mAccountId != configs.defaultAccount)
+    mAccountInfo.inheritDefaultAccount = mInheritDefaultAccountCheck.checked;
   mAccountInfo.url = mDialog.contents.querySelector('.redmineURL').value;
   mAccountInfo.key = mDialog.contents.querySelector('.redmineAPIKey').value;
   mAccountInfo.customFields = mDialog.contents.querySelector('.customFields').value;
@@ -525,6 +570,7 @@ function save() {
   }
   saveAccountConfig('accountVisibleFields', visibleFields);
 
+  saveAccountConfig('accountMappedFoldersDiverted', mMappedFoldersDiverted);
   saveAccountConfig('accountMappedFolders', mMappedFolders);
 }
 
@@ -672,6 +718,7 @@ async function initFolderMappings(projects) {
     generateOptionSource({ label: browser.i18n.getMessage('config_mappedFolders_fallbackToDefault_label'), value: '' }),
     ...projects.map(project => project.visible ? generateOptionSource({ label: project.indentedName, value: project.id }) : null)
   ].join('');
+  const mappedFolders = mInheritDefaultAccountCheck.checked ? mMappedFoldersDiverted : mMappedFolders;
 
   const addRow = (folder, parent) => {
     if (unmappableFolderPathMatcher.test(folder.path))
@@ -688,10 +735,10 @@ async function initFolderMappings(projects) {
         </tr>
       `);
       const projectChooser = rowsContainer.lastChild.querySelector('select');
-      if (folder.path in mMappedFolders &&
-          allProjects.has(mMappedFolders[folder.path]) &&
-          projectChooser.querySelector(`option[value=${JSON.stringify(sanitizeForHTMLText(String(mMappedFolders[folder.path])))}]`))
-        projectChooser.value = mMappedFolders[folder.path];
+      if (folder.path in mappedFolders &&
+          allProjects.has(mappedFolders[folder.path]) &&
+          projectChooser.querySelector(`option[value=${JSON.stringify(sanitizeForHTMLText(String(mappedFolders[folder.path])))}]`))
+        projectChooser.value = mappedFolders[folder.path];
       else
         projectChooser.value = '';
     }

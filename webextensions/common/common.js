@@ -12,12 +12,14 @@ const OVERRIDE_DEFAULT_CONFIGS = {}; /* Replace this for more customization on a
 
 export const configs = new Configs({
   // per-account configs
-  accounts: null, // url, key, defaultProject, customFields, projectsVisibilityMode, statusesVisibilityMode, useGlobalVisibleFields, useGlobalDefaultFieldValues, defaultTracker, defaultDueDate, defaultTitleCleanupPattern, defaultDescriptionHeaders, defaultNotesHeaders, descriptionTemplate, notesTemplate, deleteLastQuotationBlockFromBody, visibleFolderPattern
+  accounts: null, // inheritDefaultAccount url, key, defaultProject, customFields, projectsVisibilityMode, statusesVisibilityMode, useGlobalVisibleFields, useGlobalDefaultFieldValues, defaultTracker, defaultDueDate, defaultTitleCleanupPattern, defaultDescriptionHeaders, defaultNotesHeaders, descriptionTemplate, notesTemplate, deleteLastQuotationBlockFromBody, visibleFolderPattern
+  defaultAccount: '',
   accountMappedFolders: {},
   accountVisibleProjects: {},
   accountHiddenProjects: {},
   accountVisibleStatuses: {},
   accountVisibleFields: {},
+  accountMappedFoldersDiverted: {},
 
   // default for per-account configs
   projectsVisibilityMode: Constants.PROJECTS_VISIBILITY_SHOW_BY_DEFAULT,

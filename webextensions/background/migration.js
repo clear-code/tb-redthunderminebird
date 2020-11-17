@@ -6,12 +6,13 @@
 'use strict';
 
 import {
-  configs
+  configs,
+  clone,
 } from '/common/common.js';
 
-const kCONFIGS_VERSION = 1;
+const kCONFIGS_VERSION = 2;
 
-export function migrateConfigs() {
+export async function migrateConfigs() {
   switch (configs.configsVersion) {
     case 0:
       if (!configs.accounts && configs.account) {
@@ -42,6 +43,20 @@ export function migrateConfigs() {
         configs.accountVisibleStatuses = visibleStatuses;
 
         configs.accountVisibleFields = {};
+      }
+
+    case 1:
+      if (!configs.defaultAccount && Object.keys(configs.accounts).length > 0) {
+        const allAccounts = await browser.accounts.list();
+        const defaultAccount = allAccounts.find(account => account.type != 'none');
+        if (defaultAccount)
+          configs.defaultAccount = defaultAccount.id;
+
+        const accounts = clone(configs.accounts);
+        for (const [id, account] of Object.entries(accounts)) {
+          account.inheritDefaultAccount = !!(id != configs.defaultAccount && (!account.url || !account.key));
+        }
+        configs.accounts = accounts;
       }
   }
   configs.configsVersion = kCONFIGS_VERSION;

@@ -9,7 +9,8 @@ import * as Dialog from '/extlib/dialog.js';
 
 import {
   configs,
-  log
+  log,
+  clone,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import { Message } from '/common/Message.js';
@@ -301,7 +302,7 @@ async function buildProjectsList({ info, message, parentId, redmine } = {}) {
   if (projects.length == 0)
     return;
 
-  const mappedFolders = configs.accountMappedFolders[accountId] || {};
+  const mappedFolders = redmine.mappedFolders;
   const projectId = mappedFolders[folder.path];
 
   const suffix   = parentId == 'mappedProject' ? '' : ':sub';
@@ -448,14 +449,12 @@ async function onMenuClick(info, tab) {
       if (/^map-to-project:([^:]*)(?::sub)?$/.test(info.menuItemId) &&
           folder) {
         const projectId = RegExp.$1 || null;
-        const accountMappedFolders = JSON.parse(JSON.stringify(configs.accountMappedFolders));
-        const mappedFolders = accountMappedFolders[accountId] || {};
+        const mappedFolders = clone(redmine.mappedFolders);
         if (projectId)
           mappedFolders[folder.path] = projectId;
         else
           delete mappedFolders[folder.path];
-        accountMappedFolders[accountId] = mappedFolders;
-        configs.accountMappedFolders = accountMappedFolders;
+        redmine.mappedFolders = mappedFolders;
       }
       break;
   }
