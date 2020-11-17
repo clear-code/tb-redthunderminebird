@@ -292,8 +292,6 @@ browser.menus.onShown.addListener(async (info, tab) => {
 });
 
 async function buildProjectsList({ info, message, parentId, redmine } = {}) {
-  const accountId = (info.selectedFolder && info.selectedFolder.accountId) || (message && message.accountId);
-
   const folder = info.selectedFolder || (message && message.raw.folder);
   if (!folder)
     return;
