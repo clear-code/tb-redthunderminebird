@@ -603,7 +603,7 @@ export class IssueEditor {
       else {
         if (field.localName != 'select' ||
             field.querySelector(`option[value=${JSON.stringify(sanitizeForHTMLText(String(value)))}]`))
-          field.value = value;
+          field.value = value || '';
         else if (name == 'project_id')
           field.value = this.mRedmine.accountInfo.defaultProject || field.querySelector('option[value]:not([value=""])').value || '';
         else if (field.localName == 'select') {
