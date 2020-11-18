@@ -36,6 +36,7 @@ install_extlib:
 	#cp ../submodules/webextensions-lib-rich-confirm/RichConfirm.js extlib/; echo 'export default RichConfirm;' >> extlib/RichConfirm.js
 	cp ../submodules/webextensions-lib-dialog/dialog.js extlib/
 	cp ../submodules/webextensions-lib-dialog/dialog.css extlib/
+	cp ../submodules/webextensions-lib-message-body/messageBody.js extlib/
 
 test:
 	npm run test

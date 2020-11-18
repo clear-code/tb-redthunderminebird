@@ -11,6 +11,9 @@ import {
 } from './common.js';
 import * as DB from './db.js';
 import * as Format from './format.js';
+import * as MessageBody from '/extlib/messageBody.js';
+
+MessageBody.setLogger(log);
 
 export const RAW_PROPERTIES_FOR_HEADERS = {
   subject: 'subject',
@@ -122,51 +125,7 @@ export class Message {
   }
 
   async getBody({ withoutQuotation } = {}) {
-    log('getBody for ', this.raw);
-    const full = await this.getFull();
-    log(' full => ', full);
-    const { lastPlaintext, lastHTML } = this._collectPlaintextAndHTMLBodies(full);
-    const HTMLBody = lastHTML && Format.htmlToPlaintext(lastHTML, { withoutQuotation });
-    const plaintextBody = withoutQuotation ?
-      lastPlaintext.split('\n').reverse().join('\n').replace(/(\n|^)(?:>(?:.*)?\n)+\s*On.+, .+ wrote:\n/, '$1').split('\n').reverse().join('\n') :
-      lastPlaintext;
-    const body = (HTMLBody || plaintextBody).replace(/\r\n?/g, '\n').trim();
-    log(' body: ', { body, HTMLBody, plaintextBody });
-    return body;
-  }
-  _collectPlaintextAndHTMLBodies(part) {
-    log(' _collectPlaintextAndHTMLBodies: ', { part });
-    let lastPlaintext = '';
-    let lastHTML;
-    for (const subPart of part.parts.slice(0).reverse()) {
-      log(' subPart.contentType: ', subPart.contentType);
-      switch (subPart.contentType.replace(/\s*;.*$/, '')) {
-        case 'multipart/alternative':
-        case 'multipart/mixed':
-        case 'multipart/related':
-          const result = this._collectPlaintextAndHTMLBodies(subPart);
-          if (!lastPlaintext && result.lastPlaintext)
-            lastPlaintext = result.lastPlaintext;
-          if (!lastHTML && result.lastHTML)
-            lastHTML = result.lastHTML;
-          break;
-
-        case 'text/plain':
-          if (!subPart.name)
-            lastPlaintext = subPart.body.replace(/\r\n|\r/g, '\n');
-          break;
-
-        case 'text/html':
-          if (!subPart.name)
-            lastHTML = subPart.body.replace(/\r\n|\r/g, '\n');
-          break;
-
-        default:
-          break;
-      }
-    }
-    log(' _collectPlaintextAndHTMLBodies result: ', { part, lastPlaintext, lastHTML });
-    return { lastPlaintext, lastHTML };
+    return MessageBody.getBody(this.raw.id, { withoutQuotation });
   }
 
   /*

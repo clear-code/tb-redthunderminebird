@@ -13,3 +13,6 @@
 [submodule "submodules/webextensions-lib-event-listener-manager"]
 	path = submodules/webextensions-lib-event-listener-manager
 	url = https://github.com/piroor/webextensions-lib-event-listener-manager
+[submodule "submodules/webextensions-lib-message-body"]
+	path = submodules/webextensions-lib-message-body
+	url = https://gitlab.com/clear-code/webextensions-lib-message-body.git
