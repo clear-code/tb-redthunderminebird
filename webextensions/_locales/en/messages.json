@@ -176,6 +176,7 @@
   "config_contextCommand_noProject_label":  { "message": "When no project is mapped to the folder:" },
   "config_contextCommand_noIssue_label":    { "message": "When no ticket is linked to the message:" },
   "config_contextCommand_hasIssue_label":   { "message": "When any ticket is linked to the message:" },
+  "config_contextCommand_multiselected_label":   { "message": "When multiple messages are selected:" },
   "config_context_issueSubject_label": { "message": "Show linked issue information in the context menu" },
   "config_context_mappedProject_label": { "message": "Activate \"Folder Mapping\" in the context menu" },
 

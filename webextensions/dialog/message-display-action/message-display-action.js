@@ -16,7 +16,8 @@ browser.runtime.sendMessage({ type: Constants.TYPE_GET_DISPLAYED_MESSAGE_STATUS 
 
   document.documentElement.classList.toggle('disabled', !response.available);
   if (response.available) {
-    const message = new Message(response.message);
+    const messages = response.messages.map(rawMessage => new Message(rawMessage));
+    const message = messages[0];
     for (const [id, status] of Object.entries(response.menuStatus)) {
       const button = document.getElementById(id);
       if (!button)
@@ -29,7 +30,7 @@ browser.runtime.sendMessage({ type: Constants.TYPE_GET_DISPLAYED_MESSAGE_STATUS 
           browser.runtime.sendMessage({
             type:    Constants.TYPE_DO_MESSAGE_COMMAND,
             id,
-            message: message.raw
+            messages: messages.map(message => message.raw)
           });
           window.close();
         });

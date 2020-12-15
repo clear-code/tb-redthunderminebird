@@ -176,6 +176,7 @@
   "config_contextCommand_noProject_label":  { "message": "プロジェクトが割り当てられていない場合:" },
   "config_contextCommand_noIssue_label":    { "message": "チケットが関連付けられていない場合:" },
   "config_contextCommand_hasIssue_label":   { "message": "チケットが関連付けられている場合:" },
+  "config_contextCommand_multiselected_label":   { "message": "複数のメッセージが選択されている場合:" },
   "config_context_issueSubject_label": { "message": "関連付けられているチケットの情報をコンテキストメニュー内に表示する" },
   "config_context_mappedProject_label": { "message": "コンテキストメニューからフォルダーマッピングを行えるようにする" },
 

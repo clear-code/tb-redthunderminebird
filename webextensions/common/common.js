@@ -72,6 +72,7 @@ export const configs = new Configs({
   contextCommand_noProject: 'mappedProject',
   contextCommand_noIssue:   'createIssue',
   contextCommand_hasIssue:  'updateIssue',
+  contextCommand_multiselected: 'linkToIssue',
   context_issueSubject: true,
   context_mappedProject: false,
 

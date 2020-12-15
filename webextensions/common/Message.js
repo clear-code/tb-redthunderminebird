@@ -67,6 +67,11 @@ export class Message {
     return this.$full = await browser.messages.getFull(this.raw.id);
   }
 
+  async getMessageId() {
+    const headers = (await this.getFull()).headers;
+    return this.$messageId = headers['message-id'][0];
+  }
+
   async getThreadMessageIds() {
     if (this.$messageIds)
       return this.$messageIds;
@@ -90,6 +95,11 @@ export class Message {
   }
 
   async setIssueId(issueId) {
+    const messageId = await this.getMessageId();
+    return DB.setMessageToIssueRelation(messageId, issueId);
+  }
+
+  async setIssueIdToThread(issueId) {
     const messageIds = await this.getThreadMessageIds();
     return Promise.all(messageIds.reverse().map(async (messageId, index) => {
       if (index == 0 ||

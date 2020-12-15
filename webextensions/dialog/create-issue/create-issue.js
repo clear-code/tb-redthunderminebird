@@ -152,7 +152,7 @@ async function createIssue() {
   if (issue && issue.id) {
     mIssueEditor.issueId = issue.id;
     await Promise.all([
-      mMessage.setIssueId(issue.id),
+      mMessage.setIssueIdToThread(issue.id),
       mIssueEditor.saveRelations()
     ]);
   }

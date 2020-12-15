@@ -98,8 +98,8 @@ const MENU_ITEMS = {
     async shouldEnable({ info, tab, message, redmine } = {}) {
       return MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
     },
-    async shouldVisible({ message, redmine } = {}) {
-      return configs[`contextCommand_${await getContext({ message, redmine })}`] == 'openWebUI';
+    async shouldVisible({ info, message, redmine } = {}) {
+      return configs[`contextCommand_${await getContext({ info, message, redmine })}`] == 'openWebUI';
     }
   },
   topLevel_linkToIssue: {
@@ -108,8 +108,8 @@ const MENU_ITEMS = {
     async shouldEnable({ info, tab, message, redmine } = {}) {
       return MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
     },
-    async shouldVisible({ message, redmine } = {}) {
-      return configs[`contextCommand_${await getContext({ message, redmine })}`] == 'linkToIssue';
+    async shouldVisible({ info, message, redmine } = {}) {
+      return configs[`contextCommand_${await getContext({ info, message, redmine })}`] == 'linkToIssue';
     }
   },
   topLevel_createIssue: {
@@ -118,8 +118,8 @@ const MENU_ITEMS = {
     async shouldEnable({ info, tab, message, redmine } = {}) {
       return MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
     },
-    async shouldVisible({ message, redmine } = {}) {
-      return configs[`contextCommand_${await getContext({ message, redmine })}`] == 'createIssue';
+    async shouldVisible({ info, message, redmine } = {}) {
+      return configs[`contextCommand_${await getContext({ info, message, redmine })}`] == 'createIssue';
     }
   },
   topLevel_updateIssue: {
@@ -128,8 +128,8 @@ const MENU_ITEMS = {
     async shouldEnable({ info, tab, message, redmine } = {}) {
       return MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
     },
-    async shouldVisible({ message, redmine } = {}) {
-      return configs[`contextCommand_${await getContext({ message, redmine })}`] == 'updateIssue';
+    async shouldVisible({ info, message, redmine } = {}) {
+      return configs[`contextCommand_${await getContext({ info, message, redmine })}`] == 'updateIssue';
     }
   },
   topLevel_openIssue: {
@@ -138,8 +138,8 @@ const MENU_ITEMS = {
     async shouldEnable({ info, tab, message, redmine } = {}) {
       return MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine });
     },
-    async shouldVisible({ message, redmine } = {}) {
-      return configs[`contextCommand_${await getContext({ message, redmine })}`] == 'openIssue';
+    async shouldVisible({ info, message, redmine } = {}) {
+      return configs[`contextCommand_${await getContext({ info, message, redmine })}`] == 'openIssue';
     }
   },
 
@@ -152,13 +152,13 @@ const MENU_ITEMS = {
       return !!(
         await MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine }) &&
         (info.contexts.includes('folder_pane') ||
-         configs[`contextCommand_${await getContext({ message, redmine })}`] == 'mappedProject')
+         configs[`contextCommand_${await getContext({ info, message, redmine })}`] == 'mappedProject')
       );
     },
     async shouldVisible({ info, tab, message, redmine } = {}) {
       return !!(
         (configs.context_mappedProject ||
-         configs[`contextCommand_${await getContext({ message, redmine })}`] == 'mappedProject') &&
+         configs[`contextCommand_${await getContext({ info, message, redmine })}`] == 'mappedProject') &&
         await MENU_ITEMS.redmine.shouldEnable({ info, tab, message, redmine })
       );
     }
@@ -195,12 +195,16 @@ const MENU_ITEMS = {
   }
 };
 
-async function getContext({ message, redmine } = {}) {
+async function getContext({ info, message, redmine } = {}) {
   if (configs.contextMenuType != Constants.CONTEXT_MENU_CONTEXTUAL ||
       !redmine.accountInfo.url ||
       !redmine.accountInfo.key ||
       !message)
     return '';
+
+  if (info.selectedMessages &&
+      info.selectedMessages.messages.length > 1)
+    return 'multiselected';
 
   if (!message.getProjectId())
     return 'noProject';
@@ -239,6 +243,10 @@ browser.menus.onShown.addListener(async (info, tab) => {
   const message = messages && messages.length > 0 ? messages[0] : null;
   const accountId = (info.selectedFolder && info.selectedFolder.accountId) || (message && message.accountId);
   const redmine = new Redmine({ accountId });
+
+  getContext({ info, message, redmine }).then(context => {
+    log('context: ', context, info, tab);
+  });
 
   let modificationCount = 0;
   const tasks = [];
@@ -402,18 +410,22 @@ async function onMenuClick(info, tab) {
     case 'openWebUI': {
       if (!message)
         return;
-      const url = await redmine.getCreationURL(message);
+      const urls = new Set(await Promise.all(messages.map(message => redmine.getCreationURL(message))));
+      let active = true;
+      for (const url of urls) {
       browser.tabs.create({
         windowId: tab.windowId,
-        active:   true,
+        active,
         url
       });
+        active = false;
+      }
     }; break;
 
     case 'linkToIssue':
       if (!message)
         return;
-      runTask(async () => linkToIssue(message, { tab, accountId, redmine }));
+      runTask(async () => linkToIssue(messages, { tab, accountId, redmine }));
       break;
 
     case 'createIssue':
@@ -431,15 +443,23 @@ async function onMenuClick(info, tab) {
     case 'openIssue': {
       if (!message)
         return;
-      const issueId = await getContextIssueId(info);
-      if (!issueId)
-        return;
-      const url = await redmine.getIssueURL(issueId, { withAPIKey: true });
+      const urls = new Set(
+        Array.from(
+          new Set(
+            await Promise.all(messages.map(message => message.getIssueId()))
+          ),
+          issueId => redmine.getIssueURL(issueId, { withAPIKey: true })
+        )
+      );
+      let active = true;
+      for (const url of urls) {
       browser.tabs.create({
         windowId: tab.windowId,
-        active:   true,
+        active,
         url
       });
+        active = false;
+      }
     }; break;
 
     default:
@@ -467,16 +487,23 @@ browser.runtime.onMessage.addListener((message, _sender) => {
           return null;
 
         const tab        = tabs[0];
-        const rawMessage = await browser.messageDisplay.getDisplayedMessage(tab.id);
+        const selectedRawMessages = await browser.mailTabs.getSelectedMessages(tab.id).catch(_error => []);
+        const rawMessages = selectedRawMessages.length > 0 ?
+          selectedRawMessages :
+          typeof browser.messageDisplay.getDisplayedMessages == 'function' ?
+            await browser.messageDisplay.getDisplayedMessages(tab.id) :
+            [await browser.messageDisplay.getDisplayedMessage(tab.id)];
+        const rawMessage = rawMessages[0];
         const message    = new Message(rawMessage);
         const accountId  = message.accountId;
         const redmine    = new Redmine({ accountId });
         const menuStatus = {};
 
+
         const tasks = [];
         const info  = {
           contexts: ['message_list'],
-          selectedMessages: { messages: [rawMessage] }
+          selectedMessages: { messages: rawMessages }
         };
         for (const [id, item] of Object.entries(MENU_ITEMS)) {
           tasks.push((async () => {
@@ -497,7 +524,7 @@ browser.runtime.onMessage.addListener((message, _sender) => {
 
         return {
           available: !!(redmine.accountInfo.url && redmine.accountInfo.key),
-          message: rawMessage,
+          messages: rawMessages,
           issueId,
           menuStatus
         };
@@ -516,7 +543,7 @@ browser.runtime.onMessage.addListener((message, _sender) => {
         const info = {
           menuItemId:       message.id,
           contexts:         ['message_list'],
-          selectedMessages: { messages: [message.message] }
+          selectedMessages: { messages: message.messages }
         };
         onMenuClick(info, tabs[0]);
       });
@@ -525,7 +552,7 @@ browser.runtime.onMessage.addListener((message, _sender) => {
 });
 
 
-async function linkToIssue(message, { tab, accountId, redmine } = {}) {
+async function linkToIssue(messages, { tab, accountId, redmine } = {}) {
   try {
     const dialogParams = {
       url:    '/dialog/link-to-issue/link-to-issue.html',
@@ -539,7 +566,7 @@ async function linkToIssue(message, { tab, accountId, redmine } = {}) {
     if (typeof configs.linkToIssueDialogTop == 'number')
       dialogParams.top = configs.linkToIssueDialogTop;
     try {
-      let projectId = message.getProjectId();
+      let projectId = messages[0].getProjectId();
       if (!projectId) {
         const project = await redmine.getFirstProject();
         if (project)
@@ -548,13 +575,19 @@ async function linkToIssue(message, { tab, accountId, redmine } = {}) {
       const result = await Dialog.open(
         dialogParams,
         { accountId,
-          defaultId: await message.getIssueId(),
+          defaultId: (await Promise.all(messages.map(message => message.getIssueId()))).filter(id => !!id),
           projectId }
       );
       const issue = result && result.detail;
       log('chosen issue: ', issue);
-      if (issue)
-        await message.setIssueId(issue.id);
+      if (issue) {
+        if (messages.length == 1) {
+          await messages[0].setIssueIdToThread(issue.id);
+        }
+        else {
+          await Promise.all(messages.map(message => message.setIssueId(issue.id)));
+        }
+      }
     }
     catch(_error) {
     }
