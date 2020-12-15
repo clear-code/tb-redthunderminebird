@@ -413,11 +413,11 @@ async function onMenuClick(info, tab) {
       const urls = new Set(await Promise.all(messages.map(message => redmine.getCreationURL(message))));
       let active = true;
       for (const url of urls) {
-      browser.tabs.create({
-        windowId: tab.windowId,
-        active,
-        url
-      });
+        browser.tabs.create({
+          windowId: tab.windowId,
+          active,
+          url
+        });
         active = false;
       }
     }; break;
@@ -453,11 +453,11 @@ async function onMenuClick(info, tab) {
       );
       let active = true;
       for (const url of urls) {
-      browser.tabs.create({
-        windowId: tab.windowId,
-        active,
-        url
-      });
+        browser.tabs.create({
+          windowId: tab.windowId,
+          active,
+          url
+        });
         active = false;
       }
     }; break;
