@@ -81,6 +81,9 @@ export class Message {
     if (issueIds.length == 0)
       return null;
 
+    if (configs.allowPartialThread)
+      return parseInt(issueIds[issueIds.length - 1]);
+
     // We should return the ID of the most root level message in the thread,
     // because issue information can be modified with a message middle of the thread.
     return parseInt(issueIds[0]);
@@ -88,7 +91,12 @@ export class Message {
 
   async setIssueId(issueId) {
     const messageIds = await this.getThreadMessageIds();
-    return Promise.all(messageIds.map(messageId => DB.setMessageToIssueRelation(messageId, issueId)));
+    return Promise.all(messageIds.reverse().map(async (messageId, index) => {
+      if (index == 0 ||
+          !configs.allowPartialThread ||
+          !(await DB.getRelatedIssueIdFromMessageId(messageId)))
+        DB.setMessageToIssueRelation(messageId, issueId);
+    }));
   }
 
   getProjectId() {

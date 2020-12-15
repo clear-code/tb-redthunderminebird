@@ -76,6 +76,8 @@ export const configs = new Configs({
   context_mappedProject: false,
 
 
+  allowPartialThread: true,
+
   configsVersion: 0,
   debug: false,
   dryRun: false,

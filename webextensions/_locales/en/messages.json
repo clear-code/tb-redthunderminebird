@@ -179,6 +179,12 @@
   "config_context_issueSubject_label": { "message": "Show linked issue information in the context menu" },
   "config_context_mappedProject_label": { "message": "Activate \"Folder Mapping\" in the context menu" },
 
+
+  "config_thread_caption": { "message": "Message Threads" },
+
+  "config_allowPartialThread_label": { "message": "Allow to link partial message threads to issues different from the thread root's one" },
+
+
   "config_debug_caption": { "message": "Development" },
 
   "config_debug_label": { "message": "Debug mode" },

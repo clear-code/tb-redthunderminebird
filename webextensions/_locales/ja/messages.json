@@ -179,6 +179,12 @@
   "config_context_issueSubject_label": { "message": "関連付けられているチケットの情報をコンテキストメニュー内に表示する" },
   "config_context_mappedProject_label": { "message": "コンテキストメニューからフォルダーマッピングを行えるようにする" },
 
+
+  "config_thread_caption": { "message": "スレッドの取り扱い" },
+
+  "config_allowPartialThread_label": { "message": "スレッドの一部を別のチケットに割り当てることを許容する" },
+
+
   "config_debug_caption": { "message": "開発者向け" },
 
   "config_debug_label": { "message": "デバッグモード" },
