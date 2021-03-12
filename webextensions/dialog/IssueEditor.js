@@ -497,15 +497,15 @@ export class IssueEditor {
     const givenFields = this.params.custom_fields || [];
     log('rebuildCustomFields ', givenFields);
     let fields = [];
-      try {
-        const accountInfo = this.mRedmine.accountInfo;
-        fields = JSON.parse(accountInfo.customFields || '[]');
-        if (!Array.isArray(fields) && fields && fields.custom_fields)
-          fields = fields.custom_fields;
-      }
-      catch(_error) {
-        fields = [];
-      }
+    try {
+      const accountInfo = this.mRedmine.accountInfo;
+      fields = JSON.parse(accountInfo.customFields || '[]');
+      if (!Array.isArray(fields) && fields && fields.custom_fields)
+        fields = fields.custom_fields;
+    }
+    catch(_error) {
+      fields = [];
+    }
 
     if (givenFields) {
       const defaultFieldById = new Map();
