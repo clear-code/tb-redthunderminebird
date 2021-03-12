@@ -590,12 +590,13 @@ export class IssueEditor {
       const paramName = name.replace(/\[\]$/, '');
       const valueHolder = field.dataset.fieldId ? (this.params[paramName] || []).find(field => field.id == field.dataset.fieldId) : this.params[paramName];
       const value = field.dataset.fieldId ? (valueHolder && valueHolder.value) : valueHolder;
+      log('applyFieldValues: ', { name, paramName, valueHolder, value });
       if (field.matches('input[type="checkbox"]')) {
         if (field.dataset.fieldIsArray == 'true')
           field.checked = Array.isArray(value) && value.includes(field.value);
         else
           field.checked = !!value;
-        log('applyFieldValues: ', field, name, value, field.checked);
+        log(' => ', field, name, value, field.checked);
       }
       else if (this.shouldUseNoQuotationVersion(field)) {
         field.value = this.params[`${paramName}WithoutQuotation`];
@@ -623,7 +624,7 @@ export class IssueEditor {
         }
         else
           field.value = '';
-        log('applyFieldValues: ', field, name, value, field.value);
+        log(' => ', field, name, value, field.value);
       }
     }
 
