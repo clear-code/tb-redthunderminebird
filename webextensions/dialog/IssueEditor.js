@@ -463,6 +463,7 @@ export class IssueEditor {
     this.params.custom_fields = issue.custom_fields || [];
 
     if (issue.parent) {
+      this.params.parent_issue_id = issue.parent.id;
       this.mParentIssueField.value = issue.parent.id;
       DialogCommon.updateAutoGrowFieldSize(this.mParentIssueField);
       if (issue.parent.subject) {
@@ -474,6 +475,7 @@ export class IssueEditor {
       }
     }
     else {
+      delete this.params.parent_issue_id;
       this.mParentIssueField.value = '';
       this.mParentIssueSubject.value = '';
     }
