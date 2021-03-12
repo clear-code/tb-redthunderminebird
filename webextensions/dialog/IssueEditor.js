@@ -460,6 +460,7 @@ export class IssueEditor {
     this.params.status_id = issue.status && issue.status.id || null;
     this.params.assigned_to_id = issue.assigned_to && issue.assigned_to.id || null;
     this.params.fixed_version_id = issue.fixed_version && issue.fixed_version.id || null;
+    this.params.custom_fields = issue.custom_fields || [];
 
     if (issue.parent) {
       this.mParentIssueField.value = issue.parent.id;
@@ -487,13 +488,15 @@ export class IssueEditor {
         relations: issue.relations
       }).then(() => this.sizeToContent());
 
-    this.rebuildCustomFields(issue.custom_fields);
+    this.rebuildCustomFields();
 
     this.applyFieldValues();
   }
 
-  rebuildCustomFields(fields) {
-    if (!fields) {
+  rebuildCustomFields() {
+    const givenFields = this.params.custom_fields || [];
+    log('rebuildCustomFields ', givenFields);
+    let fields = [];
       try {
         const accountInfo = this.mRedmine.accountInfo;
         fields = JSON.parse(accountInfo.customFields || '[]');
@@ -503,8 +506,21 @@ export class IssueEditor {
       catch(_error) {
         fields = [];
       }
+
+    if (givenFields) {
+      const defaultFieldById = new Map();
+      for (const field of fields) {
+        defaultFieldById.set(field.id, field);
+      }
+      for (const field of givenFields) {
+        const defaultField = defaultFieldById.get(field.id);
+        if (defaultField)
+          defaultField.value = field.value;
+        else
+          defaultFields.push(field);
+      }
     }
-    log('rebuildCustomFields ', fields);
+    log(' => ', fields);
 
     for (const row of this.mFieldsContainer.querySelectorAll('.grid-row.custom-field')) {
       row.parentNode.removeChild(row);
@@ -524,8 +540,12 @@ export class IssueEditor {
       appendContents(this.mFieldsContainer, source);
 
       const select = this.mFieldsContainer.lastChild.querySelector('select');
-      if (select) // selectbox need to be initialized with its property instead of attribute!
-        select.value = ('value' in field ? field.value : field.default_value) || '';
+      if (select) {
+        // selectbox need to be initialized with its property instead of attribute!
+        const value = ('value' in field ? field.value : field.default_value) || '';
+        select.value = value;
+        log('dropdown list detected: set value ', select, value, field);
+      }
     }
   }
 
@@ -588,9 +608,9 @@ export class IssueEditor {
     for (const field of document.querySelectorAll('[data-field]')) {
       const name = field.dataset.field;
       const paramName = name.replace(/\[\]$/, '');
-      const valueHolder = field.dataset.fieldId ? (this.params[paramName] || []).find(field => field.id == field.dataset.fieldId) : this.params[paramName];
+      const valueHolder = field.dataset.fieldId ? (this.params[paramName] || []).find(givenField => givenField.id == field.dataset.fieldId) : this.params[paramName];
       const value = field.dataset.fieldId ? (valueHolder && valueHolder.value) : valueHolder;
-      log('applyFieldValues: ', { name, paramName, valueHolder, value });
+      log('applyFieldValues: ', { field, name, paramName, valueHolder, value });
       if (field.matches('input[type="checkbox"]')) {
         if (field.dataset.fieldIsArray == 'true')
           field.checked = Array.isArray(value) && value.includes(field.value);
