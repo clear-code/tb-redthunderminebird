@@ -627,10 +627,10 @@ export class IssueEditor {
       }
     }
 
-    this.setDateFieldValeu(this.mStartDateField, this.params.start_date);
-    this.setDateFieldValeu(this.mDueDateField, this.params.due_date);
+    this.setDateFieldValue(this.mStartDateField, this.params.start_date);
+    this.setDateFieldValue(this.mDueDateField, this.params.due_date);
   }
-  setDateFieldValeu(field, value) {
+  setDateFieldValue(field, value) {
     if (value || !field.disabled) {
       field.value = value;
       return;
