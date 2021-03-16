@@ -406,6 +406,7 @@ async function onMenuClick(info, tab) {
   const message = messages && messages.length ? messages[0] : null;
   const accountId = (info.selectedFolder && info.selectedFolder.accountId) || (message && message.accountId);
   const redmine = new Redmine({ accountId });
+  log('onMenuClick ', { info, tab, messages, message, accountId, redmine });
   switch (info.menuItemId.replace(/^topLevel_/, '')) {
     case 'openWebUI': {
       if (!message)
@@ -572,6 +573,7 @@ async function linkToIssue(messages, { tab, accountId, redmine } = {}) {
         if (project)
           projectId = project.id;
       }
+      log('linkToIssue: projectId = ', projectId);
       const result = await Dialog.open(
         dialogParams,
         { accountId,
@@ -589,7 +591,8 @@ async function linkToIssue(messages, { tab, accountId, redmine } = {}) {
         }
       }
     }
-    catch(_error) {
+    catch(error) {
+      console.error(error);
     }
   }
   catch(error) {
@@ -621,7 +624,9 @@ async function createIssue(message, { tab, accountId } = {}) {
 }
 
 async function updateIssue(message, { tab, accountId, redmine } = {}) {
+  log('updateIssue ', { message, tab, accountId, redmine });
   if (!(await message.getIssueId())) {
+    log('updateIssue: no issue id found');
     await linkToIssue(message, { tab, accountId, redmine });
     if (!(await message.getIssueId()))
       return;
