@@ -554,6 +554,9 @@ browser.runtime.onMessage.addListener((message, _sender) => {
 
 
 async function linkToIssue(messages, { tab, accountId, redmine } = {}) {
+  if (!Array.isArray(messages))
+    messages = [messages];
+  log('linkToIssue ', { messages, tab, accountId, redmine });
   try {
     const dialogParams = {
       url:    '/dialog/link-to-issue/link-to-issue.html',
