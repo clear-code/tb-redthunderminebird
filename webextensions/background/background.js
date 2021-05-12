@@ -11,6 +11,7 @@ import {
   configs,
   log,
   clone,
+  openURLs,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import { Message } from '/common/Message.js';
@@ -412,15 +413,7 @@ async function onMenuClick(info, tab) {
       if (!message)
         return;
       const urls = new Set(await Promise.all(messages.map(message => redmine.getCreationURL(message))));
-      let active = true;
-      for (const url of urls) {
-        browser.tabs.create({
-          windowId: tab.windowId,
-          active,
-          url
-        });
-        active = false;
-      }
+      openURLs(urls, { windowId: tab.windowId });
     }; break;
 
     case 'linkToIssue':
@@ -452,15 +445,7 @@ async function onMenuClick(info, tab) {
           issueId => redmine.getIssueURL(issueId, { withAPIKey: true })
         )
       );
-      let active = true;
-      for (const url of urls) {
-        browser.tabs.create({
-          windowId: tab.windowId,
-          active,
-          url
-        });
-        active = false;
-      }
+      openURLs(urls, { windowId: tab.windowId });
     }; break;
 
     default:

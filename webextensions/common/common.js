@@ -79,6 +79,8 @@ export const configs = new Configs({
 
   allowPartialThread: true,
 
+  openInDefaultBrowser: true,
+
   configsVersion: 0,
   debug: false,
   dryRun: false,
@@ -134,4 +136,31 @@ export function sanitizeForHTMLText(text) {
 
 export function clone(object) {
   return JSON.parse(JSON.stringify(object));
+}
+
+export async function openURL(url, { windowId } = {}) {
+  return openURLs(url, { windowId });
+}
+
+export async function openURLs(urls, { windowId } = {}) {
+  let active = true;
+  const extraOptions = {};
+  if (windowId)
+    extraOptions.windowId = windowId;
+  const promises = [];
+  for (const url of urls) {
+    if (typeof browser.windows.openDefaultBrowser == 'function' &&
+        configs.openInDefaultBrowser) {
+      promises.push(browser.windows.openDefaultBrowser(url));
+    }
+    else {
+      promises.push(browser.tabs.create({
+        active,
+        url,
+        ...extraOptions,
+      }));
+    }
+    active = false;
+  }
+  return Promise.all(promises);
 }

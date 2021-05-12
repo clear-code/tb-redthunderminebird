@@ -12,7 +12,8 @@ import {
   configs,
   log,
   appendContents,
-  sanitizeForHTMLText
+  sanitizeForHTMLText,
+  openURL,
 } from '/common/common.js';
 import { Message } from '/common/Message.js';
 import { Redmine } from '/common/Redmine.js';
@@ -86,10 +87,7 @@ configs.$loaded.then(async () => {
         const openLink = event => {
           event.preventDefault();
           event.stopPropagation();
-          browser.tabs.create({
-            active: true,
-            url
-          });
+          openURL(url);
         };
         link.addEventListener('click', event => {
           if (event.button != 0)

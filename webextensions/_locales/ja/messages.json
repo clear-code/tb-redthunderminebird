@@ -188,6 +188,8 @@
 
   "config_debug_caption": { "message": "開発者向け" },
 
+  "config_openInDefaultBrowser_label": { "message": "リンク先を既定のブラウザーで開く（Thunderbird 78.6以降が必要）" },
+
   "config_debug_label": { "message": "デバッグモード" },
   "config_dryRun_label": { "message": "シミュレーションモード" },
   "config_all_caption": { "message": "すべての設定" }
