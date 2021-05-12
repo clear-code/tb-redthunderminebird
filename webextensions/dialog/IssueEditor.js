@@ -831,20 +831,6 @@ export class IssueEditor {
     if (!this.completelyInitialized)
       return;
 
-    if (this.$sizeToContentTimer)
-      clearTimeout(this.$sizeToContentTimer);
-    this.$sizeToContentTimer = setTimeout(async () => {
-      const box = document.querySelector('#form > *:first-child');
-      const range = document.createRange();
-      range.selectNodeContents(box);
-      const delta = range.getBoundingClientRect().height - box.getBoundingClientRect().height;
-      range.detach();
-
-      const windowId = await Dialog.getWindowId();
-      const win = await browser.windows.get(windowId);
-      browser.windows.update(win.id, { height: Math.round(win.height + delta) });
-
-      delete this.$sizeToContentTimer;
-    }, 100);
+    Dialog.sizeToContent();
   }
 }
