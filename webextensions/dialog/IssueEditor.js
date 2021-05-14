@@ -519,7 +519,7 @@ export class IssueEditor {
         if (defaultField)
           defaultField.value = field.value;
         else
-          defaultFields.push(field);
+          fields.push(field);
       }
     }
     log(' => ', fields);
