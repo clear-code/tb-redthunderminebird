@@ -139,7 +139,7 @@ export function clone(object) {
 }
 
 export async function openURL(url, { windowId } = {}) {
-  return openURLs(url, { windowId });
+  return openURLs([url], { windowId });
 }
 
 export async function openURLs(urls, { windowId } = {}) {
