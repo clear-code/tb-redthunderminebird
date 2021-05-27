@@ -92,13 +92,13 @@ configs.$loaded.then(async () => {
         link.addEventListener('click', event => {
           if (event.button != 0)
             return;
-          openLink(event);
+          openLink(url);
         });
         link.addEventListener('keydown', event => {
           if (event.key != 'Enter' &&
               event.key != ' ')
             return;
-          openLink(event);
+          openLink(url);
         });
         // delay is required to apply CSS transition
         setTimeout(() => completedMessage.show(), 0);
