@@ -9,7 +9,8 @@ import {
   configs,
   appendContents,
   sanitizeForHTMLText,
-  clone
+  clone,
+  log,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import * as Dialog from '/extlib/dialog.js';
@@ -425,6 +426,7 @@ mVisibleFolderPatternField.addEventListener('input', () => {
 
 export async function show(accountId) {
   mAccountId = accountId;
+  log('AccountConfig::show ', accountId);
 
   mRedmine = new Redmine({ accountId: mAccountId });
   mAccountInfo = clone(mRedmine.privateAccountInfo);
@@ -575,8 +577,11 @@ function save() {
 }
 
 function saveAccountConfig(key, value) {
+  log('AccountConfig::saveAccountConfig ', key, mAccountId, value);
   const values = clone(configs[key]) || {};
-  values[mRedmine.accountId] = value;
+  log('  old values: ', clone(values));
+  // Don't use mRedmine.accountId because it can refer the default account!
+  values[mAccountId] = value;
   configs[key] = values;
 }
 
