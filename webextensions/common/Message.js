@@ -150,6 +150,7 @@ export class Message {
     if (typeof browser.messages.listAttachments != 'function' ||
         typeof browser.messages.getAttachmentFile != 'function')
       return [];
+    // for Thunderbird 88 and later
     const attachments = await browser.messages.listAttachments(this.raw.id);
     return Promise.all(attachments.map(async attachment => {
       const file = await browser.messages.getAttachmentFile(this.raw.id, attachment.partName);
