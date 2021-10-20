@@ -146,22 +146,17 @@ export class Message {
     return MessageBody.getBody(this.raw.id, { withoutQuotation });
   }
 
-  /*
   async getAttachments() {
-    const full = await this.getFull();
-    const attachments = [];
-    for (const part of full.parts) {
-      if (!part.name)
-        continue;
-
-      attachments.push({
-        name: part.name,
-        size: part.size
-      });
-    }
-    return attachments;
+    if (typeof browser.messages.listAttachments != 'function' ||
+        typeof browser.messages.getAttachmentFile != 'function')
+      return [];
+    const attachments = await browser.messages.listAttachments(this.raw.id);
+    return Promise.all(attachments.map(async attachment => {
+      const file = await browser.messages.getAttachmentFile(this.raw.id, attachment.partName);
+      attachment.file = file;
+      return attachment;
+    }));
   }
-  */
 
   async toRedmineParams() {
     const [issueId, body, bodyWithoutQuotation, rawHeaders] = await Promise.all([

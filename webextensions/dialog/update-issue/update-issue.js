@@ -80,6 +80,10 @@ configs.$loaded.then(async () => {
   });
   await mIssueEditor.initialized;
 
+  const attachments = await mMessage.getAttachments();
+  if (attachments.length > 0)
+    await mIssueEditor.addFiles(attachments.map(attachment => attachment.file));
+
   Dialog.initButton(mAcceptButton, async _event => {
     mAcceptButton.disabled = mCancelButton.disabled = true;
     try {

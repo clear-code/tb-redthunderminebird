@@ -833,4 +833,8 @@ export class IssueEditor {
 
     Dialog.sizeToContent();
   }
+
+  addFiles(files) {
+    return this.mFilesField.addFiles(files);
+  }
 }
