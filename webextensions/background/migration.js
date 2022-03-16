@@ -10,7 +10,7 @@ import {
   clone,
 } from '/common/common.js';
 
-const kCONFIGS_VERSION = 2;
+const kCONFIGS_VERSION = 3;
 
 export async function migrateConfigs() {
   switch (configs.configsVersion) {
@@ -57,6 +57,14 @@ export async function migrateConfigs() {
           account.inheritDefaultAccount = !!(id != configs.defaultAccount && (!account.url || !account.key));
         }
         configs.accounts = accounts;
+      }
+
+    case 2:
+      if (!configs.defaultAccount) {
+        const accounts = await browser.accounts.list();
+        const regularAccounts = accounts.filter(account => account.type != 'none');
+        if (regularAccounts.length > 0)
+          configs.defaultAccount = regularAccounts[0].id;
       }
   }
   configs.configsVersion = kCONFIGS_VERSION;
