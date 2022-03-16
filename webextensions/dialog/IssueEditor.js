@@ -93,17 +93,17 @@ export class IssueEditor {
       log('IssueEditor initialization completed');
     });
 
-    this.mStartDateEnabled.checked = false;
-    this.mStartDateEnabled.addEventListener('change', () => {
-      this.mStartDateField.disabled = !this.mStartDateEnabled.checked;
+    // controlls startDate, dueDate, and custom fields
+    document.addEventListener('change', event => {
+      const target = event.target;
+      if (!target.id ||
+          !target.matches('input[type="checkbox"]') ||
+          !target.id.endsWith(':enabled'))
+        return;
+      const field = document.querySelector(`#${target.id.replace(/:enabled$/, '')}`);
+      if (field)
+        field.disabled = !target.checked;
     });
-    this.mStartDateField.disabled = true;
-
-    this.mDueDateEnabled.checked = false;
-    this.mDueDateEnabled.addEventListener('change', () => {
-      this.mDueDateField.disabled = !this.mDueDateEnabled.checked;
-    });
-    this.mDueDateField.disabled = true;
 
     const projectIdGetter = () => this.mProjectField ? this.mProjectField.value : this.params.project_id || this.mProjects.length > 0 && this.mProjects[0].id || null;
     this.mIssueChooser = new IssueChooser({
@@ -533,7 +533,9 @@ export class IssueEditor {
         <div class="grid-row custom-field"
              data-field-id=${JSON.stringify(sanitizeForHTMLText(field.id))}
              data-field-format=${JSON.stringify(sanitizeForHTMLText(field.field_format) + (field.multiple ? '-multiple' : ''))}>
-          <label for="custom-field-${sanitizeForHTMLText(field.id)}${field.multiple ? '-0' : ''}">${sanitizeForHTMLText(field.name)}</label>
+          <label for="custom-field-${sanitizeForHTMLText(field.id)}${field.multiple ? '-0' : ''}"
+            ><input type="checkbox" id=${JSON.stringify(sanitizeForHTMLText('custom-field-' + field.id + ':enabled'))} />
+             ${sanitizeForHTMLText(field.name)}</label>
           <span class="grid-column">${this.customFieldUISource(field)}</span>
         </div>
       `.trim();
@@ -648,6 +650,10 @@ export class IssueEditor {
           field.value = '';
         log(' => ', field, name, value, field.value);
       }
+      // controlls startDate, dueDate, and custom fields
+      const enabledCheckbox = field.id && document.querySelector(`#${field.id}\\:enabled`);
+      if (enabledCheckbox)
+        field.disabled = !enabledCheckbox.checked
     }
 
     this.setDateFieldValue(this.mStartDateField, this.params.start_date);
@@ -746,6 +752,8 @@ export class IssueEditor {
       switch (customFieldRow.dataset.fieldFormat) {
         case 'list-multiple': {
           const checkboxes = customFieldRow.querySelectorAll(`[type="checkbox"]`);
+          if (Array.from(checkboxes).every(checkbox => checkbox.disabled))
+            continue;
           customFields.push({
             id,
             value: this.getRequestParamValueFromCheckboxes(checkboxes)
@@ -754,6 +762,8 @@ export class IssueEditor {
 
         default: {
           const field = customFieldRow.querySelector(`[data-field]`);
+          if (field.disabled)
+            continue;
           const value = this.getRequestParamValueFromField(field);
           if (value !== null)
             customFields.push({ id, value });
