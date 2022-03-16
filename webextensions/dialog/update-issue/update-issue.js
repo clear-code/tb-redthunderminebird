@@ -71,7 +71,11 @@ configs.$loaded.then(async () => {
     toggleDescriptionField();
   });
 
-  mIssueEditor = new IssueEditor({ accountId: mMessage.accountId, ...redmineParams });
+  mIssueEditor = new IssueEditor({
+    accountId: mMessage.accountId,
+    customFields: mParams.customFields,
+    ...redmineParams,
+  });
   mIssueEditor.onValid.addListener(() => {
     mAcceptButton.disabled = false;
   });

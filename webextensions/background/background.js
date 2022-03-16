@@ -425,7 +425,7 @@ async function onMenuClick(info, tab) {
     case 'createIssue':
       if (!message)
         return;
-      runTask(async () => createIssue(message, { tab, accountId }));
+      runTask(async () => createIssue(message, { tab, accountId, redmine }));
       break;
 
     case 'updateIssue':
@@ -588,7 +588,7 @@ async function linkToIssue(messages, { tab, accountId, redmine } = {}) {
   }
 }
 
-async function createIssue(message, { tab, accountId } = {}) {
+async function createIssue(message, { tab, accountId, redmine } = {}) {
   const dialogParams = {
     url:    '/dialog/create-issue/create-issue.html',
     modal:  !configs.debug,
@@ -601,10 +601,12 @@ async function createIssue(message, { tab, accountId } = {}) {
   if (typeof configs.createIssueDialogTop == 'number')
     dialogParams.top = configs.createIssueDialogTop;
   try {
+    const customFields = redmine && await redmine.getCustomFields();
     await Dialog.open(
       dialogParams,
       { accountId,
-        message: message.raw }
+        message: message.raw,
+        customFields }
     );
   }
   catch(_error) {
@@ -632,10 +634,12 @@ async function updateIssue(message, { tab, accountId, redmine } = {}) {
   if (typeof configs.updateIssueDialogTop == 'number')
     dialogParams.top = configs.updateIssueDialogTop;
   try {
+    const customFields = redmine && await redmine.getCustomFields();
     await Dialog.open(
       dialogParams,
       { accountId,
-        message: message.raw }
+        message: message.raw,
+        customFields }
     );
   }
   catch(_error) {

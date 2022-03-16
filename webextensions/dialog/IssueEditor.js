@@ -21,9 +21,10 @@ import { RelationsField } from '/dialog/RelationsField.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 
 export class IssueEditor {
-  constructor({ accountId, ...params } = {}) {
+  constructor({ accountId, customFields, ...params } = {}) {
     this.mAccountId = accountId;
     this.params = params;
+    this.params.custom_fields = this.givenCustomFields = customFields;
     this.completelyInitialized = false;
 
     this.mRedmine = new Redmine({ accountId: this.mAccountId });
@@ -460,7 +461,7 @@ export class IssueEditor {
     this.params.status_id = issue.status && issue.status.id || null;
     this.params.assigned_to_id = issue.assigned_to && issue.assigned_to.id || null;
     this.params.fixed_version_id = issue.fixed_version && issue.fixed_version.id || null;
-    this.params.custom_fields = issue.custom_fields || [];
+    this.params.custom_fields = this.givenCustomFields || issue.custom_fields || [];
 
     if (issue.parent) {
       this.params.parent_issue_id = issue.parent.id;
@@ -529,7 +530,7 @@ export class IssueEditor {
     }
 
     for (const field of fields) {
-      const enabledCheck = field.is_requried ? '' :
+      const enabledCheck = field.is_required ? '' :
         `<input type="checkbox"
                 id=${JSON.stringify(sanitizeForHTMLText('custom-field-' + field.id + ':enabled'))} />`;
       const source = `

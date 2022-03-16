@@ -543,21 +543,24 @@ export class Redmine {
   async getCustomFields() {
     log('customFields ', this.accountId);
 
-    /*
-    const response = await Cache.getAndFallback(
+    return Cache.getAndFallback(
       'redmine:customFields',
-      () => {
-        return this._request({ path: 'custom_fields.json' });
+      async () => {
+        const response = await this._request({ path: 'custom_fields.json' });
+        return response &&
+          response.custom_fields &&
+          response.custom_fields.filter(field => {
+            return field.customized_type == 'issue' && field.visible;
+          });
       }
     );
-    return response.issue_statuses.filter(field => {
-      return field.customized_type == 'issue' && field.visible;
-    });
-  */
+
+    /*
     const fields = JSON.parse(this.accountInfo.customFields || '[]');
     if (!Array.isArray(fields) && fields.custom_fields)
       return fields.custom_fields;
     return fields;
+    */
   }
 
   recache() {
