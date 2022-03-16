@@ -529,13 +529,15 @@ export class IssueEditor {
     }
 
     for (const field of fields) {
+      const enabledCheck = field.is_requried ? '' :
+        `<input type="checkbox"
+                id=${JSON.stringify(sanitizeForHTMLText('custom-field-' + field.id + ':enabled'))} />`;
       const source = `
         <div class="grid-row custom-field"
              data-field-id=${JSON.stringify(sanitizeForHTMLText(field.id))}
              data-field-format=${JSON.stringify(sanitizeForHTMLText(field.field_format) + (field.multiple ? '-multiple' : ''))}>
           <label for="custom-field-${sanitizeForHTMLText(field.id)}${field.multiple ? '-0' : ''}"
-            ><input type="checkbox" id=${JSON.stringify(sanitizeForHTMLText('custom-field-' + field.id + ':enabled'))} />
-             ${sanitizeForHTMLText(field.name)}</label>
+            >${enabledCheck}${sanitizeForHTMLText(field.name)}</label>
           <span class="grid-column">${this.customFieldUISource(field)}</span>
         </div>
       `.trim();
