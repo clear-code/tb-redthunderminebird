@@ -46,7 +46,7 @@ export async function migrateConfigs() {
       }
 
     case 1:
-      if (!configs.defaultAccount && Object.keys(configs.accounts).length > 0) {
+      if (!configs.defaultAccount && configs.accounts && Object.keys(configs.accounts).length > 0) {
         const allAccounts = await browser.accounts.list();
         const defaultAccount = allAccounts.find(account => account.type != 'none');
         if (defaultAccount)
