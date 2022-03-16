@@ -461,7 +461,20 @@ export class IssueEditor {
     this.params.status_id = issue.status && issue.status.id || null;
     this.params.assigned_to_id = issue.assigned_to && issue.assigned_to.id || null;
     this.params.fixed_version_id = issue.fixed_version && issue.fixed_version.id || null;
-    this.params.custom_fields = this.givenCustomFields || issue.custom_fields || [];
+    const issueCustomFields = Object.fromEntries((issue.custom_fields || []).map(field => [field.id, field]));
+    const mergedCustomFields = {};
+    for (const fieldDefinition of [
+      ...(this.givenCustomFields || []),
+      ...Object.values(issueCustomFields),
+    ]) {
+      const issueFields = issueCustomFields[fieldDefinition.id];
+      mergedCustomFields[fieldDefinition.id] = ({
+        ...fieldDefinition,
+        ...issueFields,
+        ...(mergedCustomFields[fieldDefinition.id] || {})
+      });
+    }
+    this.params.custom_fields = Object.values(mergedCustomFields);
 
     if (issue.parent) {
       this.params.parent_issue_id = issue.parent.id;

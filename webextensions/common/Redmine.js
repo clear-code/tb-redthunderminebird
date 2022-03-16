@@ -543,10 +543,20 @@ export class Redmine {
   async getCustomFields() {
     log('customFields ', this.accountId);
 
+    if (this.accountInfo.customFields) {
+      const fields = JSON.parse(this.accountInfo.customFields || '[]');
+      if (!Array.isArray(fields) && fields.custom_fields)
+        return fields.custom_fields;
+      return fields;
+    }
+
     return Cache.getAndFallback(
       'redmine:customFields',
       async () => {
-        const response = await this._request({ path: 'custom_fields.json' });
+        const response = await this._request({ path: 'custom_fields.json' }).catch(error => {
+          console.log('failed to fetch custom fields definition: ', error);
+          return null;
+        });
         return response &&
           response.custom_fields &&
           response.custom_fields.filter(field => {
@@ -554,13 +564,6 @@ export class Redmine {
           });
       }
     );
-
-    /*
-    const fields = JSON.parse(this.accountInfo.customFields || '[]');
-    if (!Array.isArray(fields) && fields.custom_fields)
-      return fields.custom_fields;
-    return fields;
-    */
   }
 
   recache() {
