@@ -612,6 +612,15 @@ export class IssueEditor {
           `.trim();
         }
 
+      case 'text': // long string
+        return `
+          <textarea id="custom-field-${field.id}"
+                 value=${JSON.stringify(sanitizeForHTMLText('value' in field ? field.value : (field.default_value || '')))}
+                 data-original-value=${JSON.stringify(sanitizeForHTMLText(field.value || ''))}
+                 data-field-type="string"
+                 ${commonAttributes}></textarea>
+        `.trim();
+
       default:
         return `
           <input id="custom-field-${field.id}"
