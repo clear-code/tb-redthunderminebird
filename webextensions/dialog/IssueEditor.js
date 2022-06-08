@@ -543,6 +543,8 @@ export class IssueEditor {
     }
 
     for (const field of fields) {
+      if (typeof field.value == 'string' && field.value.includes('\n'))
+        field.field_format = 'text';
       const enabledCheck = field.is_required ? '' :
         `<input type="checkbox"
                 id=${JSON.stringify(sanitizeForHTMLText('custom-field-' + field.id + ':enabled'))} />`;
