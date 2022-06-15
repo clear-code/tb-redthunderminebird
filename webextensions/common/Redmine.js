@@ -368,6 +368,7 @@ export class Redmine {
       `redmine[${this.accountId}]:projects`,
       async () => {
         const projects = [];
+        const projectsById = {};
         let offset = 0;
         let response;
         do {
@@ -377,14 +378,20 @@ export class Redmine {
             data: { offset, limit }
           });
           if (!response.projects)
-            return projects;
-          projects.push(...response.projects.map(project => {
-            project.fullName = this._getProjectFullName(project);
-            project.indentedName = this._getIndentedName(project);
-            return project;
-          }));
+            break;
+          for (const project of response.projects) {
+            projectsById[project.id] = project;
+          }
+          projects.push(...response.projects);
           offset += limit;
         } while (response.offset + response.limit <= response.total_count);
+        for (const project of projects) {
+          const names = this._getNestedProjectNames(project, projectsById);
+          project.fullName = names.join('/');
+          project.indentedName = names.length > 1 ?
+            `${names.slice(0, names.length - 1).map(() => '\u00A0').join('\u00A0')}\u00A0»\u00A0${names[names.length - 1]}` :
+            names[0];
+        }
         return projects.sort((a, b) => (a.fullName > b.fullName) ? 1 : -1 );
       }
     );
@@ -406,15 +413,11 @@ export class Redmine {
       return true;
     });
   }
-  _getProjectFullName(project) {
-    if (project.parent)
-      return `${this._getProjectFullName(project.parent)}/${project.name}`;
-    return project.name;
-  }
-  _getIndentedName(project) {
-    if (project.parent)
-      return `${this._getIndentedName(project.parent)}\n${project.name}`.replace(/.+\n/g, '\u00A0»\u00A0');
-    return project.name;
+  _getNestedProjectNames(project, projectsById) {
+    const parent = project.parent || projectsById[project.id]?.parent;
+    if (parent)
+      return [...this._getNestedProjectNames(parent, projectsById), project.name];
+    return [project.name];
   }
 
   async getFirstProject() {
