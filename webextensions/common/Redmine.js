@@ -105,37 +105,24 @@ export class Redmine {
       return response || {};
     }
 
-    const request = new XMLHttpRequest();
-    return new Promise((resolve, reject) => {
-      try {
-        log('request url:', url);
-        request.open(method, url, true);
-        request.setRequestHeader('Content-Type', type);
-        request.addEventListener('readystatechange', _event => {
-          if (request.readyState != XMLHttpRequest.DONE)
-            return;
+    const options = {
+      method: method || 'GET',
+      mode:   'no-cors',
+      headers: {
+        'Content-Type': type,
+      },
+    };
+    if (body)
+      options.body = body;
 
-          log('request status:', request.status);
-          log('request response:', request.responseText);
+    const rawResponse = await fetch(url, options);
+    log('result:', rawResponse.ok);
+    if (!rawResponse.ok)
+      throw new Error(`${rawResponse.status} ${rawResponse.statusText}`);
 
-          if (request.status >= 300 && request.status != 422)
-            return reject(request);
-
-          //文字列なら(多分JSON文字列なので)オブジェクトにして返却
-          let result = request.responseText;
-          if (result != 0)
-            result = JSON.parse(result);
-
-          resolve(result);
-        });
-        log('request send:', body);
-        request.send(body);
-      }
-      catch(error) {
-        log('Redmine.request error: ' + String(error));
-        reject(request);
-      }
-    });
+    const responseBody = await rawResponse.json();
+    log('responseBody:', responseBody);
+    return responseBody;
   }
 
   getIssueURL(id, { withAPIKey } = {}) {
