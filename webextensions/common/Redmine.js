@@ -107,7 +107,7 @@ export class Redmine {
 
     const options = {
       method: method || 'GET',
-      mode:   'no-cors',
+      mode:   'cors',
       headers: {
         'Content-Type': type,
       },
