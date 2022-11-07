@@ -120,9 +120,9 @@ export class Redmine {
     if (!rawResponse.ok)
       throw new Error(`${rawResponse.status} ${rawResponse.statusText}`);
 
-    const responseBody = await rawResponse.json();
-    log('responseBody:', responseBody);
-    return responseBody;
+    const responseBody = await rawResponse.text();
+    log('responseBody: ', responseBody);
+    return JSON.parse(responseBody);
   }
 
   getIssueURL(id, { withAPIKey } = {}) {
