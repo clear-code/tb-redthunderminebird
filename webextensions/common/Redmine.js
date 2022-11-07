@@ -122,7 +122,7 @@ export class Redmine {
 
     const responseBody = await rawResponse.text();
     log('responseBody: ', responseBody);
-    return JSON.parse(responseBody);
+    return responseBody && JSON.parse(responseBody);
   }
 
   getIssueURL(id, { withAPIKey } = {}) {
