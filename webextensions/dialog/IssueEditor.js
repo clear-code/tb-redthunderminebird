@@ -548,12 +548,13 @@ export class IssueEditor {
       const enabledCheck = field.is_required ? '' :
         `<input type="checkbox"
                 id=${JSON.stringify(sanitizeForHTMLText('custom-field-' + field.id + ':enabled'))} />`;
+      const labelForAttr = enabledCheck ? '' :
+        `for="custom-field-${sanitizeForHTMLText(field.id)}${field.multiple ? '-0' : ''}"`;
       const source = `
         <div class="grid-row custom-field"
              data-field-id=${JSON.stringify(sanitizeForHTMLText(field.id))}
              data-field-format=${JSON.stringify(sanitizeForHTMLText(field.field_format) + (field.multiple ? '-multiple' : ''))}>
-          <label for="custom-field-${sanitizeForHTMLText(field.id)}${field.multiple ? '-0' : ''}"
-            >${enabledCheck}${sanitizeForHTMLText(field.name)}</label>
+          <label ${labelForAttr}>${enabledCheck}${sanitizeForHTMLText(field.name)}</label>
           <span class="grid-column">${this.customFieldUISource(field)}</span>
         </div>
       `.trim();
