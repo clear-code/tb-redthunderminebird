@@ -3,6 +3,19 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="レイヤー_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
 	 y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+    g {
+      fill: #0C0C0D;
+    }
+    @media (prefers-color-scheme: dark) {
+      g {
+        fill: #F9F9FA;
+      }
+    }
+  </style>
 <g>
 	<path d="M0.67,8.738l2.083,0.626c0.21-0.778,0.477-1.499,0.798-2.141L1.774,6.182C1.33,6.951,0.958,7.809,0.67,8.738z"/>
 	<path d="M4.639,3.086C3.865,3.58,3.16,4.239,2.544,5.039l1.554,1.25c0.453-0.682,0.971-1.243,1.54-1.655L4.639,3.086z"/>
