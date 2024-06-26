@@ -282,7 +282,7 @@ export class IssueEditor {
   }
 
   initSelect(field, items, itemTranslator) {
-    if (!field)
+    if (!field || !items)
       return;
 
     const oldValue = field.value;
